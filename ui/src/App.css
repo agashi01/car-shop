@@ -1,0 +1,118 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.box {
+  border: 1px solid #fff;
+  padding: 10px;
+  border-radius: 1px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.account {
+  display: inline-block;
+}
+
+.account p {
+  margin-right: 5px;
+}
+
+.prezantimi {
+  display: inline-block;
+
+}
+
+.prezantimi label[for='emri'] {
+  margin-right: 10px;
+}
+
+.box input {
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+.box button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 12px 8px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.logo {
+  display: flex;
+  /* Ensures the image behaves like a block-level element */
+  justify-content: flex-end;
+  margin: 0 auto;
+  /* Center the image horizontally */
+  max-width: 20%;
+  /* Ensures the image doesn't exceed its natural size */
+  height: auto;
+  /* Maintains the image's aspect ratio */
+  border-radius: 50%;
+  /* Creates a circular border for a circular logo (optional) */
+  box-shadow: 0px 4px 10px rgba(33, 150, 243, 1);
+  /* Adds a subtle shadow (optional) */
+}
+
+/* If you want to add hover effect or animation */
+.logo:hover {
+  transform: scale(1.1);
+  /* Scale the logo on hover (optional) */
+  transition: transform 0.3s ease-in-out;
+  /* Add a smooth transition effect (optional) */
+}
+
+.register {
+  /* flex-direction:column; */
+  height: 100px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.sign-in-home {
+  margin: 5px 0px 0px 0px;
+}
+
+.register-home {
+
+  margin: 0px 0px 0px 5px;
+}
+
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+.card-grid {
+  display: grid;
+  grid-template-rows: repeat(2,minmax(200px,1fr));
+  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+
+}
