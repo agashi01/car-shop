@@ -20,11 +20,11 @@ const app = express()
 app.use(cors())
 
 
-app.use(bodyParser.json())   
+app.use(bodyParser.json())
 
 
 
-app.get('/', (req, res) => {return res.status(200).json("Server is up and running!") })
+app.get('/', (req, res) => { return res.status(200).json("Server is up and running!") })
 
 app.post('/sign-up', (req, res) => auth.signUp(db)(req, res));
 app.post('/log-in', (req, res) => auth.logIn(db)(req, res));
@@ -42,10 +42,16 @@ app.delete('/dealers/:id', (req, res) => dealers.deleteDealer(db)(req, res))
 
 
 
-
-
-
-
+app.use((err, req, res, next) => {
+  const errStatus = err.statusCode || 500;
+  const errMsg = err.message || 'Something went wrong';
+  res.status(errStatus).json({
+    success: false,
+    status: errStatus,
+    message: errMsg,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : {}
+  })
+});
 
 
 app.listen(3000, () => console.log("Server is running on port 3000"))

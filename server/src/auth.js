@@ -74,8 +74,7 @@ const logIn = (db) => async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-       
-       return res.status(400).json('missing credentials')
+        return res.status(400).json('missing credentials')
     }
 
     db('users').where({
@@ -102,7 +101,6 @@ const logIn = (db) => async (req, res) => {
                                     .from('cars as c')
                                     .join('dealers as d', 'c.dealer_id', 'd.id')
                                     .where({ owner_id: user.id })
-
 
                                     .then((cars) => {
 

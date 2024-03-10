@@ -1,24 +1,16 @@
-import { useState } from 'react'
 import React from 'react';
 import Logo from "./Logo.jsx";
-import GetStarted from "./GetStarted.jsx";
-import SignInForm from "./SignInForm";
+// import GetStarted from "./GetStarted.jsx";
+import SignInForm from "./forms/SignIn.jsx";
 
 import './App.css';
 
-
-
-
-function App() {
-
+export default function App() {
   return (
     <>
-      <GetStarted />
+      {/* <GetStarted /> */}
       <Logo />
-      <SignInForm  />
-
+      <SignInForm />
     </>
   )
 }
-
-export default App
