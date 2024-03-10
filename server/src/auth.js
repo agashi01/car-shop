@@ -53,13 +53,13 @@ const signUp = (db) => async (req, res) => {
                         hash
                     }).returning('*')
                         .then((user) => {
-                            res.json(user[0])
+                            return res.json(user[0])
                         }).catch(err => {
                             res.status(500).json('problems in the server!')
                         })
 
                 } else {
-                    res.status(400).json('wrong credentials')
+                    res.status(400).json('missing credentials')
                 }
             }).catch(err => {
                 res.status(500).json('email is already in use')
@@ -74,7 +74,8 @@ const logIn = (db) => async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        res.status(400).json('missing credentials')
+       
+       return res.status(400).json('missing credentials')
     }
 
     db('users').where({
@@ -111,14 +112,14 @@ const logIn = (db) => async (req, res) => {
                                     })
                             }).catch(err => (res.status(500).json('problem in the server')))
                     } else {
-                        res.status(400).json('wrong passworrd')
+                        return res.status(400).json('wrong password')
                     }
                 }).catch(err => {
                     console.error(err)
                     res.status(500).json(err)
                 })
         }).catch(err => {
-            res.status(400).json('wrong email')
+            return res.status(400).json('wrong email')
         })
 }
 

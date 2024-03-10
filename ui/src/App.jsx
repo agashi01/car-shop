@@ -15,7 +15,7 @@ function App() {
     <>
       <GetStarted />
       <Logo />
-      <SignInForm password={signInPassword} email={signInEmail} />
+      <SignInForm  />
 
     </>
   )

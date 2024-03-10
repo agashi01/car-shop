@@ -24,7 +24,7 @@ app.use(bodyParser.json())
 
 
 
-app.get('/', (req, res) => { res.send(200).json("Server is up and running!") })
+app.get('/', (req, res) => {return res.status(200).json("Server is up and running!") })
 
 app.post('/sign-up', (req, res) => auth.signUp(db)(req, res));
 app.post('/log-in', (req, res) => auth.logIn(db)(req, res));
@@ -45,10 +45,7 @@ app.delete('/dealers/:id', (req, res) => dealers.deleteDealer(db)(req, res))
 
 
 
-app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).json({ error: err.message })
-})
+
 
 
 app.listen(3000, () => console.log("Server is running on port 3000"))
