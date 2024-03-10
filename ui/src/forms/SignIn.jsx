@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 
-export default function SignInForm() {
+export default function SignInForm({home,register}) {
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
@@ -53,7 +53,7 @@ export default function SignInForm() {
         <form>
             <div className='box'>
 
-                <h2>Sign In</h2>
+                <p className='improved-h2'>Sign In</p>
                 <label htmlFor='email'>
                     <input type='text' onChange={(e) => signInEmail(e.target.value)} value={signIn.email} id='email' placeholder='Enter your email'></input>
                 </label>
@@ -66,7 +66,7 @@ export default function SignInForm() {
                     <p className='text' style={{
                         marginRight: 5,
                     }}>Do not have an account? </p>
-                    <button type='button'>Register</button>
+                    <button onClick={register}type='button'>Register</button>
                 </div>
             </div>
         </form>
