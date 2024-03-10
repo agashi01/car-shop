@@ -52,6 +52,8 @@ export default function SignInForm() {
 
         <form>
             <div className='box'>
+
+                <h2>Sign In</h2>
                 <label htmlFor='email'>
                     <input type='text' onChange={(e) => signInEmail(e.target.value)} value={signIn.email} id='email' placeholder='Enter your email'></input>
                 </label>
