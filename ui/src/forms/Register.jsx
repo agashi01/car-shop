@@ -1,21 +1,34 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
+import { useEffect } from 'react'
+import PropTypes from 'prop-types';
+
+Register.propTypes = {
+    signIn: PropTypes.func.isRequired,
+    home: PropTypes.func.isRequired,
+
+};
 
 export default function Register({ signIn }) {
 
-    const [register, setRegister] = useState({})
+    // const [register, setRegister] = useState({})
 
-    const emri = useRef('');
-    const mbiemri = useRef('');
-    const email = useRef('');
-    const password = useRef('');
+    const emri = useRef(null);
+    const mbiemri = useRef(null);
+    const email = useRef(null);
+    const password = useRef(null);
+
+    const [ HasAnyError ,setHasAnyError]=useState(false)
+
     const [error, setError] = useState({
         emri: '',
         mbiemri: '',
         email: '',
         password: ''
     });
+
     const [value, setValue] = useState({
         emri: '',
         mbiemri: '',
@@ -23,6 +36,76 @@ export default function Register({ signIn }) {
         password: ''
 
     })
+
+
+
+
+    const arrowUp = (ref) => {
+
+
+        ref.focus()
+
+    }
+
+
+
+    const arrowDown = (ref) => {
+
+
+        ref.focus()
+
+    }
+
+
+
+    useEffect(() => {
+        const arrowHandler = (ref1, ref2) => (event) => {
+
+            if(event.key.startsWith("Arrow")){
+                event.preventDefault()
+            }
+
+            switch (event.key) {
+
+
+
+                case "ArrowUp":
+
+                    arrowUp(ref1)
+                    break;
+
+                case "ArrowDown":
+
+                    arrowDown(ref2)
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+
+
+        const emriRef = emri.current;
+        const mbiemriRef = mbiemri.current;
+        const emailRef = email.current;
+        const passwordRef = password.current;
+
+        emriRef.addEventListener('keydown', arrowHandler(passwordRef, mbiemriRef));
+        mbiemriRef.addEventListener('keydown', arrowHandler(emriRef, emailRef));
+        emailRef.addEventListener('keydown', arrowHandler(mbiemriRef, passwordRef));
+        passwordRef.addEventListener('keydown', arrowHandler(emailRef, emriRef));
+
+        return () => {
+            emriRef.removeEventListener('keydown', arrowHandler(passwordRef, mbiemriRef));
+            mbiemriRef.removeEventListener('keydown', arrowHandler(emriRef, emailRef));
+            emailRef.removeEventListener('keydown', arrowHandler(mbiemriRef, passwordRef));
+            passwordRef.removeEventListener('keydown', arrowHandler(emailRef, emriRef));
+        };
+    }, [arrowDown, arrowUp]);
+
+
+
 
     const setEmri = (e) => {
         setValue((current) => {
@@ -52,7 +135,8 @@ export default function Register({ signIn }) {
         })
     }
 
-    const registerConfirm = () => {
+    const registerConfirm = (e) => {
+        e.preventDefault()
         if (value.emri.length === 0) {
             setError((current) => {
 
@@ -96,34 +180,79 @@ export default function Register({ signIn }) {
     }
 
 
+   
+        const errorArr=Object.keys(error)
+
+        for(let i=0;i<errorArr.length;i++){
+            if(error[errorArr[i]]!==""){
+                
+                setHasAnyError(true)
+            }
+            
+        }
+    
+
+
+
+
     return (
         <form className='box register-box'>
             <p className='improved-h2'>Register</p>
             <div className='prezantimi'>
-                <label className='emri'>
-                    <input type='text' ref={emri} id='emri' value={value.emri} onChange={setEmri} placeholder='name'></input>
+                <label htmlFor="emri"className={hasAnyError ?"wrong-prezantimi-register":"prezantimi-register"}>
+                    <input
+                        type='text'
+                        ref={emri}
+                        id='emri'
+                        value={value.emri}
+                        onChange={setEmri}
+                        placeholder='name'
+                        autoComplete='off'></input>
                 </label>
                 {error.emri && <p className='wrongSignIn'>{error.emri}</p>}
-                <label className='prezantimi mbiemri'>
-                    <input ref={mbiemri} type='text' value={value.mbiemri} onChange={setMbiemri} placeholder='surname'></input>
+                <label htmlFor="mbiemri"className={hasAnyError ?"wrong-prezantimi-register":"prezantimi-register"}>
+                    <input
+                        ref={mbiemri}
+                        type='text'
+                        value={value.mbiemri}
+                        onChange={setMbiemri}
+                        placeholder='surname'
+                        autoComplete='off'></input>
                 </label>
                 {error.mbiemri && <p className='wrongSignIn'>{error.mbiemri}</p>}
-            </div>
-            <label htmlFor='email'>
-                <input type='text' ref={email} id='email' onChange={setEmail} placeholder='Enter your email'></input>
+            
+            <label className={hasAnyError?"wrong-prezantimi-register":"prezantimi-register"} htmlFor='email'>
+                <input
+                    type='text'
+                    ref={email}
+                    id='email'
+                    onChange={setEmail}
+                    placeholder='Enter your email'
+                    ></input>
             </label>
-            {error.email && <p className='wrongSignIn'>{error.mbiemri}</p>}
-            <label htmlFor='password'>
-                <input type='password' ref={password} id='password' onChange={setPassword} placeholder='Enter your password'></input>
+            {error.email && <p className='wrongSignIn'>{error.email}</p>}
+            <label className={hasAnyError ?"wrong-prezantimi-register":"prezantimi-register"} htmlFor='password'>
+                <input
+                    type='password'
+                    ref={password}
+                    id='password'
+                    onChange={setPassword}
+                    placeholder='Enter your password'
+                    autoComplete='off'
+                ></input>
             </label >
             {error.password && <p className='wrongSignIn'>{error.password}</p>}
             <button type='btn' onClick={registerConfirm}>Register</button>
+            </div>
             <div className='register'>
                 <p className='text' style={{
                     marginRight: 5,
                 }}>Already have an account? </p>
-                <button onClick={signIn} type='button'>Sign In</button>
+                <button
+                    onClick={signIn}
+                    type='button'>Sign In</button>
             </div>
         </form>
     )
 }
+

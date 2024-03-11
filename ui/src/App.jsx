@@ -4,6 +4,7 @@ import Logo from "./Logo.jsx";
 // import GetStarted from "./GetStarted.jsx";
 import SignInForm from "./forms/SignIn.jsx";
 import Register from "./forms/Register.jsx";
+import Home from "./forms/Home.jsx"
 
 import './App.css';
 
@@ -15,7 +16,7 @@ export default function App() {
     setPage('signIn')
   }
 
-  const registerPage=() => {
+  const registerPage = () => {
     setPage('register')
   }
 
@@ -24,12 +25,17 @@ export default function App() {
   }
 
 
+  
+
   return (
     <>
       <Logo />
-      {page === 'signIn' ? <SignInForm home={homePage} register={registerPage}/> :
-        page === 'home' ? <Home home ={homePage}register={registerPage} signIn={signInPage} /> :
-         <Register home={homePage} signIn={signInPage}/>}
+      {page === 'signIn' ? <SignInForm home={homePage} register={registerPage} /> :
+        page === 'home' ? <Home home={homePage} register={registerPage} signIn={signInPage} /> :
+          <Register home={homePage} signIn={signInPage}
+          
+          />}
+
       {/* <GetStarted /> */}
 
     </>

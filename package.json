@@ -2,5 +2,8 @@
     "scripts": {
         "dev-ui": "cd ui && npm run dev",
         "dev-server": "cd server && npm run dev"
+    },
+    "dependencies": {
+        "prop-types": "^15.8.1"
     }
 }

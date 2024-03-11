@@ -6,13 +6,18 @@
 }
 
 .wrongSignIn {
+  display:flex;
+  justify-content: flex-start;
   color: red;
-  font-size: 0.75em;
+  font-size: 0.7em;
+  margin-top:0;
+  margin-bottom: 30px;
+  
 
 }
 
 .box {
-  border: 1px solid #fff;
+  border: 1px solid #333;
   padding: 25px;
   display: flex;
   flex-direction: column;
@@ -20,7 +25,7 @@
   margin-top: 50px;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 10px 4px  rgba(0, 0, 0, 0.5);
 }
 
 .register-box{
@@ -36,13 +41,19 @@
 
 
 .prezantimi {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
 
 }
-
-.prezantimi label[for='emri'] {
-  margin-right: 10px;
+.prezantimi-register{
+  margin-bottom:0;
+  border-radius: 5;
 }
+.wrong-prezantimi-register{
+  border-color: red;
+}
+
+
 
 .box input {
   margin-bottom: 10px;
@@ -51,7 +62,7 @@
 
 .box button {
   background-color: rgb(189, 195, 199);
-  color: #fff;
+  color:  #333;
   padding: 5px 10px;
   border: none;
   cursor: pointer;
@@ -60,7 +71,7 @@
 }
 
 .box button:hover {
-  background-color:  rgba(33, 150, 243, 1);
+  background-color:  hsl(200, 100%, 90%);;
   transform: translateY(-2px)
 }
 
@@ -88,7 +99,8 @@
   /* Maintains the image's aspect ratio */
   border-radius: 50%;
   /* Creates a circular border for a circular logo (optional) */
-  box-shadow: 0px 4px 10px rgba(33, 150, 243, 1);
+  box-shadow: 0px 4px 10px ;
+   color: hsl(200, 100%, 70%);
   /* Adds a subtle shadow (optional) */
 }
 
@@ -140,4 +152,146 @@
   grid-template-rows: repeat(2, minmax(200px, 1fr));
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
+}
+
+ /* already made  */
+ * {
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background: #333;
+  color: hsl(200, 100%, 90%);
+  
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+.new-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.btn {
+  background: hsl(200, 100%, 50%, 0.1);
+  border: 1px solid hsl(200, 100%, 50%);
+  color: hsl(200, 100%, 50%);
+  padding: 0.25em 0.5em;
+  border-radius: 0.25em;
+  cursor: pointer;
+  outline: none;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: hsl(200, 100%, 50%, 0.2);
+}
+
+.btn.btn-danger {
+  background: hsl(0, 100%, 40%, 0.1);
+  border: 1px solid hsl(0, 100%, 40%);
+  color: hsl(0, 100%, 40%);
+}
+
+.btn.btn-danger:hover,
+.btn.btn-danger:focus-visible {
+  background: hsl(0, 100%, 40%, 0.2);
+}
+
+.new-item-form input {
+  outline: none;
+  border: 1px solid hsl(200, 100%, 40%);
+  background: hsl(200, 100%, 30%);
+  border-radius: 0.25em;
+  padding: 0.25em 0.5em;
+  color: hsl(200, 100%, 90%);
+}
+
+.new-item-form input:focus {
+  border: 1px solid hsl(200, 100%, 70%);
+}
+
+.header {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  margin-left: 1rem;
+  list-style: none;
+}
+
+.list li:has(input:checked) label {
+  color: hsl(200, 20%, 40%);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.list li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.list li label {
+  display: flex;
+  gap: 0.25rem;
+  cursor: pointer;
+  align-items: center;
+}
+
+.list li:has(input:focus-visible) label {
+  outline: 1px solid hsl(200, 100%, 50%);
+}
+
+.list li input {
+  outline: none;
+  width: 0;
+  height: 0;
+  appearance: none;
+  pointer-events: none;
+  position: absolute;
+}
+
+.list li label::before {
+  content: "";
+  display: block;
+  width: 0.9rem;
+  height: 0.9rem;
+  background: hsl(200, 100%, 90%);
+  border-radius: 0.25em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list li label:hover::before {
+  background: hsl(200, 100%, 80%);
+}
+
+.list li:has(input:checked) label::before {
+  content: "✔";
+  background: hsl(200, 100%, 40%);
+  color: hsl(200, 100%, 90%);
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.list li:has(input:checked) label:hover::before {
+  background: hsl(200, 100%, 30%);
 }
