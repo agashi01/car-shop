@@ -205,6 +205,8 @@ export default function Register({ signIn }) {
             <p className='improved-h2'>Register</p>
             <div className='prezantimi'>
                 <label htmlFor="emri"
+                    className={error.emri) === 'bad' ? "wrong-prezantimi-register" :
+                        error.emri) === good ? "good-prezantimi-register" : "prezantimi-register"}>
                     <input
                         type='text'
                         ref={emri}
@@ -218,6 +220,8 @@ export default function Register({ signIn }) {
                     {error.emri && <p className='wrongSignIn'>{error.emri}</p>}
                 </div>
                 <label htmlFor="mbiemri"
+                    className={error.mbiemri) === 'bad' ? "wrong-prezantimi-register" :
+                        error.mbiemri) === good ? "good-prezantimi-register" : "prezantimi-register"}>
                     <input
                         ref={mbiemri}
                         type='text'
@@ -230,6 +234,8 @@ export default function Register({ signIn }) {
                     {error.mbiemri && <p className='wrongSignIn'>{error.mbiemri}</p>}
                 </div>
 
+                <label className={error.email) === 'bad' ? "wrong-prezantimi-register" :
+                    error.email) === good ? "good-prezantimi-register" : "prezantimi-register"} 
                     htmlFor='email'>
                     <input
                         type='text'
@@ -242,6 +248,8 @@ export default function Register({ signIn }) {
                 <div className="error">
                     {error.email && <p className='wrongSignIn'>{error.email}</p>}
                 </div>
+                <label className={error.password)==='bad' ? "wrong-prezantimi-register" :
+                error.password)===good? "good-prezantimi-register":"prezantimi-register"}
                  htmlFor='password'>
                     <input
                         type='password'
