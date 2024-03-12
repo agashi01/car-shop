@@ -4,9 +4,23 @@
   padding: 2rem;
   text-align: center;
 }
+.good-sign-in{
+  color:green;
+  display:flex;
+  justify-content: flex-start;
+  font-size: 0.7em;
+  margin-top:0;
+  margin-bottom: 30px;
+}
 
+<<<<<<< Updated upstream
 .wrongSignIn {
   display: flex;
+=======
+
+.wrong-sign-in {
+  display:flex;
+>>>>>>> Stashed changes
   justify-content: flex-start;
   color: red;
   font-size: 0.7em;
@@ -46,6 +60,7 @@
 
 }
 
+<<<<<<< Updated upstream
 .prezantimi-register {
   margin-bottom: 0;
  
@@ -55,6 +70,20 @@
   border-color: red;
   border-radius: 5%;
   
+=======
+
+
+.prezantimi-register{
+  margin-bottom:0;
+  border-radius: 5;
+}
+.wrong-prezantimi-register{
+  border: 2px solid red
+  
+}
+.good-prezantimi-register{
+  border: 2px solid green
+>>>>>>> Stashed changes
 }
 
 .good-prezantimi-register{
@@ -175,8 +204,13 @@
 body {
   background: #333;
   color: hsl(200, 100%, 90%);
+<<<<<<< Updated upstream
 
   padding: 1rem;
+=======
+  min-width: 100vh;
+  min-height: 100vh;
+>>>>>>> Stashed changes
   margin: 0 auto;
 }
 

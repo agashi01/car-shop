@@ -7,7 +7,19 @@ import PropTypes from 'prop-types'
 export default function SignInForm({ register }) {
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
-    const [error, setError] = useState('');
+    const [error, setError] = useState({
+       
+        email: '',
+        password: ''
+    });
+
+    const [value, setValue] = useState({
+       
+        email: '',
+        password: ''
+
+    })
+ 
 
     const email = useRef(null);
     const password = useRef(null);
@@ -72,8 +84,7 @@ export default function SignInForm({ register }) {
     }, [arrowDown, arrowUp]);
 
 
-
-
+   
 
     function signInEmail(text) {
         setSignIn((current) => {
@@ -90,31 +101,113 @@ export default function SignInForm({ register }) {
     async function signInConfirm(e) {
         e.preventDefault()
 
-        if (signIn.email.length === 0) {
-            setError("Email is empty")
-            return;
-        } else if (!signIn.email.includes('@')) {
-            setError("Email is invalid");
-            return;
+
+        e.preventDefault()
+        if (value.emri.length === 0) {
+            setError((current) => {
+
+                return { ...current, emri: 'Enter your name!' }
+            })
+        } else {
+            setError((current) => {
+
+                return { ...current, emri: 'correct' }
+            })
         }
 
-        if (signIn.password.length === 0) {
-            setError("Password is empty")
-            return
+        if (value.mbiemri.length === 0) {
+            setError((current) => {
+
+                return { ...current, mbiemri: 'Enter your surname!' }
+            })
+        } else {
+            setError((current) => {
+
+                return { ...current, mbiemri: 'correct' }
+            })
+        }
+
+        if (value.email.length === 0) {
+            setError((current) => {
+
+                return { ...current, email: 'Enter your email!' }
+            })
+        } else if (!value.email.includes('@')) {
+
+
+            setError((current) => {
+                return { ...current, email: 'Invalid form of email' }
+            })
+        } else {
+            setError((current) => {
+                return { ...current, email: 'correct' }
+            })
+
+        }
+
+        if (value.password.length === 0) {
+            setError((current) => {
+
+                return { ...current, password: 'Enter your password!' }
+            })
+        } else {
+            setError((current) => {
+
+                return { ...current, password: 'correct' }
+            })
         }
 
         await axios
-            .post('http://localhost:3000/log-in', {
-                email: signIn.email,
-                password: signIn.password
-            })
-            .then(res => {
-                console.log(res.response)
+        .post('http://localhost:3000/log-in', {
+            email: signIn.email,
+            password: signIn.password
+        })
+        .then(res => {
+            console.log(res.response)
 
-            }).catch(err => {
-                setError(err.response.data);
-            })
+        }).catch(err => {
+            setError(err.response.data);
+        })
+
+
     }
+
+    const hasAnyError = (input) => {
+
+
+        if (input !== "correct" && input.length > 0) {
+            console.log('babi')
+            return "bad"
+        } else if (input === "correct") {
+            return 'correct'
+        } else {
+            return 'normal'
+        }
+    }
+
+    const hasAnyErrorEmail = () => {
+        if (error.email === "Enter your email") {
+
+
+            return "Enter your email!"
+        } else if (error.email === "Invalid form of email") {
+
+            return "invalid form of email"
+        } else if (error.email.length > 0) {
+
+            return "correct"
+        } else {
+
+            return ""
+
+        }
+    }
+
+
+
+
+
+
 
     return (
 
@@ -157,5 +250,11 @@ export default function SignInForm({ register }) {
 
 SignInForm.propTypes = {
     home: PropTypes.func.isRequired,
-    register: PropTypes.func.isRequired,
-};
+    register: PropTypes.func.isRequired
+}
+
+// warning: in the working copy of 'package.json', CRLF will be replaced by LF the next time Git touches it
+// warning: in the working copy of 'ui/src/forms/Home.jsx', CRLF will be replaced by LF the next time Git touches it
+// warning: in the working copy of 'node_modules/.bin/loose-envify.cmd', CRLF will be replaced by LF the next time Git touches it
+// warning: in the working copy of 'node_modules/.package-lock.json', CRLF will be replaced by LF the next time Git touches it
+// warning: in the working copy of 'package-lock.json', CRLF will be replaced by LF the next time Git touches it 
