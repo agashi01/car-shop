@@ -20,7 +20,7 @@ export default function Register({ signIn }) {
     const email = useRef(null);
     const password = useRef(null);
 
-    const [ HasAnyError ,setHasAnyError]=useState(false)
+
 
     const [error, setError] = useState({
         emri: '',
@@ -61,7 +61,7 @@ export default function Register({ signIn }) {
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
 
-            if(event.key.startsWith("Arrow")){
+            if (event.key.startsWith("Arrow")) {
                 event.preventDefault()
             }
 
@@ -142,12 +142,22 @@ export default function Register({ signIn }) {
 
                 return { ...current, emri: 'Enter your name' }
             })
+        } else {
+            setError((current) => {
+
+                return { ...current, emri: 'good' }
+            })
         }
 
         if (value.mbiemri.length === 0) {
             setError((current) => {
 
                 return { ...current, mbiemri: 'Enter your surname' }
+            })
+        } else {
+            setError((current) => {
+
+                return { ...current, mbiemri: 'good' }
             })
         }
 
@@ -156,11 +166,16 @@ export default function Register({ signIn }) {
 
                 return { ...current, email: 'Enter your email' }
             })
-        } else if (!value.emri.includes('@')) {
+        } else if (!value.email.includes('@')) {
 
             setError((current) => {
                 return { ...current, email: 'Invalid form of email' }
             })
+        } else {
+            setError((current) => {
+                return { ...current, email: 'good' }
+            })
+
         }
 
         if (value.password.length === 0) {
@@ -168,29 +183,19 @@ export default function Register({ signIn }) {
 
                 return { ...current, password: 'Enter your password' }
             })
-        }
-        const arrayError = Object.values(error)
+        } else {
+            setError((current) => {
 
-        for (let i = 0; i < arrayError.length; i++) {
-            if (arrayError[i] !== '') {
-                return
-            }
+                return { ...current, password: 'good' }
+            })
         }
+
+
 
     }
 
-
-   
-        const errorArr=Object.keys(error)
-
-        for(let i=0;i<errorArr.length;i++){
-            if(error[errorArr[i]]!==""){
-                
-                setHasAnyError(true)
-            }
-            
-        }
     
+
 
 
 
@@ -199,50 +204,56 @@ export default function Register({ signIn }) {
         <form className='box register-box'>
             <p className='improved-h2'>Register</p>
             <div className='prezantimi'>
-                <label htmlFor="emri"className={hasAnyError ?"wrong-prezantimi-register":"prezantimi-register"}>
+                <label htmlFor="emri"
                     <input
                         type='text'
                         ref={emri}
                         id='emri'
                         value={value.emri}
                         onChange={setEmri}
-                        placeholder='name'
+                        placeholder='Enter your name'
                         autoComplete='off'></input>
                 </label>
-                {error.emri && <p className='wrongSignIn'>{error.emri}</p>}
-                <label htmlFor="mbiemri"className={hasAnyError ?"wrong-prezantimi-register":"prezantimi-register"}>
+                <div className="error">
+                    {error.emri && <p className='wrongSignIn'>{error.emri}</p>}
+                </div>
+                <label htmlFor="mbiemri"
                     <input
                         ref={mbiemri}
                         type='text'
                         value={value.mbiemri}
                         onChange={setMbiemri}
-                        placeholder='surname'
+                        placeholder='Enter your surname'
                         autoComplete='off'></input>
                 </label>
-                {error.mbiemri && <p className='wrongSignIn'>{error.mbiemri}</p>}
-            
-            <label className={hasAnyError?"wrong-prezantimi-register":"prezantimi-register"} htmlFor='email'>
-                <input
-                    type='text'
-                    ref={email}
-                    id='email'
-                    onChange={setEmail}
-                    placeholder='Enter your email'
+                <div className="error">
+                    {error.mbiemri && <p className='wrongSignIn'>{error.mbiemri}</p>}
+                </div>
+
+                    htmlFor='email'>
+                    <input
+                        type='text'
+                        ref={email}
+                        id='email'
+                        onChange={setEmail}
+                        placeholder='Enter your email'
                     ></input>
-            </label>
-            {error.email && <p className='wrongSignIn'>{error.email}</p>}
-            <label className={hasAnyError ?"wrong-prezantimi-register":"prezantimi-register"} htmlFor='password'>
-                <input
-                    type='password'
-                    ref={password}
-                    id='password'
-                    onChange={setPassword}
-                    placeholder='Enter your password'
-                    autoComplete='off'
-                ></input>
-            </label >
-            {error.password && <p className='wrongSignIn'>{error.password}</p>}
-            <button type='btn' onClick={registerConfirm}>Register</button>
+                </label>
+                <div className="error">
+                    {error.email && <p className='wrongSignIn'>{error.email}</p>}
+                </div>
+                 htmlFor='password'>
+                    <input
+                        type='password'
+                        ref={password}
+                        id='password'
+                        onChange={setPassword}
+                        placeholder='Enter your password'
+                        autoComplete='off'
+                    ></input>
+                </label >
+                {error.password && <p className='wrongSignIn'>{error.password}</p>}
+                <button type='btn' onClick={registerConfirm}>Register</button>
             </div>
             <div className='register'>
                 <p className='text' style={{

@@ -156,7 +156,6 @@ export default function SignInForm({ register }) {
 }
 
 SignInForm.propTypes = {
-    signIn: PropTypes.func.isRequired,
     home: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
 };

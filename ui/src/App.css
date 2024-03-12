@@ -6,13 +6,13 @@
 }
 
 .wrongSignIn {
-  display:flex;
+  display: flex;
   justify-content: flex-start;
   color: red;
   font-size: 0.7em;
-  margin-top:0;
+  margin-top: 0;
   margin-bottom: 30px;
-  
+
 
 }
 
@@ -25,11 +25,11 @@
   margin-top: 50px;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 10px 4px  rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 10px 4px rgba(0, 0, 0, 0.5);
 }
 
-.register-box{
-  margin-top:25px;
+.register-box {
+  margin-top: 25px;
 }
 
 .register {
@@ -45,15 +45,22 @@
   flex-direction: column;
 
 }
-.prezantimi-register{
-  margin-bottom:0;
-  border-radius: 5;
+
+.prezantimi-register {
+  margin-bottom: 0;
+ 
 }
-.wrong-prezantimi-register{
+
+.wrong-prezantimi-register {
   border-color: red;
+  border-radius: 5%;
+  
 }
 
-
+.good-prezantimi-register{
+  border-color: green;
+  border-radius: 5%;
+}
 
 .box input {
   margin-bottom: 10px;
@@ -62,7 +69,7 @@
 
 .box button {
   background-color: rgb(189, 195, 199);
-  color:  #333;
+  color: #333;
   padding: 5px 10px;
   border: none;
   cursor: pointer;
@@ -71,12 +78,13 @@
 }
 
 .box button:hover {
-  background-color:  hsl(200, 100%, 90%);;
+  background-color: hsl(200, 100%, 90%);
+  ;
   transform: translateY(-2px)
 }
 
-.improved-h2{
-  font-style:italic;
+.improved-h2 {
+  font-style: italic;
   display: block;
   font-size: 1.5em;
   margin-block-start: 0.83em;
@@ -88,19 +96,23 @@
 
 .logo-container {
   display: flex;
-  justify-content: center; /* Align the logo to the left */
+  justify-content: center;
+  /* Align the logo to the left */
   margin: 0 auto;
-  max-width: 100%; /* Adjust this if needed, or remove it for full width */
-  width: 100%; /* Ensure the container takes up the full width */
+  max-width: 100%;
+  /* Adjust this if needed, or remove it for full width */
+  width: 100%;
+  /* Ensure the container takes up the full width */
   height: 200px;
 }
+
 .logo {
 
   /* Maintains the image's aspect ratio */
   border-radius: 50%;
   /* Creates a circular border for a circular logo (optional) */
-  box-shadow: 0px 4px 10px ;
-   color: hsl(200, 100%, 70%);
+  box-shadow: 0px 4px 10px;
+  color: hsl(200, 100%, 70%);
   /* Adds a subtle shadow (optional) */
 }
 
@@ -154,8 +166,8 @@
 
 }
 
- /* already made  */
- * {
+/* already made  */
+* {
   font-family: Arial, Helvetica, sans-serif;
   box-sizing: border-box;
 }
@@ -163,7 +175,7 @@
 body {
   background: #333;
   color: hsl(200, 100%, 90%);
-  
+
   padding: 1rem;
   margin: 0 auto;
 }
