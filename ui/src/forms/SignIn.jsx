@@ -13,12 +13,7 @@ export default function SignInForm({ register }) {
         password: ''
     });
 
-    const [value, setValue] = useState({
-       
-        email: '',
-        password: ''
-
-    })
+   
  
 
     const email = useRef(null);
@@ -103,36 +98,14 @@ export default function SignInForm({ register }) {
 
 
         e.preventDefault()
-        if (value.emri.length === 0) {
-            setError((current) => {
+      
 
-                return { ...current, emri: 'Enter your name!' }
-            })
-        } else {
-            setError((current) => {
-
-                return { ...current, emri: 'correct' }
-            })
-        }
-
-        if (value.mbiemri.length === 0) {
-            setError((current) => {
-
-                return { ...current, mbiemri: 'Enter your surname!' }
-            })
-        } else {
-            setError((current) => {
-
-                return { ...current, mbiemri: 'correct' }
-            })
-        }
-
-        if (value.email.length === 0) {
+        if (signIn.email.length === 0) {
             setError((current) => {
 
                 return { ...current, email: 'Enter your email!' }
             })
-        } else if (!value.email.includes('@')) {
+        } else if (!signIn.email.includes('@')) {
 
 
             setError((current) => {
@@ -145,7 +118,7 @@ export default function SignInForm({ register }) {
 
         }
 
-        if (value.password.length === 0) {
+        if (signIn.password.length === 0) {
             setError((current) => {
 
                 return { ...current, password: 'Enter your password!' }
@@ -176,6 +149,9 @@ export default function SignInForm({ register }) {
 
 
         if (input !== "correct" && input.length > 0) {
+            if(input===error.email&& !input.includes('@')){
+                return 'meh'
+            }
             console.log('babi')
             return "bad"
         } else if (input === "correct") {
