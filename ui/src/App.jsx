@@ -10,7 +10,7 @@ import './App.css';
 
 export default function App() {
 
-  const [page, setPage] = useState('signIn');
+  const [page, setPage] = useState('register');
 
   const signInPage = () => {
     setPage('signIn')

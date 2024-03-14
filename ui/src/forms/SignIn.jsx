@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef,useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types'
 
@@ -7,49 +7,25 @@ import PropTypes from 'prop-types'
 export default function SignInForm({ register }) {
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
-    const [error, setError] = useState({
-       
-        email: '',
-        password: ''
-    });
-
-    const [value, setValue] = useState({
-       
-        email: '',
-        password: ''
-
-    })
- 
+    const [error, setError] = useState({ email: '', password: '' });
 
     const email = useRef(null);
     const password = useRef(null);
 
     const arrowUp = (ref) => {
-
-
         ref.focus()
-
     }
 
 
 
     const arrowDown = (ref) => {
-
-
         ref.focus()
-
     }
-
-
 
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
 
-            
-
             switch (event.key) {
-
-
 
                 case "ArrowUp":
 
@@ -84,7 +60,7 @@ export default function SignInForm({ register }) {
     }, [arrowDown, arrowUp]);
 
 
-   
+
 
     function signInEmail(text) {
         setSignIn((current) => {
@@ -99,44 +75,21 @@ export default function SignInForm({ register }) {
     }
 
     async function signInConfirm(e) {
-        e.preventDefault()
 
 
         e.preventDefault()
-        if (value.emri.length === 0) {
-            setError((current) => {
 
-                return { ...current, emri: 'Enter your name!' }
-            })
-        } else {
-            setError((current) => {
 
-                return { ...current, emri: 'correct' }
-            })
-        }
-
-        if (value.mbiemri.length === 0) {
-            setError((current) => {
-
-                return { ...current, mbiemri: 'Enter your surname!' }
-            })
-        } else {
-            setError((current) => {
-
-                return { ...current, mbiemri: 'correct' }
-            })
-        }
-
-        if (value.email.length === 0) {
+        if (signIn.email.length === 0) {
             setError((current) => {
 
                 return { ...current, email: 'Enter your email!' }
             })
-        } else if (!value.email.includes('@')) {
+        } else if (!signIn.email.includes('@')) {
 
 
             setError((current) => {
-                return { ...current, email: 'Invalid form of email' }
+                return { ...current, email: 'Invalid form of email!' }
             })
         } else {
             setError((current) => {
@@ -145,7 +98,7 @@ export default function SignInForm({ register }) {
 
         }
 
-        if (value.password.length === 0) {
+        if (signIn.password.length === 0) {
             setError((current) => {
 
                 return { ...current, password: 'Enter your password!' }
@@ -156,54 +109,30 @@ export default function SignInForm({ register }) {
                 return { ...current, password: 'correct' }
             })
         }
-
+        const array = Object.values(error)
+        let hasErrors = false
+        for (key of array) {
+            if (key === true) {
+                hasErrors = true
+            }
+        }
+        if (hasErrors === false) {
         await axios
-        .post('http://localhost:3000/log-in', {
-            email: signIn.email,
-            password: signIn.password
-        })
-        .then(res => {
-            console.log(res.response)
+            .post('http://localhost:3000/log-in', {
+                email: signIn.email,
+                password: signIn.password
+            })
+            .then(res => {
+                console.log(res.response)
 
-        }).catch(err => {
-            setError(err.response.data);
-        })
-
-
-    }
-
-    const hasAnyError = (input) => {
-
-
-        if (input !== "correct" && input.length > 0) {
-            console.log('babi')
-            return "bad"
-        } else if (input === "correct") {
-            return 'correct'
-        } else {
-            return 'normal'
-        }
-    }
-
-    const hasAnyErrorEmail = () => {
-        if (error.email === "Enter your email") {
-
-
-            return "Enter your email!"
-        } else if (error.email === "Invalid form of email") {
-
-            return "invalid form of email"
-        } else if (error.email.length > 0) {
-
-            return "correct"
-        } else {
-
-            return ""
+            }).catch(err => {
+                setError(err.response.data);
+            })
 
         }
     }
 
-
+   
 
 
 
@@ -216,30 +145,45 @@ export default function SignInForm({ register }) {
 
                 <p className='improved-h2'>Sign In</p>
                 <label htmlFor='email'>
-                    <input 
-                    type='text' 
-                    onChange={(e) => signInEmail(e.target.value)} 
-                    value={signIn.email} 
-                    id='email' 
-                    placeholder='Enter your email'
-                    ref={email}
+                    <input
+                        className={error.email === 'Enter your email!' ? 'wrong-prezantimi-register' :
+                            error.email === 'Invalid form of email!' ? 'wrong-prezantimi-register' :
+                                error.email === 'correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
+                        type='text'
+                        onChange={(e) => signInEmail(e.target.value)}
+                        value={signIn.email}
+                        id='email'
+                        placeholder='Enter your email'
+                        ref={email}
                     ></input>
                 </label>
+                <div className='error'>
+                    {error.email === 'Enter your email!' && <p className='wrong-sign-in'>{error.email}</p>}
+                    {error.email === 'Invalid form of email!' && <p className='wrong-sign-in'>{error.email}</p>}
+                    {error.email === 'correct' && <p className='good-sign-in'>{error.email}</p>}
+                </div>
                 <label htmlFor='password'>
-                    <input 
-                    type='password' 
-                    onChange={(e) => signInPassword(e.target.value)} 
-                    value={signIn.password} 
-                    id='password' 
-                    placeholder='Enter your password'
-                    ref={password}
+                    <input
+                        className={error.password === 'Enter your password!' ? 'wrong-prezantimi-register' :
+                            error.password === 'correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
+                        type='password'
+                        onChange={(e) => signInPassword(e.target.value)}
+                        value={signIn.password}
+                        id='password'
+                        placeholder='Enter your password'
+                        ref={password}
                     ></input>
                 </label >
-                {error && <p className='wrongSignIn'>{error}</p>}
+                <div className='error'>
+                    {error.password === 'Enter your password!' && <p className='wrong-sign-in'>{error.password}</p>}
+                    {error.password === 'correct' && <p className='good-sign-in'>{error.password}</p>}
+                </div>
                 <button type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
                 <div className='register'>
                     <p className='text' style={{
+                        fontSize: 13,
                         marginRight: 5,
+
                     }}>Do not have an account? </p>
                     <button onClick={register} type='btn'>Register</button>
                 </div>
@@ -249,7 +193,7 @@ export default function SignInForm({ register }) {
 }
 
 SignInForm.propTypes = {
-    home: PropTypes.func.isRequired,
+    // home: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired
 }
 

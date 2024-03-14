@@ -12,15 +12,13 @@
   margin-top:0;
   margin-bottom: 30px;
 }
-
-<<<<<<< Updated upstream
-.wrongSignIn {
-  display: flex;
-=======
+.error{
+  display:flex;
+  justify-content: flex-start;
+}
 
 .wrong-sign-in {
   display:flex;
->>>>>>> Stashed changes
   justify-content: flex-start;
   color: red;
   font-size: 0.7em;
@@ -60,17 +58,6 @@
 
 }
 
-<<<<<<< Updated upstream
-.prezantimi-register {
-  margin-bottom: 0;
- 
-}
-
-.wrong-prezantimi-register {
-  border-color: red;
-  border-radius: 5%;
-  
-=======
 
 
 .prezantimi-register{
@@ -83,13 +70,8 @@
 }
 .good-prezantimi-register{
   border: 2px solid green
->>>>>>> Stashed changes
 }
 
-.good-prezantimi-register{
-  border-color: green;
-  border-radius: 5%;
-}
 
 .box input {
   margin-bottom: 10px;
@@ -110,6 +92,10 @@
   background-color: hsl(200, 100%, 90%);
   ;
   transform: translateY(-2px)
+}
+  
+input{
+  border-radius:20px;
 }
 
 .improved-h2 {
@@ -204,13 +190,8 @@
 body {
   background: #333;
   color: hsl(200, 100%, 90%);
-<<<<<<< Updated upstream
-
-  padding: 1rem;
-=======
   min-width: 100vh;
   min-height: 100vh;
->>>>>>> Stashed changes
   margin: 0 auto;
 }
 
