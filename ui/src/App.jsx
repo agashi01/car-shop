@@ -12,32 +12,27 @@ export default function App() {
 
   const [page, setPage] = useState('signIn');
 
-  const signInPage = () => {
-    setPage('signIn')
-  }
-
-  const registerPage = () => {
-    setPage('register')
-  }
-
-  const homePage = () => {
-    setPage('home');
-  }
-
-
-  
-
   return (
     <>
       <Logo />
-      {page === 'signIn' ? <SignInForm home={homePage} register={registerPage} /> :
-        page === 'home' ? <Home home={homePage} register={registerPage} signIn={signInPage} /> :
-          <Register home={homePage} signIn={signInPage}
-          
-          />}
+      <div className='box'>
+        {page === 'signIn' ? <SignInForm /> : <Register />}
+        {page === 'register' ? (<div className='register'>
+          <p className='text' style={{
+            marginRight: 5,
+          }}>Already have an account? </p>
+          <button
+            onClick={() => setPage('signIn')}
+            type='button'>Sign In</button>
+        </div>) : (<div className='register'>
+          <p className='text' style={{
+            fontSize: 13,
+            marginRight: 5,
 
-      {/* <GetStarted /> */}
-
+          }}>Do not have an account? </p>
+          <button onClick={() => setPage('register')} type='btn'>Register</button>
+        </div>)}
+      </div>
     </>
   )
 }

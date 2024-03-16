@@ -3,17 +3,10 @@ import React from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react'
-import PropTypes from 'prop-types';
+import axios from 'axios';
 
-Register.propTypes = {
-    signIn: PropTypes.func.isRequired,
-    home: PropTypes.func.isRequired,
 
-};
-
-export default function Register({ signIn }) {
-
-    // const [register, setRegister] = useState({})
+export default function Register() {
 
     const emri = useRef(null);
     const mbiemri = useRef(null);
@@ -22,69 +15,40 @@ export default function Register({ signIn }) {
 
 
 
-    const [error, setError] = useState({
+    const [error, setError] = useState({ emri: "", mbiemri: "", email: "", password: "" })
+
+    const [register, setRegister] = useState({
         emri: '',
         mbiemri: '',
         email: '',
         password: ''
     });
 
-    const [value, setValue] = useState({
-        emri: '',
-        mbiemri: '',
-        email: '',
-        password: ''
-
-    })
-
-
-
-
     const arrowUp = (ref) => {
-
-
         ref.focus()
-
     }
-
-
 
     const arrowDown = (ref) => {
-
-
         ref.focus()
-
     }
-
-
 
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
-
             if (event.key.startsWith("Arrow")) {
                 event.preventDefault()
             }
 
             switch (event.key) {
-
-
-
                 case "ArrowUp":
-
                     arrowUp(ref1)
                     break;
-
                 case "ArrowDown":
-
                     arrowDown(ref2)
                     break;
-
                 default:
                     break;
             }
         }
-
-
 
         const emriRef = emri.current;
         const mbiemriRef = mbiemri.current;
@@ -104,220 +68,175 @@ export default function Register({ signIn }) {
         };
     }, [arrowDown, arrowUp]);
 
-
-
-
     const setEmri = (e) => {
-        setValue((current) => {
-
+        setRegister((current) => {
             return { ...current, emri: e.target.value }
         })
     }
 
     const setMbiemri = (e) => {
-        setValue((current) => {
-
+        setRegister((current) => {
             return { ...current, mbiemri: e.target.value }
         })
     }
 
     const setEmail = (e) => {
-        setValue((current) => {
-
+        setRegister((current) => {
             return { ...current, email: e.target.value }
         })
     }
 
     const setPassword = (e) => {
-        setValue((current) => {
-
+        setRegister((current) => {
             return { ...current, password: e.target.value }
         })
     }
 
     const registerConfirm = (e) => {
         e.preventDefault()
-        if (value.emri.length === 0) {
-            setError((current) => {
+        if (register.emri.length === 0) {
 
+            setError((current) => {
                 return { ...current, emri: 'Enter your name!' }
             })
         } else {
-            setError((current) => {
 
+            setError((current) => {
                 return { ...current, emri: 'correct' }
             })
-        } 
+        }
+        if (register.mbiemri.length === 0) {
 
-        if (value.mbiemri.length === 0) {
             setError((current) => {
-
                 return { ...current, mbiemri: 'Enter your surname!' }
             })
         } else {
-            setError((current) => {
 
+            setError((current) => {
                 return { ...current, mbiemri: 'correct' }
             })
-        } 
-        
+        }
+        if (register.email.length === 0) {
 
-        if (value.email.length === 0) {
             setError((current) => {
-
                 return { ...current, email: 'Enter your email!' }
             })
-        } else if (!value.email.includes('@')) {
+        } else if (!register.email.includes('@')) {
 
             setError((current) => {
-                return { ...current, email: 'Invalid form of email' }
+                return { ...current, email: 'Invalid form of email!' }
             })
         } else {
+
             setError((current) => {
                 return { ...current, email: 'correct' }
             })
 
         }
 
-        if (value.password.length === 0) {
-            setError((current) => {
+        if (register.password.length === 0) {
 
+            setError((current) => {
                 return { ...current, password: 'Enter your password!' }
             })
         } else {
-            setError((current) => {
 
+            setError((current) => {
                 return { ...current, password: 'correct' }
             })
-        }
-
-
-
-
-
-    }
-
-    const hasAnyError = (input) => {
-
-
-        if (input !== "correct" && input.length > 0) {
-            console.log('babi')
-            return "bad"
-        } else if (input === "correct") {
-            return 'correct'
-        } else {
-            return 'normal'
-        }
-    }
-
-    const hasAnyErrorEmail = () => {
-        if (error.email === "Enter your email") {
-
-
-            return "Enter your email!"
-        } else if (error.email === "Invalid form of email") {
-
-            return "invalid form of email"
-        } else if (error.email.length > 0) {
-
-            return "correct"
-        } else {
-
-            return ""
+            const array = Object.values(error)
+            let hasErrors = false
+            for (let key of array) {
+                if (key !== 'correct') {
+                    hasErrors = true
+                }
+            }
+            if (hasErrors === false) {
+                axios
+                    .post('http://localhost:3000/sign-up', {
+                        name: register.emri,
+                        surname: register.mbiemri,
+                        email: register.email,
+                        password: register.password
+                    })
+                    .then(res => {
+                        console.log(res)
+                    })
+            }
 
         }
     }
-
-
-
-
-
-
-
-
-
-
 
     return (
-        <form className='box register-box'>
-            <p className='improved-h2'>Register</p>
+        <form id='register'>
+            <h2>Register</h2>
             <div className='prezantimi'>
-                <label >
-
+                <label htmlFor='emri'>
                     <input
-                         className={hasAnyError(error.emri) === 'bad' ? "wrong-prezantimi-register" :
-                         hasAnyError(error.emri) === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={error.emri === 'Enter your name!' ? "wrong-prezantimi-register" :
+                            error.emri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
                         type='text'
                         ref={emri}
                         id='emri'
-                        value={value.emri}
+                        value={register.emri}
                         onChange={setEmri}
                         placeholder='Enter your name'
                         autoComplete='off'></input>
                 </label>
                 <div className="error">
-                    {hasAnyError(error.emri) === 'bad' && <p className='wrong-sign-in'>{error.emri}</p>}
-                    {hasAnyError(error.emri) === 'correct' && <p className='good-sign-in'>{error.emri}</p>}
+                    {error.emri === 'Enter your name!' && <p className='wrong-sign-in'>{error.emri}</p>}
+                    {error.emri === 'correct' && <p className='good-sign-in'>{error.emri}</p>}
                 </div>
-                <label htmlFor="mbiemri"
-                >
+                <label htmlFor="mbiemri">
                     <input
-                        className={hasAnyError(error.mbiemri) === 'bad' ? "wrong-prezantimi-register" :
-                            hasAnyError(error.mbiemri) === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={error.mbiemri === 'Enter your surname!' ? "wrong-prezantimi-register" :
+                            error.mbiemri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
                         ref={mbiemri}
                         type='text'
-                        value={value.mbiemri}
+                        value={register.mbiemri}
                         onChange={setMbiemri}
                         placeholder='Enter your surname'
                         autoComplete='off'></input>
                 </label>
                 <div className="error">
-                    {hasAnyError(error.mbiemri) === 'bad' && <p className='wrong-sign-in'>{error.mbiemri}</p>}
-                    {hasAnyError(error.mbiemri) === 'correct' && <p className='good-sign-in'>{error.mbiemri}</p>}
+                    {error.mbiemri === 'Enter your surname!' && <p className='wrong-sign-in'>{error.mbiemri}</p>}
                 </div>
-
-                <label
-                    htmlFor='email'>
+                <label htmlFor='email'>
                     <input
-                        className={hasAnyErrorEmail() === "Enter your email!" ? "wrong-prezantimi-register" :
-                            hasAnyErrorEmail() === "invalid form of email" ? "wrong-prezantimi-register" :
-                                hasAnyErrorEmail() === "correct" ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={error.email === "Enter your email!" ? "wrong-prezantimi-register" :
+                            error.email === "Invalid form of email!" ? "wrong-prezantimi-register" :
+                                error.email === "correct" ? "good-prezantimi-register" : "prezantimi-register"}
                         type='text'
                         ref={email}
                         id='email'
+                        value={register.email}
                         onChange={setEmail}
                         placeholder='Enter your email'
                     ></input>
                 </label>
                 <div className="error">
-                    {hasAnyErrorEmail() === "Enter your email!" && <p className='wrong-sign-in'>{hasAnyErrorEmail()}</p>}
-                    {hasAnyErrorEmail() === "invalid form of email" && <p className='wrong-sign-in'>{hasAnyErrorEmail()}</p>}
-                    {hasAnyErrorEmail() === 'correct' && <p className='good-sign-in'>{hasAnyErrorEmail()}</p>}
+                    {error.email === "Enter your email!" && <p className='wrong-sign-in'>{error.email}</p>}
+                    {error.email === "Invalid form of email!" && <p className='wrong-sign-in'>{error.email}</p>}
+                    {error.email === 'correct' && <p className='good-sign-in'>{error.email}</p>}
                 </div>
-                <label 
-                    htmlFor='password'>
+                <label htmlFor='password'>
                     <input
-                        className={hasAnyError(error.password) === 'bad' ? "wrong-prezantimi-register" :
-                            hasAnyError(error.password) === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={error.password === 'Enter your password!' ? "wrong-prezantimi-register" :
+                            error.password === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
                         type='password'
                         ref={password}
                         id='password'
+                        value={register.password}
                         onChange={setPassword}
                         placeholder='Enter your password'
                         autoComplete='off'
                     ></input>
                 </label >
-                {hasAnyError(error.password) === 'bad' && <p className='wrong-sign-in'>{error.password}</p>}
-                {hasAnyError(error.password) === 'correct' && <p className='good-sign-in'>{error.password}</p>}
+                <div className="error">
+                    {error.password === 'Enter your password!' && <p className='wrong-sign-in'>{error.password}</p>}
+                    {error.password === 'correct' && <p className='good-sign-in'>{error.password}</p>}
+                </div>
                 <button type='btn' onClick={registerConfirm}>Register</button>
-            </div>
-            <div className='register'>
-                <p className='text' style={{
-                    marginRight: 5,
-                }}>Already have an account? </p>
-                <button
-                    onClick={signIn}
-                    type='button'>Sign In</button>
             </div>
         </form>
     )

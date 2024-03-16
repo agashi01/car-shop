@@ -1,50 +1,30 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef,useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import PropTypes from 'prop-types'
 
-
-export default function SignInForm({ register }) {
+export default function SignInForm() {
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
-    const [error, setError] = useState({
-       
-        email: '',
-        password: ''
-    });
+    const [error, setError] = useState({ email: '', password: '' });
 
-   
- 
 
     const email = useRef(null);
     const password = useRef(null);
 
     const arrowUp = (ref) => {
-
-
         ref.focus()
-
     }
 
 
 
     const arrowDown = (ref) => {
-
-
         ref.focus()
-
     }
-
-
 
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
 
-            
-
             switch (event.key) {
-
-
 
                 case "ArrowUp":
 
@@ -79,7 +59,7 @@ export default function SignInForm({ register }) {
     }, [arrowDown, arrowUp]);
 
 
-   
+
 
     function signInEmail(text) {
         setSignIn((current) => {
@@ -93,26 +73,30 @@ export default function SignInForm({ register }) {
         })
     }
 
+    function resetErrors() {
+        setError({ email: 'correct', password: 'correct' })
+    }
     async function signInConfirm(e) {
+        resetErrors();
+
+        console.log(signIn)
         e.preventDefault()
 
-
-        e.preventDefault()
-      
 
         if (signIn.email.length === 0) {
             setError((current) => {
 
-                return { ...current, email: 'Enter your email!' }
+                return { ...current, email: 'Enter your email !' }
             })
         } else if (!signIn.email.includes('@')) {
 
-
             setError((current) => {
-                return { ...current, email: 'Invalid form of email' }
+                return { ...current, email: 'Invalid form of email !' }
             })
         } else {
+
             setError((current) => {
+                console.log('email correct')
                 return { ...current, email: 'correct' }
             })
 
@@ -121,7 +105,7 @@ export default function SignInForm({ register }) {
         if (signIn.password.length === 0) {
             setError((current) => {
 
-                return { ...current, password: 'Enter your password!' }
+                return { ...current, password: 'Enter your password !' }
             })
         } else {
             setError((current) => {
@@ -129,52 +113,32 @@ export default function SignInForm({ register }) {
                 return { ...current, password: 'correct' }
             })
         }
+        const array = Object.values(error)
 
-        await axios
-        .post('http://localhost:3000/log-in', {
-            email: signIn.email,
-            password: signIn.password
-        })
-        .then(res => {
-            console.log(res.response)
-
-        }).catch(err => {
-            setError(err.response.data);
-        })
-
-
-    }
-
-    const hasAnyError = (input) => {
-
-
-        if (input !== "correct" && input.length > 0) {
-            if(input===error.email&& !input.includes('@')){
-                return 'meh'
+        let hasErrors = false
+        console.log(array)
+        for (let key of array) {
+            if (key !== 'correct') {
+                hasErrors = true
+                break;
             }
-            console.log('babi')
-            return "bad"
-        } else if (input === "correct") {
-            return 'correct'
-        } else {
-            return 'normal'
         }
-    }
 
-    const hasAnyErrorEmail = () => {
-        if (error.email === "Enter your email") {
+        if (!hasErrors) {
+            await axios
+                .post('http://localhost:3000/log-in', {
+                    email: signIn.email,
+                    password: signIn.password
+                })
+                .then(res => {
+                    console.log(res.response)
 
+                }).catch(err => {
+                    if (err.response.data === 'wrong email' || err.response.data === 'wrong password') {
+                        setError({ password: 'wrong', email: 'wrong' })
+                    }
 
-            return "Enter your email!"
-        } else if (error.email === "Invalid form of email") {
-
-            return "invalid form of email"
-        } else if (error.email.length > 0) {
-
-            return "correct"
-        } else {
-
-            return ""
+                })
 
         }
     }
@@ -187,50 +151,46 @@ export default function SignInForm({ register }) {
 
     return (
 
-        <form>
-            <div className='box'>
-
-                <p className='improved-h2'>Sign In</p>
-                <label htmlFor='email'>
-                    <input 
-                    type='text' 
-                    onChange={(e) => signInEmail(e.target.value)} 
-                    value={signIn.email} 
-                    id='email' 
+        <form id='sign-in'>
+            <h2>Sign In</h2>
+            <label htmlFor='email'>
+                <input
+                    className={error.email === 'Enter your email !' ? 'wrong-prezantimi-register' :
+                        error.email === 'wrong' ? 'wrong-prezantimi-register' :
+                            error.email === 'Invalid form of email !' ? 'wrong-prezantimi-register' :
+                                error.email === 'correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
+                    type='text'
+                    onChange={(e) => signInEmail(e.target.value)}
+                    value={signIn.email}
+                    id='email'
                     placeholder='Enter your email'
                     ref={email}
-                    ></input>
-                </label>
-                <label htmlFor='password'>
-                    <input 
-                    type='password' 
-                    onChange={(e) => signInPassword(e.target.value)} 
-                    value={signIn.password} 
-                    id='password' 
+                ></input>
+            </label>
+            <div className='error'>
+                {error.email === 'Enter your email !' && <p className='wrong-sign-in'>{error.email}</p>}
+                {error.email === 'Invalid form of email !' && <p className='wrong-sign-in'>{error.email}</p>}
+                {error.email === 'correct' && <p className='good-sign-in'>{error.email}</p>}
+            </div>
+            <label htmlFor='password'>
+                <input
+                    className={error.password === 'Enter your password !' ? 'wrong-prezantimi-register' :
+                        error.password === "wrong" ? 'wrong-prezantimi-register' :
+                            error.password === 'correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
+                    type='password'
+                    onChange={(e) => signInPassword(e.target.value)}
+                    value={signIn.password}
+                    id='password'
                     placeholder='Enter your password'
                     ref={password}
-                    ></input>
-                </label >
-                {error && <p className='wrongSignIn'>{error}</p>}
-                <button type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
-                <div className='register'>
-                    <p className='text' style={{
-                        marginRight: 5,
-                    }}>Do not have an account? </p>
-                    <button onClick={register} type='btn'>Register</button>
-                </div>
+                ></input>
+            </label >
+            <div className='error'>
+                {(error.password === 'wrong' || error.email === 'wrong') && <p className='wrong-sign-in'>Wrong email or password !</p>}
+                {error.password === 'Enter your password !' && <p className='wrong-sign-in'>{error.password}</p>}
+                {error.password === 'correct' && <p className='good-sign-in'>{error.password}</p>}
             </div>
-        </form>
+            <button type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
+        </form >
     )
 }
-
-SignInForm.propTypes = {
-    home: PropTypes.func.isRequired,
-    register: PropTypes.func.isRequired
-}
-
-// warning: in the working copy of 'package.json', CRLF will be replaced by LF the next time Git touches it
-// warning: in the working copy of 'ui/src/forms/Home.jsx', CRLF will be replaced by LF the next time Git touches it
-// warning: in the working copy of 'node_modules/.bin/loose-envify.cmd', CRLF will be replaced by LF the next time Git touches it
-// warning: in the working copy of 'node_modules/.package-lock.json', CRLF will be replaced by LF the next time Git touches it
-// warning: in the working copy of 'package-lock.json', CRLF will be replaced by LF the next time Git touches it 
