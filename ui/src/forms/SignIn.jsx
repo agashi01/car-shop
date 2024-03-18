@@ -2,10 +2,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 
+
 export default function SignInForm() {
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
     const [error, setError] = useState({ email: '', password: '' });
+    const [backendError, setBackendError] = useState(false)
 
 
     const email = useRef(null);
@@ -20,6 +22,23 @@ export default function SignInForm() {
     const arrowDown = (ref) => {
         ref.focus()
     }
+
+    useEffect(() => {
+        const array = Object.values(error)
+
+        // console.log(array)
+
+        for (let key of array) {
+            if (key !== 'Correct' && key !== '') {
+                setBackendError(true)
+
+                break;
+            }
+        }
+
+        console.log(error)
+
+    }, [error])
 
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
@@ -56,7 +75,7 @@ export default function SignInForm() {
             emailRef.removeEventListener('keydown', arrowHandler(passwordRef, passwordRef));
             passwordRef.removeEventListener('keydown', arrowHandler(emailRef, emailRef));
         };
-    }, [arrowDown, arrowUp]);
+    }, []);
 
 
 
@@ -73,58 +92,48 @@ export default function SignInForm() {
         })
     }
 
-    function resetErrors() {
-        setError({ email: 'correct', password: 'correct' })
-    }
-    async function signInConfirm(e) {
-        resetErrors();
 
-        console.log(signIn)
+
+
+    async function signInConfirm(e) {
+        setError((current) => {
+            return { ...current, email: '', password: '' }
+        }
+        )
+
+
+
         e.preventDefault()
 
 
-        if (signIn.email.length === 0) {
-            setError((current) => {
 
-                return { ...current, email: 'Enter your email !' }
-            })
-        } else if (!signIn.email.includes('@')) {
-
-            setError((current) => {
-                return { ...current, email: 'Invalid form of email !' }
-            })
-        } else {
-
-            setError((current) => {
-                console.log('email correct')
-                return { ...current, email: 'correct' }
-            })
-
-        }
-
-        if (signIn.password.length === 0) {
-            setError((current) => {
-
-                return { ...current, password: 'Enter your password !' }
-            })
-        } else {
-            setError((current) => {
-
-                return { ...current, password: 'correct' }
-            })
-        }
-        const array = Object.values(error)
-
-        let hasErrors = false
-        console.log(array)
-        for (let key of array) {
-            if (key !== 'correct') {
-                hasErrors = true
-                break;
+        setError((current) => {
+            if (signIn.email.length === 0) {
+                return { ...current, email: 'Enter your email !' };
+            } else if (!signIn.email.includes('@')) {
+                return { ...current, email: 'Invalid form of email !' };
+            } else {
+                return { ...current, email: 'Correct' };
             }
-        }
+        });
 
-        if (!hasErrors) {
+        setError((current) => {
+
+
+            if (signIn.password.length === 0) {
+                return { ...current, password: 'Enter your password !' };
+            } else {
+                return { ...current, password: 'Correct' };
+            }
+
+        });
+
+
+
+
+        if (backendError) {
+
+            console.log('hi')
             await axios
                 .post('http://localhost:3000/log-in', {
                     email: signIn.email,
@@ -132,10 +141,11 @@ export default function SignInForm() {
                 })
                 .then(res => {
                     console.log(res.response)
+                    setBackendError(false)
 
                 }).catch(err => {
                     if (err.response.data === 'wrong email' || err.response.data === 'wrong password') {
-                        setError({ password: 'wrong', email: 'wrong' })
+                        setBackendError(true)
                     }
 
                 })
@@ -144,53 +154,59 @@ export default function SignInForm() {
     }
 
 
-
-
-
-
-
     return (
-
-        <form id='sign-in'>
-            <h2>Sign In</h2>
-            <label htmlFor='email'>
-                <input
-                    className={error.email === 'Enter your email !' ? 'wrong-prezantimi-register' :
-                        error.email === 'wrong' ? 'wrong-prezantimi-register' :
-                            error.email === 'Invalid form of email !' ? 'wrong-prezantimi-register' :
-                                error.email === 'correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
-                    type='text'
-                    onChange={(e) => signInEmail(e.target.value)}
-                    value={signIn.email}
-                    id='email'
-                    placeholder='Enter your email'
-                    ref={email}
-                ></input>
-            </label>
-            <div className='error'>
-                {error.email === 'Enter your email !' && <p className='wrong-sign-in'>{error.email}</p>}
-                {error.email === 'Invalid form of email !' && <p className='wrong-sign-in'>{error.email}</p>}
-                {error.email === 'correct' && <p className='good-sign-in'>{error.email}</p>}
-            </div>
-            <label htmlFor='password'>
-                <input
-                    className={error.password === 'Enter your password !' ? 'wrong-prezantimi-register' :
-                        error.password === "wrong" ? 'wrong-prezantimi-register' :
-                            error.password === 'correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
-                    type='password'
-                    onChange={(e) => signInPassword(e.target.value)}
-                    value={signIn.password}
-                    id='password'
-                    placeholder='Enter your password'
-                    ref={password}
-                ></input>
-            </label >
-            <div className='error'>
-                {(error.password === 'wrong' || error.email === 'wrong') && <p className='wrong-sign-in'>Wrong email or password !</p>}
-                {error.password === 'Enter your password !' && <p className='wrong-sign-in'>{error.password}</p>}
-                {error.password === 'correct' && <p className='good-sign-in'>{error.password}</p>}
-            </div>
-            <button type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
-        </form >
+        <>
+            <form id='sign-in'>
+                <h2>Sign In</h2>
+                <label htmlFor='email'>
+                    <input
+                        className={backendError === true ? 'wrong-prezantimi-register' :
+                            error.email === 'Enter your email !' ? 'wrong-prezantimi-register' :
+                                error.email === 'Invalid form of email !' ? 'wrong-prezantimi-register' :
+                                    error.email === 'Correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
+                        type='text'
+                        onChange={(e) => signInEmail(e.target.value)}
+                        value={signIn.email}
+                        id='email'
+                        placeholder='Enter your email'
+                        ref={email}
+                    ></input>
+                </label>
+                <div className='error'>
+                    {backendError === true ? (
+                        null
+                    ) : error.email === 'Enter your email !' ? (
+                        <p className='wrong-sign-in'>{error.email}</p>
+                    ) : error.email === 'Invalid form of email !' ? (
+                        <p className='wrong-sign-in'>{error.email}</p>
+                    ) : error.email === 'Correct' ? (
+                        <p className='good-sign-in'>correct</p>
+                    ) : null}
+                </div>
+                <label htmlFor='password'>
+                    <input
+                        className={backendError === true ? 'wrong-prezantimi-register' :
+                            error.password === 'Enter your password !' ? 'wrong-prezantimi-register' :
+                                error.password === 'Correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
+                        type='password'
+                        onChange={(e) => signInPassword(e.target.value)}
+                        value={signIn.password}
+                        id='password'
+                        placeholder='Enter your password'
+                        ref={password}
+                    ></input>
+                </label >
+                <div className='error'>
+                    {backendError === true ? (
+                        <p className='wrong-sign-in'>Wrong email or password</p>
+                    ) : error.password === 'Enter your password !' ? (
+                        <p className='wrong-sign-in'>{error.password}</p>
+                    ) : error.password === 'Correct' ? (
+                        <p className='good-sign-in'>correct</p>
+                    ) : null}
+                </div>
+                <button type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
+            </form >
+        </>
     )
 }
