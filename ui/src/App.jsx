@@ -5,6 +5,7 @@ import Logo from "./Logo.jsx";
 import SignInForm from "./forms/SignIn.jsx";
 import Register from "./forms/Register.jsx";
 import Home from "./forms/Home.jsx"
+import { ToastContainer } from 'react-toastify';
 
 import './App.css';
 
@@ -14,6 +15,8 @@ export default function App() {
 
   return (
     <>
+
+      <ToastContainer />
       <Logo />
       <div className='box'>
         {page === 'signIn' ? <SignInForm /> : <Register />}

@@ -14,7 +14,7 @@
 }
 .error{
   display:flex;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .wrong-sign-in {
@@ -133,6 +133,7 @@ input{
 
   margin: 0px 0px 0px 5px;
 }
+
 
 
 @keyframes logo-spin {
