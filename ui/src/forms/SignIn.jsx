@@ -3,11 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from "react-toastify"
 
+
 export default function SignInForm() {
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
     const [error, setError] = useState({ email: '', password: '' });
-    const [backendError, setBackendError] = useState(false)
+    const [backendError, setBackendError] = useState(null)
 
 
     const email = useRef(null);
@@ -22,6 +23,29 @@ export default function SignInForm() {
     const arrowDown = (ref) => {
         ref.focus()
     }
+
+    useEffect(() => {
+        const array = Object.values(error)
+
+        // console.log(array)
+        let hasErrors=false
+        for (let key of array) {
+            if (key !== 'Correct') {
+                hasErrors=true
+                setBackendError(false)
+
+                break;
+            }
+        }
+        if(!hasErrors){
+            
+            setBackendError(true)
+        }
+
+
+        console.log(error)
+
+    }, [error])
 
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
@@ -79,58 +103,43 @@ export default function SignInForm() {
 
 
     async function signInConfirm(e) {
-        setError({ email: '', password: '' })
+        setError((current) => {
+            return { ...current, email: '', password: '' }
+        }
+        )
 
-      
+
+
         e.preventDefault()
 
 
-        if (signIn.email.length === 0) {
-            setError((current) => {
 
-                return { ...current, email: 'Enter your email !' }
-            })
-        } else if (!signIn.email.includes('@')) {
-
-            setError((current) => {
-                return { ...current, email: 'Invalid form of email !' }
-            })
-        } else{
-            setError((current) => {
-                return { ...current, email: 'Correct' }
-            })
-        }
-
-        if (signIn.password.length === 0) {
-            setError((current) => {
-
-                return { ...current, password: 'Enter your password !' }
-            })
-        }else{
-            setError((current) => {
-                return { ...current, password: 'Correct' }
-            })
-        }
-
-        const array = Object.values(error)
-
-        let hasErrors = false
-        console.log(array)
-
-
-        for (let key of array) {
-            console.log('gr')
-            if (key!=='Correct') {
-                hasErrors = true
-                break;
+        setError((current) => {
+            if (signIn.email.length === 0) {
+                return { ...current, email: 'Enter your email !' };
+            } else if (!signIn.email.includes('@')) {
+                return { ...current, email: 'Invalid form of email !' };
+            } else {
+                return { ...current, email: 'Correct' };
             }
-        }
-        if(hasErrors===true){
-            setBackendError(false)
-        }
-        console.log(error)
+        });
 
-        if (!hasErrors) {
+        setError((current) => {
+
+
+            if (signIn.password.length === 0) {
+                return { ...current, password: 'Enter your password !' };
+            } else {
+                return { ...current, password: 'Correct' };
+            }
+
+        });
+
+
+
+
+        if (backendError) {
+
             console.log('hi')
             await axios
                 .post('http://localhost:3000/log-in', {
@@ -138,13 +147,9 @@ export default function SignInForm() {
                     password: signIn.password
                 })
                 .then(res => {
+                    setBackendError(false)
                     console.log(res.response)
                     setBackendError(false)
-
-                }).catch(err => {
-                    if (err.response.data === 'wrong email' || err.response.data === 'wrong password') {
-                        setBackendError(true)
-                    }
 
                 })
 
@@ -183,7 +188,7 @@ export default function SignInForm() {
                 </div>
                 <label htmlFor='password'>
                     <input
-                        className={backendError === true ? 'wrong-prezantimi-register' :
+                        className={backendError ? 'wrong-prezantimi-register' :
                             error.password === 'Enter your password !' ? 'wrong-prezantimi-register' :
                                 error.password === 'Correct' ? 'good-prezantimi-register' : 'prezantimi-register'}
                         type='password'

@@ -13,7 +13,7 @@ export default function Register() {
     const email = useRef(null);
     const password = useRef(null);
 
-
+    const [backendError, setBackendError] = useState(null)
 
     const [error, setError] = useState({ emri: "", mbiemri: "", email: "", password: "" })
 
@@ -31,6 +31,29 @@ export default function Register() {
     const arrowDown = (ref) => {
         ref.focus()
     }
+
+    useEffect(() => {
+        const array = Object.values(error)
+
+         console.log(array)
+        let hasErrors = false
+        for (let key of array) {
+            if (key !== 'correct') {
+                hasErrors = true
+                setBackendError(false)
+
+                break;
+            }
+        }
+        if (!hasErrors) {
+
+            setBackendError(true)
+        }
+
+
+      
+
+    }, [error])
 
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
@@ -144,28 +167,28 @@ export default function Register() {
             setError((current) => {
                 return { ...current, password: 'correct' }
             })
-            const array = Object.values(error)
-            let hasErrors = false
-            for (let key of array) {
-                if (key !== 'correct') {
-                    hasErrors = true
-                }
-            }
-            if (hasErrors === false) {
-                axios
-                    .post('http://localhost:3000/sign-up', {
-                        name: register.emri,
-                        surname: register.mbiemri,
-                        email: register.email,
-                        password: register.password
-                    })
-                    .then(res => {
-                        console.log(res)
-                    })
-            }
 
         }
+        console.log(backendError)
+        if (backendError) {
+            console.log('i got here')
+
+            axios
+                .post('http://localhost:3000/sign-up', {
+                    name: register.emri,
+                    surname: register.mbiemri,
+                    email: register.email,
+                    password: register.password
+                })
+                .then(res => {
+                    console.log('bayb')
+                })
+                
+
+        }
+
     }
+
 
     return (
         <form id='register'>
@@ -173,8 +196,9 @@ export default function Register() {
             <div className='prezantimi'>
                 <label htmlFor='emri'>
                     <input
-                        className={error.emri === 'Enter your name!' ? "wrong-prezantimi-register" :
-                            error.emri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={backendError ? "wrong-prezantimi-register" :
+                            error.emri === 'Enter your name!' ? "wrong-prezantimi-register" :
+                                error.emri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
                         type='text'
                         ref={emri}
                         id='emri'
@@ -184,13 +208,19 @@ export default function Register() {
                         autoComplete='off'></input>
                 </label>
                 <div className="error">
-                    {error.emri === 'Enter your name!' && <p className='wrong-sign-in'>{error.emri}</p>}
-                    {error.emri === 'correct' && <p className='good-sign-in'>{error.emri}</p>}
+                    {backendError ? (
+                        null
+                    ) : error.emri === 'Enter your name!' ? (
+                        <p className='wrong-sign-in'>{error.emri}</p>
+                    ) : error.emri === 'correct' ? (
+                        <p className='good-sign-in'>{error.emri}</p>
+                    ) : null}
                 </div>
                 <label htmlFor="mbiemri">
                     <input
-                        className={error.mbiemri === 'Enter your surname!' ? "wrong-prezantimi-register" :
-                            error.mbiemri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={backendError ? "wrong-prezantimi-register" :
+                            error.mbiemri === 'Enter your surname!' ? "wrong-prezantimi-register" :
+                                error.mbiemri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
                         ref={mbiemri}
                         type='text'
                         value={register.mbiemri}
@@ -199,13 +229,20 @@ export default function Register() {
                         autoComplete='off'></input>
                 </label>
                 <div className="error">
-                    {error.mbiemri === 'Enter your surname!' && <p className='wrong-sign-in'>{error.mbiemri}</p>}
+                    {backendError ? (
+                        null
+                    ) : error.mbiemri === 'Enter your surname!' ? (
+                        <p className='wrong-sign-in'>{error.mbiemri}</p>
+                    ) : error.mbiemri === 'correct' ? (
+                        <p className='good-sign-in'>{error.mbiemri}</p>
+                    ) : null}
                 </div>
                 <label htmlFor='email'>
                     <input
-                        className={error.email === "Enter your email!" ? "wrong-prezantimi-register" :
-                            error.email === "Invalid form of email!" ? "wrong-prezantimi-register" :
-                                error.email === "correct" ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={backendError ? "wrong-prezantimi-register" :
+                            error.email === "Enter your email!" ? "wrong-prezantimi-register" :
+                                error.email === "Invalid form of email!" ? "wrong-prezantimi-register" :
+                                    error.email === "correct" ? "good-prezantimi-register" : "prezantimi-register"}
                         type='text'
                         ref={email}
                         id='email'
@@ -215,14 +252,16 @@ export default function Register() {
                     ></input>
                 </label>
                 <div className="error">
-                    {error.email === "Enter your email!" && <p className='wrong-sign-in'>{error.email}</p>}
-                    {error.email === "Invalid form of email!" && <p className='wrong-sign-in'>{error.email}</p>}
-                    {error.email === 'correct' && <p className='good-sign-in'>{error.email}</p>}
+                    {backendError ? (null
+                    ) : error.email === "Enter your email!" ? (<p className='wrong-sign-in'>{error.email}</p>
+                    ) : error.email === "Invalid form of email!" ? (<p className='wrong-sign-in'>{error.email}</p>
+                    ) : error.email === 'correct' ? (<p className='good-sign-in'>{error.email}</p>) : null}
                 </div>
                 <label htmlFor='password'>
                     <input
-                        className={error.password === 'Enter your password!' ? "wrong-prezantimi-register" :
-                            error.password === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
+                        className={backendError ? "wrong-prezantimi-register" :
+                            error.password === 'Enter your password!' ? "wrong-prezantimi-register" :
+                                error.password === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
                         type='password'
                         ref={password}
                         id='password'
@@ -233,8 +272,11 @@ export default function Register() {
                     ></input>
                 </label >
                 <div className="error">
-                    {error.password === 'Enter your password!' && <p className='wrong-sign-in'>{error.password}</p>}
-                    {error.password === 'correct' && <p className='good-sign-in'>{error.password}</p>}
+                    {backendError ? (<p className='wrong-sign-in'>Something went wrong</p>
+                    ) : error.password === 'Enter your password!' ? (<p className='wrong-sign-in'>{error.password}</p>
+                    ) : error.password === 'correct' ? (<p className='good-sign-in'>{error.password}</p>
+                    ) : null
+                    }
                 </div>
                 <button type='btn' onClick={registerConfirm}>Register</button>
             </div>
