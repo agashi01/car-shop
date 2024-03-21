@@ -5,7 +5,7 @@ import Logo from "./Logo.jsx";
 import SignInForm from "./forms/SignIn.jsx";
 import Register from "./forms/Register.jsx";
 import Home from "./forms/Home.jsx"
-import { ToastContainer } from 'react-toastify';
+
 
 import './App.css';
 
@@ -13,13 +13,17 @@ export default function App() {
 
   const [page, setPage] = useState('signIn');
 
+  const changePage=(text)=>{
+    setPage(text)
+  }
+
   return (
     <>
 
-      <ToastContainer />
+    
       <Logo />
       <div className='box'>
-        {page === 'signIn' ? <SignInForm /> : <Register />}
+        {page === 'signIn' ? <SignInForm page={changePage}/> : page==='register'? <Register page={changePage}/>:page==='home'? <Home/>:null}
         {page === 'register' ? (<div className='register'>
           <p className='text' style={{
             marginRight: 5,

@@ -6,14 +6,15 @@ import { useEffect } from 'react'
 import axios from 'axios';
 
 
-export default function Register() {
+export default function Register(changePage) {
 
     const emri = useRef(null);
     const mbiemri = useRef(null);
     const email = useRef(null);
     const password = useRef(null);
 
-    const [backendError, setBackendError] = useState(null)
+    const [backendError, setBackendError] = useState()
+    const [backendMessage, setBackendMessage] = useState()
 
     const [error, setError] = useState({ emri: "", mbiemri: "", email: "", password: "" })
 
@@ -33,12 +34,48 @@ export default function Register() {
     }
 
     useEffect(() => {
+        // console.log('fesf',backendError)
+        if (backendError) {
+            // console.log('i got ')
+
+            axios
+                .post('http://localhost:3000/sign-up', {
+                    name: register.emri,
+                    surname: register.mbiemri,
+                    email: register.email,
+                    password: register.password
+                })
+                .then(res => {
+
+                    // console.log('good')
+                    setBackendError(false)
+                    changePage('home')
+                    console.log(res)
+                })
+                .catch(err => {
+
+                    // console.log('bad')
+
+                    if (err?.response?.data === 'email is already in use') {
+                        setBackendMessage(err.response.data)
+
+                    } else {
+                        setBackendMessage('')
+                    }
+                })
+
+
+        }
+    }, [error,backendError])
+
+    useEffect(() => {
         const array = Object.values(error)
 
-         console.log(array)
+        // console.log(array, 'halo')
         let hasErrors = false
         for (let key of array) {
             if (key !== 'correct') {
+                console.log('oops')
                 hasErrors = true
                 setBackendError(false)
 
@@ -46,12 +83,13 @@ export default function Register() {
             }
         }
         if (!hasErrors) {
-
+            
             setBackendError(true)
         }
+         console.log('fesf',backendError,hasErrors)
 
 
-      
+
 
     }, [error])
 
@@ -115,77 +153,66 @@ export default function Register() {
         })
     }
 
-    const registerConfirm = (e) => {
+    const registerConfirm = async (e) => {
         e.preventDefault()
-        if (register.emri.length === 0) {
 
-            setError((current) => {
-                return { ...current, emri: 'Enter your name!' }
-            })
-        } else {
+        e.preventDefault()
+        let bufferEmri = ''
+        let bufferMbiemri = ''
+        let bufferEmail = ''
+        let bufferPassword = ''
+        setError((current) => {
+            if (register.emri.length === 0) {
 
-            setError((current) => {
-                return { ...current, emri: 'correct' }
-            })
-        }
-        if (register.mbiemri.length === 0) {
 
-            setError((current) => {
-                return { ...current, mbiemri: 'Enter your surname!' }
-            })
-        } else {
+                bufferEmri = 'Enter your name!';
 
-            setError((current) => {
-                return { ...current, mbiemri: 'correct' }
-            })
-        }
-        if (register.email.length === 0) {
+            } else {
 
-            setError((current) => {
-                return { ...current, email: 'Enter your email!' }
-            })
-        } else if (!register.email.includes('@')) {
+                bufferEmri = 'correct';
 
-            setError((current) => {
-                return { ...current, email: 'Invalid form of email!' }
-            })
-        } else {
+            }
 
-            setError((current) => {
-                return { ...current, email: 'correct' }
-            })
+            if (register.mbiemri.length === 0) {
 
-        }
 
-        if (register.password.length === 0) {
+                bufferMbiemri = 'Enter your surname!';
+            } else {
 
-            setError((current) => {
-                return { ...current, password: 'Enter your password!' }
-            })
-        } else {
+                bufferMbiemri = 'correct';
 
-            setError((current) => {
-                return { ...current, password: 'correct' }
-            })
+            }
 
-        }
-        console.log(backendError)
-        if (backendError) {
-            console.log('i got here')
 
-            axios
-                .post('http://localhost:3000/sign-up', {
-                    name: register.emri,
-                    surname: register.mbiemri,
-                    email: register.email,
-                    password: register.password
-                })
-                .then(res => {
-                    console.log('bayb')
-                })
-                
 
-        }
+            if (register.email.length === 0) {
+
+                bufferEmail = 'Enter your email!';
+
+            } else if (!register.email.includes('@')) {
+
+                bufferEmail = 'Invalid form of email!';
+
+            } else {
+
+                bufferEmail = 'correct';
+
+            }
+
+            if (register.password.length === 0) {
+
+                bufferPassword = 'Enter your password!';
+            } else {
+
+                bufferPassword = 'correct';
+
+            }
+            return { ...current, email: bufferEmail, emri: bufferEmri, mbiemri: bufferMbiemri, password: bufferPassword }
+        })
+
+
+
+
 
     }
 
@@ -272,13 +299,13 @@ export default function Register() {
                     ></input>
                 </label >
                 <div className="error">
-                    {backendError ? (<p className='wrong-sign-in'>Something went wrong</p>
+                    {backendError ? (<p className='wrong-sign-in'>{backendMessage?backendMessage:null}</p>
                     ) : error.password === 'Enter your password!' ? (<p className='wrong-sign-in'>{error.password}</p>
                     ) : error.password === 'correct' ? (<p className='good-sign-in'>{error.password}</p>
                     ) : null
                     }
                 </div>
-                <button type='btn' onClick={registerConfirm}>Register</button>
+                <button className='absolute-btn' type='btn' onClick={registerConfirm}>Register</button>
             </div>
         </form>
     )

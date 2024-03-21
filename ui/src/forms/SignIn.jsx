@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { ToastContainer, toast } from "react-toastify"
+
 
 
 export default function SignInForm() {
@@ -148,10 +148,13 @@ export default function SignInForm() {
                 })
                 .then(res => {
                     setBackendError(false)
-                    console.log(res.response)
-                    setBackendError(false)
+                   console.log(res)
+                    
 
                 })
+               
+                   
+                 
 
         }
     }
@@ -208,7 +211,7 @@ export default function SignInForm() {
                         <p className='good-sign-in'>correct</p>
                     ) : null}
                 </div>
-                <button type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
+                <button className='absolute-btn' type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
             </form >
         </>
     )
