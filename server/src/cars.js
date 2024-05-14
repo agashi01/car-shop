@@ -1,10 +1,10 @@
-const create = (db) => function(req, res) {
+const create = (db) => async function(req, res) {
     const { make, model, mileage, color, transmission, fuel_type, vehicle_type, dealer_id, owner_id } = req.body;
     db.on('query', function (queryData) {
         console.log(queryData);
     });
     {
-        db.transaction(trx => {
+        await db.transaction(async trx => {
             trx('cars').insert({
 
 
@@ -20,8 +20,8 @@ const create = (db) => function(req, res) {
                 , dealer_id: dealer_id
                 , owner_id: owner_id
             }).returning('*')
-                .then(([car]) => {
-                    trx.select('dealers.*').from('cars').innerJoin('dealers', 'dealers.id', 'cars.dealer_id')
+                .then(async ([car]) => {
+                    await trx.select('dealers.*').from('cars').innerJoin('dealers', 'dealers.id', 'cars.dealer_id')
                         .where('cars.id', car.id)
                         .returning("*")
                         .then(([dealer]) => {
@@ -41,8 +41,8 @@ const create = (db) => function(req, res) {
                     res.status(400).json('this car is missing something')
                 })
 
-                .then(trx.commit)
-                .catch(trx.rollback)
+                .then(await trx.commit)
+                .catch(await trx.rollback)
         })
 
     }

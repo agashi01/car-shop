@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
+import CarCard from './CarCard'
+import axios from 'axios';
 
 
 // eslint-disable-next-line react/prop-types
@@ -7,6 +9,18 @@ function Home({ guest, username }) {
   const [isClicked, setIsClicked] = useState(false);
   const [burgerMenu, setBurgerMenu] = useState("burger unclicked")
   const [menu, setMenu] = useState('menu-hidden')
+  const [cars, setCars] = useState([])
+
+  useEffect(() => {
+      axios
+          .get('http://localhost:3000/cars')
+          .then(res => {
+              setCars(res.data)
+          })
+          .catch(err => {
+              console.log(err)
+          })
+  }, [])
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
@@ -63,10 +77,16 @@ function Home({ guest, username }) {
             </div>
           </div>
         </nav>
-
-
-
       }
+        <ul className='cars-ul'>
+          {cars.map(car=>{
+            return(
+              // eslint-disable-next-line react/jsx-key
+              <CarCard key={car.id} car={car}/>
+            )
+          })}
+        </ul>
+      
 
     </div>
   )

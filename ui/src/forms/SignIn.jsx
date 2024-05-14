@@ -101,7 +101,7 @@ export default function SignInForm({ page, setGuest, username }) {
             setBackendError(true)
         }
 
-        console.log(error)
+       
 
     }, [signInConfirm])
 
