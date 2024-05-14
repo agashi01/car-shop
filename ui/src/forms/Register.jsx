@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react'
 import axios from 'axios';
 
+// eslint-disable-next-line react/prop-types
+export default function Register({ page }) {
 
-export default function Register(changePage) {
-
+    const username = useRef(null)
     const emri = useRef(null);
     const mbiemri = useRef(null);
     const email = useRef(null);
@@ -16,14 +17,9 @@ export default function Register(changePage) {
     const [backendError, setBackendError] = useState()
     const [backendMessage, setBackendMessage] = useState()
 
-    const [error, setError] = useState({ emri: "", mbiemri: "", email: "", password: "" })
+    const [error, setError] = useState({ emri: "", mbiemri: "", email: "", password: "", username: "" })
+    const [register, setRegister] = useState({ emri: '', mbiemri: '', email: '', password: '', username: '' });
 
-    const [register, setRegister] = useState({
-        emri: '',
-        mbiemri: '',
-        email: '',
-        password: ''
-    });
 
     const arrowUp = (ref) => {
         ref.focus()
@@ -33,71 +29,237 @@ export default function Register(changePage) {
         ref.focus()
     }
 
+
     useEffect(() => {
-        // console.log('fesf',backendError)
         if (backendError) {
-            // console.log('i got ')
 
             axios
                 .post('http://localhost:3000/sign-up', {
                     name: register.emri,
                     surname: register.mbiemri,
                     email: register.email,
-                    password: register.password
+                    password: register.password,
+                    username: register.username,
                 })
                 .then(res => {
 
-                    // console.log('good')
                     setBackendError(false)
-                    changePage('home')
+                    page('afterRegister')
                     console.log(res)
+                    console.log(backendError)
                 })
                 .catch(err => {
-
-                    // console.log('bad')
-
+                    setBackendError(true)
                     if (err?.response?.data === 'email is already in use') {
-                        setBackendMessage(err.response.data)
+                        setError((current) => {
+                            return { ...current, email: 'Email is already in use' }
+                        })
 
-                    } else {
-                        setBackendMessage('')
+                    } else if (err?.response?.data === 'username is already in use') {
+                        setError((current) => {
+                            return { ...current, username: 'Username is already in use' }
+                        })
+                    }
+                    else {
+                        console.log(err)
+                        setBackendMessage(err?.response?.data)
                     }
                 })
 
-
         }
-    }, [error,backendError])
+    }, [backendError])
+
+    // function when user submits
+    const registerConfirm = async (e) => {
+
+        e.preventDefault()
+        setError({ emri: "", mbiemri: "", email: "", password: "", username: "" })
+        console.log(register)
+
+        console.log('here')
+
+
+        setError((current) => {
+            if (!register.emri) {
+
+                return { ...current, emri: 'Enter your name!' }
+
+            } else if (register.emri.length < 8) {
+                // check again
+                return { ...current, emri: 'Name should contain only letters!' }
+
+            } else {
+
+                return { ...current, emri: ' Correct form' }
+
+            }
+        })
+
+        setError((current) => {
+
+            if (!register.mbiemri) {
+
+                return { ...current, mbiemri: 'Enter your surname!' }
+            } else if (register.mbiemri.length < 8) {
+                // check again
+                return { ...current, mbiemri: "Surname should contain only letters!" }
+            } else {
+
+                return { ...current, mbiemri: ' Correct form' }
+
+            }
+
+        })
+
+        setError((current) => {
+            if (!register.username) {
+
+                return { ...current, username: 'Enter your username!' }
+
+            } else {
+
+                return { ...current, username: ' Correct form' }
+
+            }
+
+        })
+
+
+        setError((current) => {
+            if (!register.email) {
+
+                return { ...current, email: 'Enter your email!' }
+
+            } else if (!register.email.includes('@')) {
+
+                return { ...current, email: 'Invalid form of email!' }
+
+            } else {
+
+                return { ...current, email: ' Correct form' }
+            }
+        })
+
+        setError((current) => {
+            if (!register.password) {
+
+                return { ...current, password: 'Enter your password!' }
+            } else if (register.password.length < 8) {
+                return { ...current, password: "Minimum 8 characters" }
+            } else {
+
+                return { ...current, password: ' Correct form' }
+
+            }
+
+        })
+        console.log(error)
+    }
 
     useEffect(() => {
         const array = Object.values(error)
-
-        // console.log(array, 'halo')
         let hasErrors = false
         for (let key of array) {
-            if (key !== 'correct') {
-                console.log('oops')
+            if (key !== ' Correct form') {
                 hasErrors = true
                 setBackendError(false)
-
                 break;
             }
         }
         if (!hasErrors) {
-            
+
             setBackendError(true)
         }
-         console.log('fesf',backendError,hasErrors)
 
+    }, [registerConfirm])
 
+    // function to see if user has typed
+    const hasUserType = () => {
+        return Object.values(register).some(value => value)
+    }
 
+    // functions when user is typing 
+    const dynamicEmri = useCallback(() => {
+        setError((current) => {
 
-    }, [error])
+            if (!register.emri) {
+                if (hasUserType())
+                    return { ...current, emri: "Enter your name" }
+                else
+                    return { ...current, emri: "Stabil" }
+            } else if (register.emri.length < 8)
+                return { ...current, emri: ' Name should contain only letters!' }
+            else
+                return { ...current, emri: 'Correct form' }
+
+        }, [register])
+    })
+
+    const dynamicMbiemri = useCallback(() => {
+        setError((current) => {
+            if (!register.mbiemri) {
+                if (hasUserType())
+                    return { ...current, mbiemri: "Enter your surname" }
+                else
+                    return { ...current, mbiemri: "Stabil" }
+            } else if (register.mbiemri.length < 8)
+                return { ...current, mbiemri: ' Surname should contain only letters!' }
+            else
+                return { ...current, mbiemri: 'Correct form' }
+        })
+    }, [register])
+
+    const dynamicUsername = useCallback(() => {
+        setError((current) => {
+            if (!register.username) {
+                if (hasUserType())
+                    return { ...current, username: "Enter your username" }
+                else
+                    return { ...current, username: "Stabil" }
+            } else
+                return { ...current, username: 'Correct form' }
+        })
+    }, [register])
+
+    const dynamicEmail = useCallback(() => {
+        setError((current) => {
+            if (!register.email) {
+                if (hasUserType())
+                    return { ...current, email: "Enter your email" }
+                else
+                    return { ...current, email: "Stabil" }
+            } else if (!register.email.includes('@'))
+                return { ...current, email: ' Invalid form of email!' }
+            else
+                return { ...current, email: 'Correct form' }
+        })
+    }, [register])
+
+    const dynamicPassword = useCallback(() => {
+        setError((current) => {
+            if (!register.password) {
+                if (hasUserType())
+                    return { ...current, password: "Enter your password" }
+                else
+                    return { ...current, password: "Stabil" }
+            } else if (register.password.length < 8)
+                return { ...current, password: ' Minimum 8 characters' }
+            else
+                return { ...current, password: 'Correct form' }
+        })
+    
+    }, [register])
+
+    useEffect(() => {
+        dynamicEmri()
+        dynamicMbiemri()
+        dynamicUsername()
+        dynamicEmail()
+        dynamicPassword()
+    }, [register])
 
     useEffect(() => {
         const arrowHandler = (ref1, ref2) => (event) => {
-            if (event.key.startsWith("Arrow")) {
-                event.preventDefault()
-            }
 
             switch (event.key) {
                 case "ArrowUp":
@@ -110,15 +272,16 @@ export default function Register(changePage) {
                     break;
             }
         }
-
+        const usernameRef = username.current;
         const emriRef = emri.current;
         const mbiemriRef = mbiemri.current;
         const emailRef = email.current;
         const passwordRef = password.current;
 
+        usernameRef.addEventListener('keydown', arrowHandler(mbiemriRef, emailRef))
         emriRef.addEventListener('keydown', arrowHandler(passwordRef, mbiemriRef));
-        mbiemriRef.addEventListener('keydown', arrowHandler(emriRef, emailRef));
-        emailRef.addEventListener('keydown', arrowHandler(mbiemriRef, passwordRef));
+        mbiemriRef.addEventListener('keydown', arrowHandler(emriRef, usernameRef));
+        emailRef.addEventListener('keydown', arrowHandler(usernameRef, passwordRef));
         passwordRef.addEventListener('keydown', arrowHandler(emailRef, emriRef));
 
         return () => {
@@ -129,6 +292,7 @@ export default function Register(changePage) {
         };
     }, [arrowDown, arrowUp]);
 
+    // functions when user types 
     const setEmri = (e) => {
         setRegister((current) => {
             return { ...current, emri: e.target.value }
@@ -153,160 +317,223 @@ export default function Register(changePage) {
         })
     }
 
-    const registerConfirm = async (e) => {
-        e.preventDefault()
-
-        e.preventDefault()
-        let bufferEmri = ''
-        let bufferMbiemri = ''
-        let bufferEmail = ''
-        let bufferPassword = ''
-        setError((current) => {
-            if (register.emri.length === 0) {
-
-
-                bufferEmri = 'Enter your name!';
-
-            } else {
-
-                bufferEmri = 'correct';
-
-            }
-
-            if (register.mbiemri.length === 0) {
-
-
-                bufferMbiemri = 'Enter your surname!';
-            } else {
-
-                bufferMbiemri = 'correct';
-
-            }
-
-
-
-            if (register.email.length === 0) {
-
-                bufferEmail = 'Enter your email!';
-
-            } else if (!register.email.includes('@')) {
-
-                bufferEmail = 'Invalid form of email!';
-
-            } else {
-
-                bufferEmail = 'correct';
-
-            }
-
-            if (register.password.length === 0) {
-
-                bufferPassword = 'Enter your password!';
-            } else {
-
-                bufferPassword = 'correct';
-
-            }
-            return { ...current, email: bufferEmail, emri: bufferEmri, mbiemri: bufferMbiemri, password: bufferPassword }
+    const setUsername = (e) => {
+        setRegister((current) => {
+            return { ...current, username: e.target.value }
         })
+    }
+
+    // function when user submits
 
 
+    // functions for classnames
+    const classNameEmri = () => {
+        return backendMessage ? "prezantimi-register" :
+            error.emri === 'Enter your name!' ? "wrong-prezantimi-register" :
+                error.emri === 'Enter your name' ? "good-prezantimi-register" :
+                    error.emri === 'Correct form' ? "good-prezantimi-register" :
+                        error.emri === ' Correct form' ? "good-prezantimi-register" :
+                            error.emri === ' Name should contain only letters!' ? "half-good-prezantimi" :
+                                error.emri === 'Name should contain only letters!' ? "wrong-prezantimi-register" :
+                                    "prezantimi-register"
+    }
 
+    const classNameMbiemri = () => {
+        return backendMessage ? "prezantimi-register" :
+            error.mbiemri === 'Enter your surname!' ? "wrong-prezantimi-register" :
+                error.mbiemri === 'Enter your surname' ? "good-prezantimi-register" :
+                    error.mbiemri === 'Correct form' ? "good-prezantimi-register" :
+                        error.mbiemri === ' Correct form' ? "good-prezantimi-register" :
+                            error.mbiemri === ' Surname should contain only letters!' ? "half-good-prezantimi" :
+                                error.mbiemri === 'Surname should contain only letters!' ? "wrong-prezantimi-register" :
+                                    "prezantimi-register"
+    }
 
+    const classNameUsername = () => {
+        return backendMessage ? "prezantimi-register" :
+            error.username === 'Enter your username!' ? "wrong-prezantimi-register" :
+                error.username === 'Enter your username' ? "good-prezantimi-register" :
+                    error.username === 'Correct form' ? "good-prezantimi-register" :
+                        error.username === ' Correct form' ? "good-prezantimi-register" :
+                            error.username === 'Username is already in use' ? "wrong-prezantimi-register" : "prezantimi-register"
+    }
+
+    const classNameEmail = () => {
+        return backendMessage ? "prezantimi-register" :
+            error.email === "Enter your email!" ? "wrong-prezantimi-register" :
+                error.email === 'Enter your email' ? "good-prezantimi-register" :
+                    error.email === "Invalid form of email!" ? "wrong-prezantimi-register" :
+                        error.email === " Invalid form of email!" ? "half-good-prezantimi" :
+                            error.email === "Correct form" ? "good-prezantimi-register" :
+                                error.email === ' Correct form' ? "good-prezantimi-register" :
+                                    error.email === "Email is already in use" ? "wrong-prezantimi-register" :
+                                        "prezantimi-register"
+    }
+
+    const classNamePassword = () => {
+        return backendMessage ? "prezantimi-register" :
+            error.password === 'Enter your password!' ? "wrong-prezantimi-register" :
+                error.password === 'Enter your password' ? "good-prezantimi-register" :
+                    error.password === "Minimum 8 characters" ? "wrong-prezantimi-register" :
+                        error.password === " Minimum 8 characters" ? "half-good-prezantimi" :
+                            error.password === 'Correct form' ? "good-prezantimi-register" :
+                                error.password === ' Correct form' ? "good-prezantimi-register" : "prezantimi-register"
+    }
+    // functions for errors
+
+    const errorEmri = () => {
+        return backendMessage ? (
+            null
+        ) : error.emri === 'Enter your name!' ? (
+            <p className='wrong-sign-in'>{error.emri}</p>
+        ) : error.emri === 'Enter your name' ? (
+            <p className='good-sign-in'>{error.emri}</p>
+        ) : error.emri === "Name should contain only letters!" ? (
+            <p className='wrong-sign-in'>{error.emri}</p>
+        ) : error.emri === " Name should contain only letters!" ? (
+            <p className='half-good-sign-in'>{error.emri}</p>
+        ) : error.emri === 'Correct form' ? (
+            <p className='good-sign-in'>{error.emri}</p>
+        ) : error.emri === ' Correct form' ? (
+            <p className='good-sign-in'>{error.emri}</p>
+        ) : null
+    }
+
+    const errorMbiemri = () => {
+        return backendMessage ? (
+            null
+        ) : error.mbiemri === 'Enter your surname!' ? (
+            <p className='wrong-sign-in'>{error.mbiemri}</p>
+        ) : error.mbiemri === 'Enter your surname' ? (
+            <p className='good-sign-in'>{error.emri}</p>
+        ) : error.mbiemri === "Surname should contain only letters!" ? (
+            <p className='wrong-sign-in'>{error.mbiemri}</p>
+        ) : error.mbiemri === " Surname should contain only letters!" ? (
+            <p className='half-good-sign-in'>{error.mbiemri}</p>
+        ) : error.mbiemri === 'Correct form' ? (
+            <p className='good-sign-in'>{error.mbiemri}</p>
+        ) : error.mbiemri === ' Correct form' ? (
+            <p className='good-sign-in'>{error.mbiemri}</p>
+        ) : null
+    }
+
+    const errorUsername = () => {
+        return backendMessage ? (null
+        ) : error.username === "Enter your username!" ? (
+            <p className="wrong-sign-in">{error.username}</p>
+        ) : error.username === 'Enter your username' ? (
+            <p className='good-sign-in'>{error.emri}</p>
+        ) : error.username === "Correct form" ? (
+            <p className="good-sign-in">{error.username}</p>
+        ) : error.username === ' Correct form' ? (
+            <p className='good-sign-in'>{error.username}</p>
+        ) : error.username === "Username is already in use" ? (
+            <p className="wrong-sign-in">{error.username}</p>
+        ) : (
+            null
+        )
 
     }
 
+    const errorEmail = () => {
+        return backendMessage ? (null
+        ) : error.email === "Enter your email!" ? (<p className='wrong-sign-in'>{error.email}</p>
+        ) : error.email === "Enter your email" ? (<p className='good-sign-in'>{error.email}</p>
+        ) : error.email === "Invalid form of email!" ? (<p className='wrong-sign-in'>{error.email}</p>
+        ) : error.email === " Invalid form of email!" ? (<p className='half-good-sign-in'>{error.email}</p>
+        ) : error.email === "Email is already in use" ? (<p className='wrong-sign-in'>{error.email}</p>
+        ) : error.email === 'Correct form' ? (<p className='good-sign-in'>{error.email}</p>
+        ) : error.email === ' Correct form' ? (<p className='good-sign-in'>{error.email}</p>
+        ) : null
+    }
+
+
+    const errorPassword = () => {
+        return backendMessage ? (<p className='wrong-sign-in'>{backendMessage ? backendMessage : null}</p>
+        ) : error.password === 'Enter your password!' ? (<p className='wrong-sign-in'>{error.password}</p>
+        ) : error.password === 'Enter your password' ? (<p className='good-sign-in'>{error.password}</p>
+        ) : error.password === 'Minimum 8 characters' ? (<p className='wrong-sign-in'>{error.password}</p>
+        ) : error.password === ' Minimum 8 characters' ? (<p className='half-good-sign-in'>{error.password}</p>
+        ) : error.password === 'Correct form' ? (<p className='good-sign-in'>{error.password}</p>
+        ) : error.password === ' Correct form' ? (<p className='good-sign-in'>{error.password}</p>
+        ) : null
+    }
 
     return (
         <form id='register'>
             <h2>Register</h2>
-            <div className='prezantimi'>
-                <label htmlFor='emri'>
-                    <input
-                        className={backendError ? "wrong-prezantimi-register" :
-                            error.emri === 'Enter your name!' ? "wrong-prezantimi-register" :
-                                error.emri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
-                        type='text'
-                        ref={emri}
-                        id='emri'
-                        value={register.emri}
-                        onChange={setEmri}
-                        placeholder='Enter your name'
-                        autoComplete='off'></input>
-                </label>
-                <div className="error">
-                    {backendError ? (
-                        null
-                    ) : error.emri === 'Enter your name!' ? (
-                        <p className='wrong-sign-in'>{error.emri}</p>
-                    ) : error.emri === 'correct' ? (
-                        <p className='good-sign-in'>{error.emri}</p>
-                    ) : null}
-                </div>
-                <label htmlFor="mbiemri">
-                    <input
-                        className={backendError ? "wrong-prezantimi-register" :
-                            error.mbiemri === 'Enter your surname!' ? "wrong-prezantimi-register" :
-                                error.mbiemri === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
-                        ref={mbiemri}
-                        type='text'
-                        value={register.mbiemri}
-                        onChange={setMbiemri}
-                        placeholder='Enter your surname'
-                        autoComplete='off'></input>
-                </label>
-                <div className="error">
-                    {backendError ? (
-                        null
-                    ) : error.mbiemri === 'Enter your surname!' ? (
-                        <p className='wrong-sign-in'>{error.mbiemri}</p>
-                    ) : error.mbiemri === 'correct' ? (
-                        <p className='good-sign-in'>{error.mbiemri}</p>
-                    ) : null}
-                </div>
-                <label htmlFor='email'>
-                    <input
-                        className={backendError ? "wrong-prezantimi-register" :
-                            error.email === "Enter your email!" ? "wrong-prezantimi-register" :
-                                error.email === "Invalid form of email!" ? "wrong-prezantimi-register" :
-                                    error.email === "correct" ? "good-prezantimi-register" : "prezantimi-register"}
-                        type='text'
-                        ref={email}
-                        id='email'
-                        value={register.email}
-                        onChange={setEmail}
-                        placeholder='Enter your email'
-                    ></input>
-                </label>
-                <div className="error">
-                    {backendError ? (null
-                    ) : error.email === "Enter your email!" ? (<p className='wrong-sign-in'>{error.email}</p>
-                    ) : error.email === "Invalid form of email!" ? (<p className='wrong-sign-in'>{error.email}</p>
-                    ) : error.email === 'correct' ? (<p className='good-sign-in'>{error.email}</p>) : null}
-                </div>
-                <label htmlFor='password'>
-                    <input
-                        className={backendError ? "wrong-prezantimi-register" :
-                            error.password === 'Enter your password!' ? "wrong-prezantimi-register" :
-                                error.password === 'correct' ? "good-prezantimi-register" : "prezantimi-register"}
-                        type='password'
-                        ref={password}
-                        id='password'
-                        value={register.password}
-                        onChange={setPassword}
-                        placeholder='Enter your password'
-                        autoComplete='off'
-                    ></input>
-                </label >
-                <div className="error">
-                    {backendError ? (<p className='wrong-sign-in'>{backendMessage?backendMessage:null}</p>
-                    ) : error.password === 'Enter your password!' ? (<p className='wrong-sign-in'>{error.password}</p>
-                    ) : error.password === 'correct' ? (<p className='good-sign-in'>{error.password}</p>
-                    ) : null
-                    }
-                </div>
-                <button className='absolute-btn' type='btn' onClick={registerConfirm}>Register</button>
+            <label htmlFor='emri'>
+                <input
+                    className={classNameEmri()}
+                    type='text'
+                    ref={emri}
+                    id='emri'
+                    value={register.emri}
+                    onChange={setEmri}
+                    placeholder='Enter your name'
+                    autoComplete='off'></input>
+            </label>
+            <div className="error">
+                {errorEmri()}
             </div>
+            <label htmlFor="mbiemri">
+                <input
+                    className={classNameMbiemri()}
+                    ref={mbiemri}
+                    type='text'
+                    value={register.mbiemri}
+                    onChange={setMbiemri}
+                    placeholder='Enter your surname'
+                    autoComplete='off'></input>
+            </label>
+            <div className="error">
+                {errorMbiemri()}
+            </div>
+            <label htmlFor='username'>
+                <input
+                    className={classNameUsername()}
+                    type='text'
+                    ref={username}
+                    id='username'
+                    value={register.username}
+                    onChange={setUsername}
+                    placeholder='Enter your username'
+                    autoComplete='off'></input>
+            </label>
+            <div className='error'>
+                {errorUsername()}
+            </div>
+            <label htmlFor='email'>
+                <input
+                    className={classNameEmail()}
+                    type='text'
+                    ref={email}
+                    id='email'
+                    value={register.email}
+                    onChange={setEmail}
+                    placeholder='Enter your email'
+                ></input>
+            </label>
+            <div className="error">
+                {errorEmail()}
+            </div>
+            <label htmlFor='password'>
+                <input
+                    className={classNamePassword()}
+                    type='password'
+                    ref={password}
+                    id='password'
+                    value={register.password}
+                    onChange={setPassword}
+                    placeholder='Enter your password'
+                    autoComplete='off'
+                ></input>
+            </label >
+            <div className="error">
+                {errorPassword()}
+            </div>
+            <button className='register-button' type='btn' onClick={registerConfirm}>Register</button>
+
         </form>
     )
 }

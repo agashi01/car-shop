@@ -33,9 +33,9 @@ const objToList = (list) => {
 
 
 const signUp = (db) => async (req, res) => {
-    const { name, surname, email, password } = req.body
+    const { name, surname, email, password, username } = req.body
     const hash = await bcrypt.hash(password, 10)
-    
+
 
     db.transaction(trx => {
         trx('users').insert({
@@ -49,17 +49,18 @@ const signUp = (db) => async (req, res) => {
                 if (user.length > 0) {
                     trx('users_info').insert({
                         id: user[0].id,
+                        username,
                         email: user[0].email,
                         hash
                     }).returning('*')
-                        .then((user) => {
-                            return res.json(user[0])
+                        .then(([user2]) => {
+                            return res.json({...user[0],username:user2.username})
                         }).catch(err => {
-                            res.status(500).json('problems in the server!')
+                            res.status(500).json('username is already in use')
                         })
 
                 } else {
-                    res.status(400).json('missing credentials')
+                    res.status(400).json('problems in the server!')
                 }
             }).catch(err => {
                 res.status(500).json('email is already in use')
@@ -103,8 +104,9 @@ const logIn = (db) => async (req, res) => {
                                     .where({ owner_id: user.id })
 
                                     .then((cars) => {
-
-                                        res.json({ user, ...cars })
+                                        console.log('hi')
+                                        console.log({...cars,...user,username:userInfo[0].username})
+                                        res.json({ ...cars,...user,username:userInfo[0].username})
                                     }).catch(err => {
                                         res.status(500).json(err.message)
                                     })

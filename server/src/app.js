@@ -5,6 +5,7 @@ const cors = require('cors')
 const cars = require('./cars')
 const dealers = require('./dealers')
 const auth = require('./auth')
+import { runOnce } from './RunOnce'
 
 const db = knex({
   client: 'pg',
@@ -23,7 +24,7 @@ app.use(cors())
 app.use(bodyParser.json())
 
 
-
+app.get('./runOnce', (req, res) => runOnce(db))
 app.get('/', (req, res) => { return res.status(200).json("Server is up and running!") })
 
 app.post('/sign-up', (req, res) => auth.signUp(db)(req, res));
