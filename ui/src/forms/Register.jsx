@@ -69,6 +69,18 @@ export default function Register({ page }) {
         }
     }, [backendError])
 
+    // prototype fundtion
+
+    String.prototype.doesNotInclude = function () {
+        for (let i = 0; i < this.length; i++) {
+            console.log(this[i])
+            if (!"qwertyuiopasdfghjklzxcvbnm".includes(this[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // function when user submits
     const registerConfirm = async (e) => {
 
@@ -84,7 +96,7 @@ export default function Register({ page }) {
 
                 return { ...current, emri: 'Enter your name!' }
 
-            } else if (register.emri.length < 8) {
+            } else if (register.emri.doesNotInclude()) {
                 // check again
                 return { ...current, emri: 'Name should contain only letters!' }
 
@@ -100,7 +112,7 @@ export default function Register({ page }) {
             if (!register.mbiemri) {
 
                 return { ...current, mbiemri: 'Enter your surname!' }
-            } else if (register.mbiemri.length < 8) {
+            } else if (register.mbiemri.doesNotInclude()) {
                 // check again
                 return { ...current, mbiemri: "Surname should contain only letters!" }
             } else {
@@ -187,7 +199,7 @@ export default function Register({ page }) {
                     return { ...current, emri: "Enter your name" }
                 else
                     return { ...current, emri: "Stabil" }
-            } else if (register.emri.length < 8)
+            } else if (register.emri.doesNotInclude())
                 return { ...current, emri: ' Name should contain only letters!' }
             else
                 return { ...current, emri: 'Correct form' }
@@ -202,8 +214,11 @@ export default function Register({ page }) {
                     return { ...current, mbiemri: "Enter your surname" }
                 else
                     return { ...current, mbiemri: "Stabil" }
-            } else if (register.mbiemri.length < 8)
+            } else if (register.mbiemri.doesNotInclude()) {
+                console.log(register);
                 return { ...current, mbiemri: ' Surname should contain only letters!' }
+            }
+
             else
                 return { ...current, mbiemri: 'Correct form' }
         })
@@ -247,7 +262,7 @@ export default function Register({ page }) {
             else
                 return { ...current, password: 'Correct form' }
         })
-    
+
     }, [register])
 
     useEffect(() => {
@@ -422,7 +437,7 @@ export default function Register({ page }) {
         ) : error.username === "Enter your username!" ? (
             <p className="wrong-sign-in">{error.username}</p>
         ) : error.username === 'Enter your username' ? (
-            <p className='good-sign-in'>{error.emri}</p>
+            <p className='good-sign-in'>{error.username}</p>
         ) : error.username === "Correct form" ? (
             <p className="good-sign-in">{error.username}</p>
         ) : error.username === ' Correct form' ? (
