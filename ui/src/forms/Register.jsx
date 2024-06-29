@@ -69,6 +69,17 @@ export default function Register({ page }) {
         }
     }, [backendError])
 
+// function for prototype
+
+    String.prototype.doesNotInclude=function(){
+        for(let i =0;i<this.length;i++){
+            if(!"QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm".includes(this[i])){
+                return true
+            }
+        }
+        return false
+    }
+
     // function when user submits
     const registerConfirm = async (e) => {
 
@@ -84,7 +95,7 @@ export default function Register({ page }) {
 
                 return { ...current, emri: 'Enter your name!' }
 
-            } else if (register.emri.length < 8) {
+            } else if (register.emri.doesNotInclude()) {
                 // check again
                 return { ...current, emri: 'Name should contain only letters!' }
 
@@ -100,7 +111,7 @@ export default function Register({ page }) {
             if (!register.mbiemri) {
 
                 return { ...current, mbiemri: 'Enter your surname!' }
-            } else if (register.mbiemri.length < 8) {
+            } else if (register.mbiemri.doesNotInclude()) {
                 // check again
                 return { ...current, mbiemri: "Surname should contain only letters!" }
             } else {
@@ -182,12 +193,12 @@ export default function Register({ page }) {
     const dynamicEmri = useCallback(() => {
         setError((current) => {
 
-            if (!register.emri) {
+            if (!register.emri) { 
                 if (hasUserType())
                     return { ...current, emri: "Enter your name" }
                 else
                     return { ...current, emri: "Stabil" }
-            } else if (register.emri.length < 8)
+            } else if (register.emri.doesNotInclude())
                 return { ...current, emri: ' Name should contain only letters!' }
             else
                 return { ...current, emri: 'Correct form' }
@@ -198,17 +209,21 @@ export default function Register({ page }) {
     const dynamicMbiemri = useCallback(() => {
         setError((current) => {
             if (!register.mbiemri) {
+               
+
                 if (hasUserType())
                     return { ...current, mbiemri: "Enter your surname" }
                 else
                     return { ...current, mbiemri: "Stabil" }
-            } else if (register.mbiemri.length < 8)
+            } else if (register.mbiemri.doesNotInclude()){
                 return { ...current, mbiemri: ' Surname should contain only letters!' }
+            }
+                
             else
                 return { ...current, mbiemri: 'Correct form' }
         })
     }, [register])
-
+ 
     const dynamicUsername = useCallback(() => {
         setError((current) => {
             if (!register.username) {
@@ -405,7 +420,7 @@ export default function Register({ page }) {
         ) : error.mbiemri === 'Enter your surname!' ? (
             <p className='wrong-sign-in'>{error.mbiemri}</p>
         ) : error.mbiemri === 'Enter your surname' ? (
-            <p className='good-sign-in'>{error.emri}</p>
+            <p className='good-sign-in'>{error.mbiemri}</p>
         ) : error.mbiemri === "Surname should contain only letters!" ? (
             <p className='wrong-sign-in'>{error.mbiemri}</p>
         ) : error.mbiemri === " Surname should contain only letters!" ? (
@@ -422,7 +437,7 @@ export default function Register({ page }) {
         ) : error.username === "Enter your username!" ? (
             <p className="wrong-sign-in">{error.username}</p>
         ) : error.username === 'Enter your username' ? (
-            <p className='good-sign-in'>{error.emri}</p>
+            <p className='good-sign-in'>{error.username}</p>
         ) : error.username === "Correct form" ? (
             <p className="good-sign-in">{error.username}</p>
         ) : error.username === ' Correct form' ? (

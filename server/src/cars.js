@@ -45,17 +45,13 @@ const create = (db) => async function(req, res) {
                 .catch(await trx.rollback)
         })
 
-    }
+    } 
 }
 
-const readAll = (db) => (req, res) => {
-    db.select('*').from('cars')
-        .then(cars => {
-            res.json(cars)
-        })
-        .catch(err => {
-            res.status(400).json('wrong request')
-        })
+const readAll = (db) => async (req, res) => {
+  const cars=await db.raw("SELECT * FROM cars ORDER BY RANDOM()")
+  console.log(cars.rows)
+  res.status(200).json(cars.rows)
 };
 
 const read = (db) => (req, res) => {

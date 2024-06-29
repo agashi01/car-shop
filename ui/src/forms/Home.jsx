@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import CarCard from './CarCard'
 import axios from 'axios';
 
@@ -11,15 +11,18 @@ function Home({ guest, username }) {
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
 
+
   useEffect(() => {
-      axios
-          .get('http://localhost:3000/cars')
-          .then(res => {
-              setCars(res.data)
-          })
-          .catch(err => {
-              console.log(err)
-          })
+    axios
+      .get('http://localhost:3000/cars')
+      .then(res => {
+        console.log(res.data)
+        setCars(res.data)
+      })
+      .catch(err => {
+
+        console.log(err)
+      })
   }, [])
 
   const burgerMenuFunc = (e) => {
@@ -78,15 +81,19 @@ function Home({ guest, username }) {
           </div>
         </nav>
       }
-        <ul className='cars-ul'>
-          {cars.map(car=>{
-            return(
-              // eslint-disable-next-line react/jsx-key
-              <CarCard key={car.id} car={car}/>
-            )
-          })}
-        </ul>
-      
+
+      <ul className='cars-ul'>
+        {cars.map(car => {
+          return (
+            // eslint-disable-next-line react/jsx-key
+            <div className="cars-scroll">
+              <CarCard key={car.id} car={car} />
+
+            </div>
+          )
+        })}
+      </ul>
+
 
     </div>
   )
