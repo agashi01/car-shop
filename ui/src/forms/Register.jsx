@@ -69,16 +69,15 @@ export default function Register({ page }) {
         }
     }, [backendError])
 
-    // prototype fundtion
+// function for prototype
 
-    String.prototype.doesNotInclude = function () {
-        for (let i = 0; i < this.length; i++) {
-            console.log(this[i])
-            if (!"qwertyuiopasdfghjklzxcvbnm".includes(this[i])) {
-                return true;
+    String.prototype.doesNotInclude=function(){
+        for(let i =0;i<this.length;i++){
+            if(!"QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm".includes(this[i])){
+                return true
             }
         }
-        return false;
+        return false
     }
 
     // function when user submits
@@ -194,7 +193,7 @@ export default function Register({ page }) {
     const dynamicEmri = useCallback(() => {
         setError((current) => {
 
-            if (!register.emri) {
+            if (!register.emri) { 
                 if (hasUserType())
                     return { ...current, emri: "Enter your name" }
                 else
@@ -210,20 +209,21 @@ export default function Register({ page }) {
     const dynamicMbiemri = useCallback(() => {
         setError((current) => {
             if (!register.mbiemri) {
+               
+
                 if (hasUserType())
                     return { ...current, mbiemri: "Enter your surname" }
                 else
                     return { ...current, mbiemri: "Stabil" }
-            } else if (register.mbiemri.doesNotInclude()) {
-                console.log(register);
+            } else if (register.mbiemri.doesNotInclude()){
                 return { ...current, mbiemri: ' Surname should contain only letters!' }
             }
-
+                
             else
                 return { ...current, mbiemri: 'Correct form' }
         })
     }, [register])
-
+ 
     const dynamicUsername = useCallback(() => {
         setError((current) => {
             if (!register.username) {
@@ -420,7 +420,7 @@ export default function Register({ page }) {
         ) : error.mbiemri === 'Enter your surname!' ? (
             <p className='wrong-sign-in'>{error.mbiemri}</p>
         ) : error.mbiemri === 'Enter your surname' ? (
-            <p className='good-sign-in'>{error.emri}</p>
+            <p className='good-sign-in'>{error.mbiemri}</p>
         ) : error.mbiemri === "Surname should contain only letters!" ? (
             <p className='wrong-sign-in'>{error.mbiemri}</p>
         ) : error.mbiemri === " Surname should contain only letters!" ? (

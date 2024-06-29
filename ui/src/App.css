@@ -13,6 +13,21 @@
 
 /* Home */
 
+.cars-scroll {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px
+}
+
+.carCard {
+  background-color: rgb(189, 195, 199);
+  width: 500px;
+  height: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+
+}
+
 .account {
   margin-left: 620px;
   display: flex;
@@ -191,13 +206,13 @@ nav.home {
 }
 
 
-.help li:hover{
-  background-color: #474747 ;
+.help li:hover {
+  background-color: #474747;
 }
 
 
-.help li:active{
-  background-color: #3f3f3f ;
+.help li:active {
+  background-color: #3f3f3f;
 }
 
 .help a {
