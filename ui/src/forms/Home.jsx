@@ -85,6 +85,7 @@ function Home({ guest, username }) {
       <ul className='cars-ul'>
         {cars.map(car => {
           return (
+            // eslint-disable-next-line react/jsx-key
             <li>
               <CarCard key={car.id} car={car} />
             </li>
@@ -96,7 +97,7 @@ function Home({ guest, username }) {
     </div>
   )
 }
-{
 
-}
+
+
 export default Home

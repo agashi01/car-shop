@@ -1,11 +1,16 @@
+/* eslint-disable react/prop-types */
 
-import { React } from 'react';
+import { React, useState } from 'react';
 
 // import axios from 'axios'
 
 
 // eslint-disable-next-line react/prop-types
-export default function CarCard( {car} ) {
+export default function CarCard({ car }) {
+
+    const [flip, setFlip] = useState(false)
+    const carObj = Object.keys(car)
+
 
     const modelUpdate = (s) => {
 
@@ -32,21 +37,36 @@ export default function CarCard( {car} ) {
             num++
         }
         // console.log(final)   
-        return final+" km"
+        return final + " km"
     }
 
     return (
         // eslint-disable-next-line react/prop-types
-        <div className='car-card'>
-            <div className="card-png"></div>
-            <div className="marka">{car.make}</div>
-            <div className="card-features">
-                <div className="car-model">{modelUpdate(car.model)}</div>
-                <div className="car-mileage">{mileageUpdate(car.mileage)}</div>
+        <div onClick={() => setFlip(!flip)}
+            className={flip ? 'car-card flip' : "car-card"}>
+            <div className="front">
+                <div className="card-png"></div>
+                <div className="marka">{car.make}</div>
+                <div className="card-features">
+                    <div className="car-model">{modelUpdate(car.model)}</div>
+                    <div className="car-mileage">{mileageUpdate(car.mileage)}</div>
+                </div>
+            </div>
+            <div className="back">
+
+                <div>{carObj[0]}:{car.make}</div>
+                <div>{carObj[1]}:{car.model}</div>
+                <div>{carObj[2]}:{car.mileage}</div>
+                <div>{carObj[3]}:{car.transmission}</div>
+                <div>{carObj[4]}:{car.fuel_type}</div>
+                <div>{carObj[5]}:{car.vehicle_type}</div>
+
+
+
             </div>
 
 
-        </div>
+        </div >
 
 
 

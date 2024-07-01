@@ -10,14 +10,22 @@
   src: url('./other/Fira_Code/FiraCode-VariableFont_wght.ttf') format('truetype');
 }
 
+/* car card */
 
-/* Home */
+
+
 .card-png {
-  height: 250px
+  height: 240px;
+  width: auto;
 }
 
 .marka {
+  padding: 10px;
   border: 1px solid #ccc;
+}
+
+.details {
+  display: inline-block;
 }
 
 .card-features {
@@ -25,36 +33,77 @@
   display: flex;
   justify-content: start;
 
-  border: 1px solid #ccc;
-}
-
-
-
-.cars-ul {
-  margin-top:150px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(300px, 1fr));
-  gap: 20px
+  border: 1px 0 0 0 solid #ccc;
 }
 
 .car-card {
+  transform-style: preserve-3d;
+  position: relative;
+  height: 350px;
   display: grid;
   color: black;
   background-color: rgb(189, 195, 199);
+  box-shadow: 0 0 2px 5px rgba(0, 0, 0, 0.3);
   /* grid-row:1fr;
   grid-column: 1.5fr;  */
   border: 1px solid #ccc;
+  /* backface-visibility: hidden; */
+  perspective: 1000px;
+  transform: rotateY(var(--rotate-y))
+}
+
+.car-card.flip {
+  --rotate-y: 180deg;
+}
+
+.front,
+.back {
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transition: 0.2s;
+  text-align: center;
+  position: absolute;
+
 
 }
 
+.back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotateY(180deg);
+}
+
+.car-card:hover {
+  transition: 0.2s ease-in-out;
+  background-color: rgb(178, 181, 184);
+}
+
+.car-card:active {
+  background-color: rgb(156, 158, 160);
+}
+
 .car-model {
-  width: 100%;
+  width: 50%;
   text-align: left;
 }
 
 .car-mileage {
   width: 50%;
   text-align: right;
+}
+
+/* stop */
+
+/* Home */
+
+
+.cars-ul {
+  margin-top: 150px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(350px, 1fr));
+  gap: 20px
 }
 
 .account {

@@ -49,9 +49,9 @@ const create = (db) => async function (req, res) {
 }
 
 const readAll = (db) => async (req, res) => {
-    const cars = await db.raw("SELECT * FROM cars ORDER BY RANDOM()")
-    console.log(cars.rows)
-    res.status(200).json(cars.rows)
+    const cars = await db.select("*").from("cars").join('dealers', 'cars.dealer_id', 'dealers.id')
+    
+    res.status(200).json(cars)
 };
 
 const read = (db) => (req, res) => {
