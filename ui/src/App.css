@@ -12,20 +12,49 @@
 
 
 /* Home */
+.card-png {
+  height: 250px
+}
 
-.cars-scroll {
+.marka {
+  border: 1px solid #ccc;
+}
+
+.card-features {
+  padding: 20px;
+  display: flex;
+  justify-content: start;
+
+  border: 1px solid #ccc;
+}
+
+
+
+.cars-ul {
+  margin-top:150px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, minmax(300px, 1fr));
   gap: 20px
 }
 
-.carCard {
+.car-card {
+  display: grid;
+  color: black;
   background-color: rgb(189, 195, 199);
-  width: 500px;
-  height: 300px;
-  padding: 20px;
+  /* grid-row:1fr;
+  grid-column: 1.5fr;  */
   border: 1px solid #ccc;
 
+}
+
+.car-model {
+  width: 100%;
+  text-align: left;
+}
+
+.car-mileage {
+  width: 50%;
+  text-align: right;
 }
 
 .account {

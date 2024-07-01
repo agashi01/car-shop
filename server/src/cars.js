@@ -1,4 +1,4 @@
-const create = (db) => async function(req, res) {
+const create = (db) => async function (req, res) {
     const { make, model, mileage, color, transmission, fuel_type, vehicle_type, dealer_id, owner_id } = req.body;
     db.on('query', function (queryData) {
         console.log(queryData);
@@ -45,13 +45,13 @@ const create = (db) => async function(req, res) {
                 .catch(await trx.rollback)
         })
 
-    } 
+    }
 }
 
 const readAll = (db) => async (req, res) => {
-  const cars=await db.raw("SELECT * FROM cars ORDER BY RANDOM()")
-  console.log(cars.rows)
-  res.status(200).json(cars.rows)
+    const cars = await db.raw("SELECT * FROM cars ORDER BY RANDOM()")
+    console.log(cars.rows)
+    res.status(200).json(cars.rows)
 };
 
 const read = (db) => (req, res) => {

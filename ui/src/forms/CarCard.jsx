@@ -26,26 +26,27 @@ export default function CarCard( {car} ) {
         for (let i = 0; i < string.length; i++) {
             final += string[i]
 
-            if (num % 3 === 0 && num != 0 && !i + 1 === string.length) {
+            if (num % 3 === 0 && num != 0 && !(i + 1 === string.length)) {
                 final += ","
             }
             num++
         }
-        return final
+        // console.log(final)   
+        return final+" km"
     }
 
     return (
         // eslint-disable-next-line react/prop-types
-        <li className='carCard'>
+        <div className='car-card'>
             <div className="card-png"></div>
-            <div>{car.make}</div>
+            <div className="marka">{car.make}</div>
             <div className="card-features">
-                <div>{modelUpdate(car.model)}</div>
-                <div>{mileageUpdate(car.mileage)}</div>
+                <div className="car-model">{modelUpdate(car.model)}</div>
+                <div className="car-mileage">{mileageUpdate(car.mileage)}</div>
             </div>
 
 
-        </li>
+        </div>
 
 
 
