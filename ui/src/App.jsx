@@ -13,7 +13,7 @@ import './App.css';
 
 export default function App() {
 
-  const [page, setPage] = useState('signIn');
+  const [page, setPage] = useState('home');
   const [guest, setGuest] = useState(true);
   const [username, setUsername] = useState('')
 

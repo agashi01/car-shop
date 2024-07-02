@@ -54,12 +54,14 @@ export default function CarCard({ car }) {
             </div>
             <div className="back">
 
-                <div>{carObj[0]}:{car.make}</div>
-                <div>{carObj[1]}:{car.model}</div>
-                <div>{carObj[2]}:{car.mileage}</div>
-                <div>{carObj[3]}:{car.transmission}</div>
-                <div>{carObj[4]}:{car.fuel_type}</div>
-                <div>{carObj[5]}:{car.vehicle_type}</div>
+                <div>{carObj[3]}:{car.make}</div>
+                <div>{carObj[4]}:{car.model}</div>
+                <div>{carObj[5]}:{car.mileage}</div>
+                <div>{carObj[8]}:{car.fuel_type}</div>
+                <div>{carObj[9]}:{car.vehicle_type}</div>
+                <div>{carObj[7]}:{car.transmission}</div>
+                <div>{carObj[6]}:{car.color}</div>
+
 
 
 
