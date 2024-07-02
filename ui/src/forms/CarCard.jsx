@@ -1,13 +1,15 @@
+/* eslint-disable react/no-unknown-property */
 /* eslint-disable react/prop-types */
 
 import { React, useState } from 'react';
 
-// import axios from 'axios'
+import axios from 'axios'
 
 
 // eslint-disable-next-line react/prop-types
-export default function CarCard({ car }) {
+export default function CarCard({ isit, guest, car }) {
 
+    const[purchased,setPurchased]=useState(false)
     const [flip, setFlip] = useState(false)
     const carObj = Object.keys(car)
 
@@ -20,6 +22,23 @@ export default function CarCard({ car }) {
             return s + "-Class"
         }
         return s;
+
+    }
+
+    const transmission=(e)=>{
+        if(e=="automatic_transmission")
+            return "automatic"
+        return e
+    }   
+
+    const purchasing=(id)=>{
+        if(guest){
+            isit(true)
+            return
+        }
+        
+
+        return
 
     }
 
@@ -42,6 +61,7 @@ export default function CarCard({ car }) {
 
     return (
         // eslint-disable-next-line react/prop-types
+        
         <div onClick={() => setFlip(!flip)}
             className={flip ? 'car-card flip' : "car-card"}>
             <div className="front">
@@ -54,13 +74,14 @@ export default function CarCard({ car }) {
             </div>
             <div className="back">
 
-                <div>{carObj[3]}:{car.make}</div>
-                <div>{carObj[4]}:{car.model}</div>
-                <div>{carObj[5]}:{car.mileage}</div>
-                <div>{carObj[8]}:{car.fuel_type}</div>
-                <div>{carObj[9]}:{car.vehicle_type}</div>
-                <div>{carObj[7]}:{car.transmission}</div>
-                <div>{carObj[6]}:{car.color}</div>
+                <div className="specification" >{carObj[3]}: {car.make}</div>
+                <div className="specification" >{carObj[4]}: {modelUpdate(car.model)}</div>
+                <div className="specification" >{carObj[5]}: {mileageUpdate(car.mileage)}</div>
+                <div className="specification" >{carObj[8]}: {car.fuel_type}</div>
+                <div className="specification" >{carObj[9]}: {car.vehicle_type}</div>
+                <div className="specification" >{carObj[7]}: {transmission(car.transmission)}</div>
+                <div className="specification" >{carObj[6]}: {car.color}</div>
+                <button className='purchase' ocClick={purchasing(car.id)} type='btn' >Purchase</button>
 
 
 

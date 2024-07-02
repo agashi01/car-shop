@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
-export default function Register({ page }) {
+export default function Register({ logo, page }) {
 
     const username = useRef(null)
     const emri = useRef(null);
@@ -29,6 +29,10 @@ export default function Register({ page }) {
         ref.focus()
     }
 
+    
+  useEffect(()=>{
+    logo("logo")
+  },[])
 
     useEffect(() => {
         if (backendError) {

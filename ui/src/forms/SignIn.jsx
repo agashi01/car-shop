@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
-export default function SignInForm({ page, setGuest, username }) {
+export default function SignInForm({ logo3,logo, page, setGuest, username }) {
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
     const [error, setError] = useState({ email: '', password: '' });
@@ -20,6 +20,13 @@ export default function SignInForm({ page, setGuest, username }) {
     const arrowDown = (ref) => {
         ref.focus();
     }
+
+    
+  useEffect(()=>{
+   
+    logo("logo")
+    console.log(logo3)
+  },[])
 
     useEffect(() => {
         if (backendError) {
@@ -101,7 +108,7 @@ export default function SignInForm({ page, setGuest, username }) {
             setBackendError(true)
         }
 
-       
+
 
     }, [signInConfirm])
 
@@ -131,7 +138,7 @@ export default function SignInForm({ page, setGuest, username }) {
         });
     }, [signIn.password]);
 
-    
+
 
     useEffect(() => {
         dynamicEmail()

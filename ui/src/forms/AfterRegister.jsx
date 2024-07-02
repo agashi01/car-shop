@@ -10,7 +10,7 @@ export default function AfterRegister({page}) {
             </div>
             <div className='can-signIn'>
                 <p>You can sign in now</p>
-                <button type='btn' className='btn-after' onClick={e=>{
+                <button type='btn' className='btn2' onClick={e=>{
                     e.preventDefault()
                     page('signIn')}}>Ok</button>
 

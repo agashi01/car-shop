@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import CarCard from './CarCard'
 import axios from 'axios';
+import Logo from '../Logo';
 
 
 // eslint-disable-next-line react/prop-types
-function Home({ guest, username }) {
+function Home({ page, logo, guest, username }) {
 
+  const [isit, setIsit] = useState(false)
   const [isClicked, setIsClicked] = useState(false);
   const [burgerMenu, setBurgerMenu] = useState("burger unclicked")
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
 
+
+
+  useEffect(() => {
+    logo("logo-home")
+
+  }, [])
 
   useEffect(() => {
     axios
@@ -42,6 +50,14 @@ function Home({ guest, username }) {
 
   return (
     <div>
+      {isit && <div className="isit">
+        <p className='isit-first'>You need to sign in before purchasing!</p>
+        <p className="isit-second">Go back to sign in</p>
+        <button type='btn' className='btn2' onClick={e => {
+          e.preventDefault()
+          page('signIn')
+        }}>Ok</button>
+      </div>}
       {guest ?
         <nav className="home">
           <div className="welcome-home">
@@ -52,6 +68,9 @@ function Home({ guest, username }) {
         </nav>
         :
         <nav className="home">
+          <div className="home-logo">
+            < Logo />
+          </div>
           <div className="welcome-home">
             <h2>The best car shop</h2>
           </div>
@@ -87,7 +106,7 @@ function Home({ guest, username }) {
           return (
             // eslint-disable-next-line react/jsx-key
             <li>
-              <CarCard key={car.id} car={car} />
+              <CarCard isit={setIsit} guest={guest} key={car.id} car={car} />
             </li>
           )
         })}

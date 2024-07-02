@@ -37,6 +37,7 @@
 }
 
 .car-card {
+  cursor:pointer;
   transform-style: preserve-3d;
   position: relative;
   height: 350px;
@@ -56,6 +57,7 @@
   --rotate-y: 180deg;
 }
 
+
 .front,
 .back {
   width: 100%;
@@ -68,12 +70,38 @@
 
 }
 
+.specification{
+ cursor:text;
+}
+
+.purchase {
+  outline:none;
+  width: 50%;
+  background-color: hsl(200, 100%, 70%)
+}
+
+.purchase:hover {
+  transform: translateY(-3px);
+  transition: 0.2s;
+  border: none;
+  background-color: hsl(200, 72%, 60%)
+}
+
+.purchase:focus{
+  outline: none;
+}
+
+.purchase:active {
+  outline: none;
+}
+
+
 .back {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: start;
-  right:20px;
+  right: 20px;
   transform: rotateY(180deg);
 }
 
@@ -100,9 +128,48 @@
 
 /* Home */
 
+.isit-first{
+margin-top: 40px;
+}
+
+.isit-second{
+  margin-top: 20px;
+
+}
+.btn2{
+  width:100px;
+  background: hsl(200, 100%, 50%, 0.1);
+  border: 1px solid hsl(200, 100%, 50%);
+  color: hsl(200, 100%, 50%);
+  padding: 0.25em 0.5em;
+  border-radius: 0.25em;
+  cursor: pointer;
+  outline: none;
+  margin-top:20px;
+}
+
+.btn2:hover,
+.btn2:focus-visible {
+  transform: translateY(-2px);
+  background: hsl(200, 100%, 50%, 0.2);
+}
+
+.isit{
+  border-radius: 2%;
+  background-color: #3f3f3f;
+  height:200px;
+  width:500px;
+  right:700px;
+  top:350px;
+  position:absolute;
+  display: inline-block;
+ 
+  z-index: 1000;
+}
 
 .cars-ul {
   margin-top: 150px;
+  margin-bottom: 150px;
   display: grid;
   grid-template-columns: repeat(3, minmax(350px, 1fr));
   gap: 20px
@@ -132,7 +199,7 @@ ul {
   display: flex;
   justify-content: flex-start;
   margin-left: 30px;
-  margin-right: 550px;
+  margin-right: 470px;
 }
 
 @media (max-width:1900px) {
@@ -301,8 +368,7 @@ nav.home {
 
 /* stop */
 
-/* AfterRegister */
-.can-signIn {
+/* AfterRegister */In {
   display: inline-block;
 }
 
@@ -407,6 +473,7 @@ btn .prezantimi-register {
   padding: 8px;
 }
 
+
 .box button {
   background-color: rgb(189, 195, 199);
   color: #333;
@@ -427,6 +494,10 @@ input {
   border-radius: 20px;
 }
 
+.onclick-logo{
+  border-radius: 50%;
+}
+
 .logo-container {
   display: flex;
   justify-content: center;
@@ -440,13 +511,29 @@ input {
 }
 
 .logo {
-
+  cursor:pointer;
   /* Maintains the image's aspect ratio */
   border-radius: 50%;
   /* Creates a circular border for a circular logo (optional) */
   box-shadow: 0px 4px 10px;
   color: hsl(200, 100%, 70%);
   /* Adds a subtle shadow (optional) */
+}
+
+.logo-home{
+  width:60px;
+  height:60px;
+  border-radius: 50%;
+  /* Creates a circular border for a circular logo (optional) */
+  box-shadow: 0px 4px 10px;
+  color: hsl(200, 100%, 70%);
+}
+
+.home-logo{
+  margin-left:30px;
+  margin-bottom: 10px;
+  width:50px;
+  height:50px;
 }
 
 /* If you want to add hover effect or animation */

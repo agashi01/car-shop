@@ -13,9 +13,12 @@ import './App.css';
 
 export default function App() {
 
-  const [page, setPage] = useState('home');
+  const [logo, setLogo] = useState("logo");
+  const [page, setPage] = useState('signIn');
   const [guest, setGuest] = useState(true);
   const [username, setUsername] = useState('')
+
+
 
   const changePage = (text) => {
     setPage(text)
@@ -25,10 +28,13 @@ export default function App() {
     <>
       {page !== 'home' ?
         <div>
-          <Logo />
+          <div className="onclick-logo" onClick={() => setPage("home")}>
+            <Logo logo={logo} />
+          </div>
+
           <div className='box'>
-            {page === 'signIn' ? <SignInForm setGuest={setGuest} username={setUsername} page={changePage} /> :
-              page === 'register' ? <Register page={changePage} /> :
+            {page === 'signIn' ? <SignInForm logo3={logo} logo={setLogo} setGuest={setGuest} username={setUsername} page={changePage} /> :
+              page === 'register' ? <Register logo={setLogo} page={changePage} /> :
                 page === 'afterRegister' ? <AfterRegister page={changePage} /> : null}
             {page === 'register' ? (<div className='register'>
               <p className='text' style={{
@@ -47,8 +53,8 @@ export default function App() {
           </div>
         </div>
 
-        : <Home guest={guest} username={username} />}
-      {page === 'home' && <Logo />}
+        : <Home page={setPage} logo3={Logo} logo={setLogo} guest={guest} username={username} />}
+      {/* {page === 'home' && <Logo />} */}
     </>
   )
 }
