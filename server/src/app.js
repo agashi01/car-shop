@@ -31,7 +31,7 @@ app.post('/log-in', (req, res) => auth.logIn(db)(req, res));
 app.post('/cars', (req, res) => cars.createCar(db)(req, res))
 app.get('/cars', (req, res) => cars.readAll(db)(req, res))
 app.get('/cars/:id', (req, res) => cars.readCar(db)(req, res))
-app.put('/cars/:id', (req, res) => cars.updateCar(db)(req, res))
+app.put('/cars', (req, res) => cars.updateCar(db)(req, res))
 app.delete('/cars/:id', (req, res) => cars.deleteCar(db)(req, res))
 app.post('/dealers', (req, res) => dealers.createDealer(db)(req, res))
 app.get('/dealers', (req, res) => dealers.readAll(db)(req, res))
@@ -42,6 +42,7 @@ app.delete('/dealers/:id', (req, res) => dealers.deleteDealer(db)(req, res))
 
 
 app.use((err, req, res, next) => {
+  console.log('use')
   const errStatus = err.statusCode || 500;
   const errMsg = err.message || 'Something went wrong';
   console.log('hi')

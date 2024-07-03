@@ -104,7 +104,6 @@ const logIn = (db) => async (req, res) => {
                                     .where({ owner_id: user.id })
 
                                     .then((cars) => {
-                                        console.log('hi')
                                         console.log({...cars,...user,username:userInfo[0].username})
                                         res.json({ ...cars,...user,username:userInfo[0].username})
                                     }).catch(err => {

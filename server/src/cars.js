@@ -50,7 +50,6 @@ const create = (db) => async function (req, res) {
 
 const readAll = (db) => async (req, res) => {
     const cars = await db.select("*").from("cars").join('dealers', 'cars.dealer_id', 'dealers.id')
-    
     res.status(200).json(cars)
 };
 
@@ -74,7 +73,17 @@ const read = (db) => (req, res) => {
 }
 
 const update = (db) => (req, res) => {
-    
+    console.log('blud')
+    const {id,carId}=req.body
+    db("cars")
+    .update("owner_id",id)
+    .where("id",carId)
+    .then(()=>{
+        res.status(200).json("success")
+    })
+    .catch((err)=>{
+        console.log(err)
+    })
 }
 
 

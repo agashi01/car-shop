@@ -7,7 +7,7 @@ import axios from 'axios'
 
 
 // eslint-disable-next-line react/prop-types
-export default function CarCard({ owner_id, id, isit, guest, car }) {
+export default function CarCard({ id, isit, guest, car }) {
 
     const[purchased,setPurchased]=useState(false)
     const [flip, setFlip] = useState(false)
@@ -46,6 +46,7 @@ export default function CarCard({ owner_id, id, isit, guest, car }) {
         axios.put("http://localhost:3000/cars",{id,carId})
         .then((res)=>{
             setPurchased(true);
+            console.log(res.response?.data)
         })
         .catch(err=>console.log(err))
 
@@ -90,7 +91,7 @@ export default function CarCard({ owner_id, id, isit, guest, car }) {
                 <div className="specification" >{carObj[9]}: {car.vehicle_type}</div>
                 <div className="specification" >{carObj[7]}: {transmission(car.transmission)}</div>
                 <div className="specification" >{carObj[6]}: {car.color}</div>
-                {(purchased || owner_id) ? <div className="purchased">Purchased</div>:
+                {(purchased || car.owner_id) ? <button className="purchased">Purchased</button>:
                 <button className='purchase' onClick={purchasing(car.id)} type='btn' >Purchase</button>}
 
 

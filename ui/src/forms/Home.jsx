@@ -106,7 +106,7 @@ function Home({ id, page, logo, guest, username }) {
           return (
             // eslint-disable-next-line react/jsx-key
             <li>
-              <CarCard id={id} isit={setIsit} owner_id={car.owner_id} guest={guest} key={car.id} car={car} />
+              <CarCard id={id} isit={setIsit}  guest={guest} key={car.id} car={car} />
             </li>
           )
         })}
