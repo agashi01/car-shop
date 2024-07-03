@@ -5,7 +5,7 @@ import Logo from '../Logo';
 
 
 // eslint-disable-next-line react/prop-types
-function Home({ page, logo, guest, username }) {
+function Home({ id, page, logo, guest, username }) {
 
   const [isit, setIsit] = useState(false)
   const [isClicked, setIsClicked] = useState(false);
@@ -49,7 +49,7 @@ function Home({ page, logo, guest, username }) {
 
 
   return (
-    <div>
+    <div className="complet">
       {isit && <div className="isit">
         <p className='isit-first'>You need to sign in before purchasing!</p>
         <p className="isit-second">Go back to sign in</p>
@@ -106,7 +106,7 @@ function Home({ page, logo, guest, username }) {
           return (
             // eslint-disable-next-line react/jsx-key
             <li>
-              <CarCard isit={setIsit} guest={guest} key={car.id} car={car} />
+              <CarCard id={id} isit={setIsit} owner_id={car.owner_id} guest={guest} key={car.id} car={car} />
             </li>
           )
         })}

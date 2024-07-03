@@ -13,6 +13,7 @@ import './App.css';
 
 export default function App() {
 
+  const [id,setId]=useState(null)
   const [logo, setLogo] = useState("logo");
   const [page, setPage] = useState('signIn');
   const [guest, setGuest] = useState(true);
@@ -33,7 +34,7 @@ export default function App() {
           </div>
 
           <div className='box'>
-            {page === 'signIn' ? <SignInForm logo3={logo} logo={setLogo} setGuest={setGuest} username={setUsername} page={changePage} /> :
+            {page === 'signIn' ? <SignInForm id={setId} logo3={logo} logo={setLogo} setGuest={setGuest} username={setUsername} page={changePage} /> :
               page === 'register' ? <Register logo={setLogo} page={changePage} /> :
                 page === 'afterRegister' ? <AfterRegister page={changePage} /> : null}
             {page === 'register' ? (<div className='register'>
@@ -53,7 +54,7 @@ export default function App() {
           </div>
         </div>
 
-        : <Home page={setPage} logo3={Logo} logo={setLogo} guest={guest} username={username} />}
+        : <Home id ={id} page={setPage} logo3={Logo} logo={setLogo} guest={guest} username={username} />}
       {/* {page === 'home' && <Logo />} */}
     </>
   )

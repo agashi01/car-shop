@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable react/prop-types */
 
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 
 import axios from 'axios'
 
 
 // eslint-disable-next-line react/prop-types
-export default function CarCard({ isit, guest, car }) {
+export default function CarCard({ owner_id, id, isit, guest, car }) {
 
     const[purchased,setPurchased]=useState(false)
     const [flip, setFlip] = useState(false)
@@ -26,19 +26,28 @@ export default function CarCard({ isit, guest, car }) {
     }
 
     const transmission=(e)=>{
-        if(e=="automatic_transmission")
+        if(e==="automatic_transmission")
             return "automatic"
         return e
     }   
 
-    const purchasing=(id)=>{
+    useEffect(()=>{
+
+    },[])
+
+    const purchasing=(carId)=>(e)=>{
+
+        e.stopPropagation()
         if(guest){
             isit(true)
             return
         }
         
-
-        return
+        axios.put("http://localhost:3000/cars",{id,carId})
+        .then((res)=>{
+            setPurchased(true);
+        })
+        .catch(err=>console.log(err))
 
     }
 
@@ -81,7 +90,8 @@ export default function CarCard({ isit, guest, car }) {
                 <div className="specification" >{carObj[9]}: {car.vehicle_type}</div>
                 <div className="specification" >{carObj[7]}: {transmission(car.transmission)}</div>
                 <div className="specification" >{carObj[6]}: {car.color}</div>
-                <button className='purchase' ocClick={purchasing(car.id)} type='btn' >Purchase</button>
+                {(purchased || owner_id) ? <div className="purchased">Purchased</div>:
+                <button className='purchase' onClick={purchasing(car.id)} type='btn' >Purchase</button>}
 
 
 

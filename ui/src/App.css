@@ -37,7 +37,7 @@
 }
 
 .car-card {
-  cursor:pointer;
+  cursor: pointer;
   transform-style: preserve-3d;
   position: relative;
   height: 350px;
@@ -70,29 +70,37 @@
 
 }
 
-.specification{
- cursor:text;
+.specification {
+  cursor: text;
+}
+
+.purchased {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .purchase {
-  outline:none;
+  outline: none;
   width: 50%;
   background-color: hsl(200, 100%, 70%)
 }
 
 .purchase:hover {
   transform: translateY(-3px);
-  transition: 0.2s;
+  /* transition: 0.1s`; */
   border: none;
-  background-color: hsl(200, 72%, 60%)
+  background-color: hsl(200, 86%, 55%)
 }
 
-.purchase:focus{
+.purchase:focus {
   outline: none;
+
 }
 
 .purchase:active {
   outline: none;
+  background-color: hsl(200, 72%, 41%)
 }
 
 
@@ -128,16 +136,23 @@
 
 /* Home */
 
-.isit-first{
-margin-top: 40px;
+.complet {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.isit-second{
+.isit-first {
+  margin-top: 40px;
+}
+
+.isit-second {
   margin-top: 20px;
 
 }
-.btn2{
-  width:100px;
+
+.btn2 {
+  width: 100px;
   background: hsl(200, 100%, 50%, 0.1);
   border: 1px solid hsl(200, 100%, 50%);
   color: hsl(200, 100%, 50%);
@@ -145,7 +160,7 @@ margin-top: 40px;
   border-radius: 0.25em;
   cursor: pointer;
   outline: none;
-  margin-top:20px;
+  margin-top: 20px;
 }
 
 .btn2:hover,
@@ -154,16 +169,16 @@ margin-top: 40px;
   background: hsl(200, 100%, 50%, 0.2);
 }
 
-.isit{
+.isit {
   border-radius: 2%;
   background-color: #3f3f3f;
-  height:200px;
-  width:500px;
-  right:700px;
-  top:350px;
-  position:absolute;
+  height: 200px;
+  width: 500px;
+  right: 700px;
+  top: 350px;
+  position: fixed;
   display: inline-block;
- 
+
   z-index: 1000;
 }
 
@@ -368,7 +383,8 @@ nav.home {
 
 /* stop */
 
-/* AfterRegister */In {
+/* AfterRegister */
+In {
   display: inline-block;
 }
 
@@ -494,7 +510,7 @@ input {
   border-radius: 20px;
 }
 
-.onclick-logo{
+.onclick-logo {
   border-radius: 50%;
 }
 
@@ -511,7 +527,7 @@ input {
 }
 
 .logo {
-  cursor:pointer;
+  cursor: pointer;
   /* Maintains the image's aspect ratio */
   border-radius: 50%;
   /* Creates a circular border for a circular logo (optional) */
@@ -520,20 +536,20 @@ input {
   /* Adds a subtle shadow (optional) */
 }
 
-.logo-home{
-  width:60px;
-  height:60px;
+.logo-home {
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   /* Creates a circular border for a circular logo (optional) */
   box-shadow: 0px 4px 10px;
   color: hsl(200, 100%, 70%);
 }
 
-.home-logo{
-  margin-left:30px;
+.home-logo {
+  margin-left: 30px;
   margin-bottom: 10px;
-  width:50px;
-  height:50px;
+  width: 50px;
+  height: 50px;
 }
 
 /* If you want to add hover effect or animation */

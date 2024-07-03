@@ -3,7 +3,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
-export default function SignInForm({ logo3,logo, page, setGuest, username }) {
+export default function SignInForm({ id, logo3,logo, page, setGuest, username }) {
+
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
     const [error, setError] = useState({ email: '', password: '' });
@@ -37,10 +38,11 @@ export default function SignInForm({ logo3,logo, page, setGuest, username }) {
                 })
                 .then(res => {
                     setBackendError(false)
-                    page('home')
                     username(res.data?.username)
                     setGuest(false)
+                    page("home")
                     setError({ email: 'stabil', password: 'stabil' })
+                    id(res.data?.id)
                 })
                 .catch((err) => {
                     if (err.response?.data === "wrong password") {

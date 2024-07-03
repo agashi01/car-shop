@@ -74,31 +74,9 @@ const read = (db) => (req, res) => {
 }
 
 const update = (db) => (req, res) => {
-    const { id } = req.params
-    const { mileage: client_mileage } = req.body
-    const clientId = id
-
-    if (!id) {
-        res.status(403).json('id is missing')
-    }
-
-    db('cars')
-        .where({ id: clientId })
-        .update({
-            mileage: client_mileage,
-            date_of_last_update: new Date().toISOString()
-
-        })
-        .returning('*')
-        .then(updated_row => {
-            res.json(uptaded_row[0])
-        })
-        .catch(err => {
-            res.status(404).json('something went wrong or wrong id')
-        })
-
-
+    
 }
+
 
 const delet = (db) => (req, res) => {
     const { id: clientId } = req.params
