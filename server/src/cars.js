@@ -95,19 +95,34 @@ const read = (db) => (req, res) => {
 
 }
 
-const update = (db) => (req, res) => {
-    console.log('blud')
-    const { id, carId } = req.body
-    db("cars")
-        .update("owner_id", id)
-        .where("id", carId)
-        .then(() => {
-            res.status(200).json("success")
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-}
+const update = (db) => async (req, res) => {
+    
+    const { id, carId } = req.body;
+    console.log("id:", id, "carId:", carId);
+
+    try {
+        // Check if a car with carId exists
+        const car = await db("cars").select("*").where("id", carId).first();
+
+        if (!car) {
+            return res.status(404).json({ error: 'Car not found' });
+        }
+
+        // Perform the update
+        const result = await db("cars")
+            .where("id", carId)
+            .update("owner_id", id);
+
+        if (result) {
+            res.status(200).json("success");
+        } else {
+            res.status(400).json({ error: 'Update failed' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'An error occurred while updating the owner_id' });
+    }
+};
 
 
 const delet = (db) => (req, res) => {

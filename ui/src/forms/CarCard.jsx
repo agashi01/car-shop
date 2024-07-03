@@ -36,6 +36,7 @@ export default function CarCard({ id, isit, guest, car }) {
     },[])
 
     const purchasing=(carId)=>(e)=>{
+        console.log(id)
 
         e.stopPropagation()
         if(guest){
@@ -46,7 +47,7 @@ export default function CarCard({ id, isit, guest, car }) {
         axios.put("http://localhost:3000/cars",{id,carId})
         .then((res)=>{
             setPurchased(true);
-            console.log(res.response?.data)
+            console.log(res)
         })
         .catch(err=>console.log(err))
 

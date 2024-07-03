@@ -54,7 +54,7 @@ const signUp = (db) => async (req, res) => {
                         hash
                     }).returning('*')
                         .then(([user2]) => {
-                            return res.json({...user[0],username:user2.username})
+                            return res.json({...user[0],username:user2.username,id:user2.id})
                         }).catch(err => {
                             res.status(500).json('username is already in use')
                         })

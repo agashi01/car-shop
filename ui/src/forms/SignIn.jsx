@@ -43,6 +43,7 @@ export default function SignInForm({ id, logo3,logo, page, setGuest, username })
                     page("home")
                     setError({ email: 'stabil', password: 'stabil' })
                     id(res.data?.id)
+                    console.log(res.data.id)
                 })
                 .catch((err) => {
                     if (err.response?.data === "wrong password") {
