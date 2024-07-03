@@ -53,7 +53,7 @@ const readAllGuest = (db) => async (req, res) => {
 
         const cars = await db("cars")
             .join('dealers', 'cars.dealer_id', 'dealers.id')
-            .select("*")
+            .select("cars.*")
 
         res.status(200).json(cars)
     } catch(err){
@@ -67,7 +67,7 @@ const readAll = (db) => async (req, res) => {
 
         const cars = await db("cars")
             .join('dealers', 'cars.dealer_id', 'dealers.id')
-            .select("*")
+            .select("cars.*")
             .orderBy("cars.owner_id", id)
 
         res.status(200).json(cars)

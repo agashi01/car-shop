@@ -6,9 +6,10 @@ import Logo from '../Logo';
 
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username }) {
-
+  const [isModelMenuClicked, setIsModelClicked] = useState(false)
+  const [isVehicleClicked, setIsVehicleClicked] = useState(false)
   const [isit, setIsit] = useState(false)
-  const [isClicked, setIsClicked] = useState(false);
+  const [isMenuClicked, setIsMenuClicked] = useState(false);
   const [burgerMenu, setBurgerMenu] = useState("burger unclicked")
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
@@ -21,22 +22,22 @@ function Home({ id, page, logo, guest, username }) {
   }, [])
 
   useEffect(() => {
-    if(guest){
+    if (guest) {
       axios
-      .get('http://localhost:3000/cars/guest',)
-      .then(res => {
-        console.log(res.data)
-        setCars(res.data)
-      })
-      .catch(err => {
+        .get('http://localhost:3000/cars/guest',)
+        .then(res => {
+          console.log(res.data)
+          setCars(res.data)
+        })
+        .catch(err => {
 
-        console.log(err)
-      })
+          console.log(err)
+        })
       return
     }
-    
+
     axios
-      .get('http://localhost:3000/cars',{id})
+      .get('http://localhost:3000/cars', { id })
       .then(res => {
         console.log(res.data)
         setCars(res.data)
@@ -49,12 +50,12 @@ function Home({ id, page, logo, guest, username }) {
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
-    if (isClicked) {
-      setIsClicked(false)
+    if (isMenuClicked) {
+      setIsMenuClicked(false)
       setBurgerMenu("burger unclicked")
       setMenu('menu-hidden')
     } else {
-      setIsClicked(true)
+      setIsMenuClicked(true)
       setBurgerMenu("burger clicked")
       setMenu('menu-visible')
     }
@@ -90,6 +91,8 @@ function Home({ id, page, logo, guest, username }) {
           </div>
           <div className='vehicles-menu'>
             <button className='vehicle here'>Vehicle</button>
+          </div>
+          <div className="model-menu">
             <button className='vehicle'>model</button>
           </div>
           <div className='account'>
@@ -117,10 +120,11 @@ function Home({ id, page, logo, guest, username }) {
 
       <ul className='cars-ul'>
         {cars.map(car => {
+          console.log(car.id)
           return (
             // eslint-disable-next-line react/jsx-key
-            <li>
-              <CarCard id={id} isit={setIsit}  guest={guest} key={car.id} car={car} />
+            <li >
+              <CarCard id={id} isit={setIsit} guest={guest} car={car} />
             </li>
           )
         })}

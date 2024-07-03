@@ -69,7 +69,7 @@
 
 
 }
-
+vehicle
 .specification {
   cursor: text;
 }
@@ -238,7 +238,8 @@ ul {
   margin-right: 20px;
 }
 
-.vehicles-menu {
+.vehicles-menu,
+.model-menu {
   display: inline-block;
 
 }
