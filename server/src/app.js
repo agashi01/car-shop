@@ -22,6 +22,7 @@ app.use(cors())
 
 
 app.use(bodyParser.json())
+// save
 
 app.get('/', (req, res) => { return res.status(200).json("Server is up and running!") })
 
@@ -31,7 +32,7 @@ app.post('/log-in', (req, res) => auth.logIn(db)(req, res));
 app.post('/cars', (req, res) => cars.createCar(db)(req, res))
 app.get('/cars/guest',(req,res)=> cars.readAllGuest(db)(req,res))
 app.get('/cars', (req, res) => cars.readAll(db)(req, res))
-app.get('/cars/:id', (req, res) => cars.readCar(db)(req, res))
+app.get('/cars/:id', (req, res) => cyars.readCar(db)(req, res))
 app.put('/cars', (req, res) => cars.updateCar(db)(req, res))
 app.delete('/cars/:id', (req, res) => cars.deleteCar(db)(req, res))
 app.post('/dealers', (req, res) => dealers.createDealer(db)(req, res))
