@@ -48,9 +48,32 @@ const create = (db) => async function (req, res) {
     }
 }
 
+const readAllGuest = (db) => async (req, res) => {
+    try {
+
+        const cars = await db("cars")
+            .join('dealers', 'cars.dealer_id', 'dealers.id')
+            .select("*")
+
+        res.status(200).json(cars)
+    } catch(err){
+        resizeTo.status(400).json("something went wrong")
+    }
+};
+
 const readAll = (db) => async (req, res) => {
-    const cars = await db.select("*").from("cars").join('dealers', 'cars.dealer_id', 'dealers.id')
-    res.status(200).json(cars)
+    const { id } = req.body
+    try {
+
+        const cars = await db("cars")
+            .join('dealers', 'cars.dealer_id', 'dealers.id')
+            .select("*")
+            .orderBy("cars.owner_id", id)
+
+        res.status(200).json(cars)
+    } catch(err){
+        resizeTo.status(400).json("something went wrong")
+    }
 };
 
 const read = (db) => (req, res) => {
@@ -74,16 +97,16 @@ const read = (db) => (req, res) => {
 
 const update = (db) => (req, res) => {
     console.log('blud')
-    const {id,carId}=req.body
+    const { id, carId } = req.body
     db("cars")
-    .update("owner_id",id)
-    .where("id",carId)
-    .then(()=>{
-        res.status(200).json("success")
-    })
-    .catch((err)=>{
-        console.log(err)
-    })
+        .update("owner_id", id)
+        .where("id", carId)
+        .then(() => {
+            res.status(200).json("success")
+        })
+        .catch((err) => {
+            console.log(err)
+        })
 }
 
 
@@ -110,6 +133,7 @@ module.exports = {
     , updateCar: update
     , deleteCar: delet
     , readAll
+    ,readAllGuest
 
 }
 

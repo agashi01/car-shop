@@ -21,8 +21,22 @@ function Home({ id, page, logo, guest, username }) {
   }, [])
 
   useEffect(() => {
+    if(guest){
+      axios
+      .get('http://localhost:3000/cars/guest',)
+      .then(res => {
+        console.log(res.data)
+        setCars(res.data)
+      })
+      .catch(err => {
+
+        console.log(err)
+      })
+      return
+    }
+    
     axios
-      .get('http://localhost:3000/cars')
+      .get('http://localhost:3000/cars',{id})
       .then(res => {
         console.log(res.data)
         setCars(res.data)
