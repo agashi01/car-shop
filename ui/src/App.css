@@ -139,13 +139,18 @@
 
 /* vehicle menu */
 
-.vehicle-clicked,
-.model-clicked{
-  
+.home-guest-sign {
+  margin-left: 620px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+.vehicle-clicked,
+.model-clicked {}
+
 .vehicle-unclicked,
-.model-unclicked{
+.model-unclicked {
   display: none;
 }
 

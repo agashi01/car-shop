@@ -24,30 +24,28 @@ function Home({ id, page, logo, guest, username }) {
   }, [])
 
   useEffect(() => {
-    if (guest) {
-      axios
-        .get('http://localhost:3000/cars/guest', { vehicle: vehicleClicked, model: modelClicked })
-        .then(res => {
-          setCars(res.data)
-        })
-        .catch(err => {
-
-          console.log(err)
-        })
-      console.log('hgi')
-      return
-    }
-
+    const url = guest ? 'http://localhost:3000/cars/guest' : 'http://localhost:3000/cars'
+    console.log(guest)
+    console.log(vehicleClicked)
+    console.log(modelClicked)
+    const params = { vehicle: vehicleClicked, model: modelClicked }
+    if (!guest) params.id = id
+    console.log(params)
     axios
-      .get('http://localhost:3000/cars', { vehicle: vehicleClicked, model: modelClicked, id })
+      .get(url, {
+        params
+      })
       .then(res => {
-        // console.log(res.data)
         setCars(res.data)
       })
       .catch(err => {
 
         console.log(err)
       })
+    console.log('hgi')
+    return
+
+
   }, [vehiclePicked, modelPicked])
 
   const burgerMenuFunc = (e) => {
@@ -66,11 +64,13 @@ function Home({ id, page, logo, guest, username }) {
 
 
   const modelMenu = (e) => {
+    e.preventDefault()
     console.log('ersg')
     setModelClicked(modelClicked === "model-unclicked" ? 'model-clicked' : 'model-unclicked')
   }
 
   const vehicleMenu = (e) => {
+    e.preventDefault()
     setVehicleClicked(vehicleClicked === "vehicle-unclicked" ? 'vehicle-clicked' : 'vehicle-unclicked')
 
   }
@@ -91,8 +91,22 @@ function Home({ id, page, logo, guest, username }) {
           <div className="welcome-home">
             <h2>The best car shop</h2>
           </div>
-          <button className="signIn-home">Sign in  </button>
-          <button className="register-home"> Register </button>
+          <div className='vehicles-menu'>
+            <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
+          </div>
+          <div className={vehicleClicked}>
+
+          </div>
+          <div className="model-menu">
+            <button onClick={modelMenu} className='vehicle'>model</button>
+          </div>
+          <div className={modelClicked}>
+
+          </div>
+          <div className="home-guest-sign">
+            <button className="signIn-home">Sign in  </button>
+            <button className="register-home"> Register </button>
+          </div>
         </nav>
         :
         <nav className="home">

@@ -1,3 +1,5 @@
+// optimizo fuksionin "func"
+
 const create = (db) => async function (req, res) {
     const { make, model, mileage, color, transmission, fuel_type, vehicle_type, dealer_id, owner_id } = req.body;
     db.on('query', function (queryData) {
@@ -30,8 +32,9 @@ const create = (db) => async function (req, res) {
                                 car,
                             })
                         })
-                        .catch(err => {
+                        .catch(async err => {
                             console.error(err)
+                            await trx.rollback()
                             res.status(404).json('this dealer does not exist')
                         })
 
@@ -48,7 +51,8 @@ const create = (db) => async function (req, res) {
     }
 }
 
-const func = async (db, vehicle = null, model = null, id = null) => {
+const func = async (db, vehicle = null, model = null, id) => {
+    console.log(id)
 
     if (id) {
         if (vehicle) {
@@ -58,7 +62,7 @@ const func = async (db, vehicle = null, model = null, id = null) => {
                     .join('dealers', 'cars.dealer_id', 'dealers.id')
                     .where('make', vehicle)
                     .select("cars.*")
-                    .orderBy("cars.owner_id", id,);
+                    .orderBy("cars.owner_id", id);
 
                 return a
             }
@@ -67,7 +71,7 @@ const func = async (db, vehicle = null, model = null, id = null) => {
                 .where('make', vehicle)
                 .where('model', model)
                 .select("cars.*")
-                .orderBy("cars.owner_id", id,);
+                .orderBy("cars.owner_id", id);
 
             return a
         } else if (model) {
@@ -75,14 +79,15 @@ const func = async (db, vehicle = null, model = null, id = null) => {
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
                 .where('model', model)
                 .select("cars.*")
-                .orderBy("cars.owner_id", id,);
+                .orderBy("cars.owner_id", id);
 
             return a
         } else {
+            console.log('id')
             const a = await db("cars")
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
                 .select("cars.*")
-                .orderBy("cars.owner_id", id,);
+                .orderBy("cars.owner_id", id);
 
             return a
         }
@@ -130,7 +135,6 @@ const readAllGuest = (db) => async (req, res) => {
     try {
 
         const cars = await func(db, vehicle, model)
-        console.log(cars)
 
         res.status(200).json(cars)
     } catch (err) {
@@ -140,7 +144,10 @@ const readAllGuest = (db) => async (req, res) => {
 
 const readAll = (db) => async (req, res) => {
     const { vehicle, model, id } = req.body
-
+    console.log(req.body)
+    console.log(req.params)
+    console.log(req.qs)
+    setTimeout(() => console.log(req.body), 5000)
     try {
 
         const cars = func(db, vehicle, model, id)
