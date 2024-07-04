@@ -137,6 +137,18 @@
 
 /* Home */
 
+/* vehicle menu */
+
+.vehicle-clicked,
+.model-clicked{
+  
+}
+
+.vehicle-unclicked,
+.model-unclicked{
+  display: none;
+}
+
 .complet {
   display: flex;
   justify-content: center;
@@ -295,22 +307,22 @@ nav.home {
   }
 }
 
-.burger-clicked:nth-child(1) {
+.burger.clicked:nth-child(1) {
   transform: rotate(45deg) translate(0.25em, 0.25em);
   transition: ease-out 0.4s;
 }
 
-.burger-clicked:nth-child(2) {
+.burger.clicked:nth-child(2) {
   transform: scale(0.1);
   transition: ease-out 0.4s;
 }
 
-.burger-clicked:nth-child(3) {
+.burger.clicked:nth-child(3) {
   transform: rotate(-45deg) translate(0.3em, -0.25em);
   transition: ease-out 0.4s;
 }
 
-.burger-unclicked {
+.burger.unclicked {
   transform: rotate(0) translate(0);
   transition: cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s;
 }
@@ -360,6 +372,7 @@ nav.home {
 }
 
 .help li {
+  cursor: pointer;
   margin: 12px 0;
   padding: 3px 0;
   border-bottom: #424242 solid 3px;

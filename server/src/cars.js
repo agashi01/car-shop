@@ -48,31 +48,106 @@ const create = (db) => async function (req, res) {
     }
 }
 
+const func = async (db, vehicle = null, model = null, id = null) => {
+
+    if (id) {
+        if (vehicle) {
+            if (!model) {
+                console.log('!model')
+                const a = await db("cars")
+                    .join('dealers', 'cars.dealer_id', 'dealers.id')
+                    .where('make', vehicle)
+                    .select("cars.*")
+                    .orderBy("cars.owner_id", id,);
+
+                return a
+            }
+            const a = await db("cars")
+                .join('dealers', 'cars.dealer_id', 'dealers.id')
+                .where('make', vehicle)
+                .where('model', model)
+                .select("cars.*")
+                .orderBy("cars.owner_id", id,);
+
+            return a
+        } else if (model) {
+            const a = await db("cars")
+                .join('dealers', 'cars.dealer_id', 'dealers.id')
+                .where('model', model)
+                .select("cars.*")
+                .orderBy("cars.owner_id", id,);
+
+            return a
+        } else {
+            const a = await db("cars")
+                .join('dealers', 'cars.dealer_id', 'dealers.id')
+                .select("cars.*")
+                .orderBy("cars.owner_id", id,);
+
+            return a
+        }
+    } else {
+
+        if (vehicle) {
+            if (!model) {
+                const a = await db("cars")
+                    .join('dealers', 'cars.dealer_id', 'dealers.id')
+                    .where('make', vehicle)
+                    .select("cars.*");
+
+                return a
+
+            }
+            const a = await db("cars")
+                .join('dealers', 'cars.dealer_id', 'dealers.id')
+                .where('make', vehicle)
+                .where('model', model)
+                .select("cars.*");
+
+            return a
+        } else if (model) {
+            const a = await db("cars")
+                .join('dealers', 'cars.dealer_id', 'dealers.id')
+                .where('model', model)
+                .select("cars.*");
+            return a
+        } else {
+            console.log('!')
+
+            const a = await db("cars")
+                .join('dealers', 'cars.dealer_id', 'dealers.id')
+                .select("cars.*");
+
+            return a
+        }
+
+    }
+}
+
 const readAllGuest = (db) => async (req, res) => {
+    const { vehicle, model } = req.body;
+
     try {
 
-        const cars = await db("cars")
-            .join('dealers', 'cars.dealer_id', 'dealers.id')
-            .select("cars.*")
+        const cars = await func(db, vehicle, model)
+        console.log(cars)
 
         res.status(200).json(cars)
-    } catch(err){
-        resizeTo.status(400).json("something went wrong")
+    } catch (err) {
+        res.status(400).json("something went wrong")
     }
 };
 
 const readAll = (db) => async (req, res) => {
-    const { id } = req.body
+    const { vehicle, model, id } = req.body
+
     try {
 
-        const cars = await db("cars")
-            .join('dealers', 'cars.dealer_id', 'dealers.id')
-            .select("cars.*")
-            .orderBy("cars.owner_id", id)
+        const cars = func(db, vehicle, model, id)
 
         res.status(200).json(cars)
-    } catch(err){
-        resizeTo.status(400).json("something went wrong")
+    } catch (err) {
+        res.status(400).json("something went wrong")
     }
 };
 
@@ -96,7 +171,7 @@ const read = (db) => (req, res) => {
 }
 
 const update = (db) => async (req, res) => {
-    
+
     const { id, carId } = req.body;
     console.log("id:", id, "carId:", carId);
 
@@ -148,7 +223,7 @@ module.exports = {
     , updateCar: update
     , deleteCar: delet
     , readAll
-    ,readAllGuest
+    , readAllGuest
 
 }
 

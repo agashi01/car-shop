@@ -6,10 +6,14 @@ import Logo from '../Logo';
 
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username }) {
-  const [modelClicked,setModelClicked]=useState("model-unclicked")
-  const [vehicleClicked,setVehicleClicked]=useState("vehicle-unclicked")
+
+  const [vehiclePicked, setVehiclePicked] = useState()
+  const [modelPicked, setmodelPicked] = useState()
+  const [modelClicked, setModelClicked] = useState("model-unclicked")
+  const [vehicleClicked, setVehicleClicked] = useState("vehicle-unclicked")
   const [isit, setIsit] = useState(false)
-  const [burgerMenu, setBurgerMenu] = useState("burger-unclicked")
+  const [isClicked, setIsClicked] = useState(false);
+  const [burgerMenu, setBurgerMenu] = useState("burger unclicked")
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
 
@@ -17,54 +21,57 @@ function Home({ id, page, logo, guest, username }) {
 
   useEffect(() => {
     logo("logo-home")
-
   }, [])
 
   useEffect(() => {
     if (guest) {
       axios
-        .get('http://localhost:3000/cars/guest',)
+        .get('http://localhost:3000/cars/guest', { vehicle: vehicleClicked, model: modelClicked })
         .then(res => {
-          console.log(res.data)
           setCars(res.data)
         })
         .catch(err => {
 
           console.log(err)
         })
+      console.log('hgi')
       return
     }
 
     axios
-      .get('http://localhost:3000/cars', { id })
+      .get('http://localhost:3000/cars', { vehicle: vehicleClicked, model: modelClicked, id })
       .then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         setCars(res.data)
       })
       .catch(err => {
 
         console.log(err)
       })
-  }, [])
+  }, [vehiclePicked, modelPicked])
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
-    if (burgerMenu==="burger-clicked") {
-      setBurgerMenu("burger-unclicked")
+    if (isClicked) {
+      setIsClicked(false)
+      setBurgerMenu("burger unclicked")
       setMenu('menu-hidden')
     } else {
-      setBurgerMenu("burger-clicked")
+      setIsClicked(true)
+      setBurgerMenu("burger clicked")
       setMenu('menu-visible')
     }
-
   }
 
-  const modelMenu=(e)=>{
-    setModelClicked( modelClicked==="model-unclicked"? 'model-clicked':'model-unclicked')
+
+
+  const modelMenu = (e) => {
+    console.log('ersg')
+    setModelClicked(modelClicked === "model-unclicked" ? 'model-clicked' : 'model-unclicked')
   }
 
-  const vehicleMenu=(e)=>{
-    setVehicleClicked(vehicleClicked==="vehicle-unclicked"? 'vehicle-clicked':'vehicle-unclicked')
+  const vehicleMenu = (e) => {
+    setVehicleClicked(vehicleClicked === "vehicle-unclicked" ? 'vehicle-clicked' : 'vehicle-unclicked')
 
   }
 
@@ -98,8 +105,14 @@ function Home({ id, page, logo, guest, username }) {
           <div className='vehicles-menu'>
             <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
           </div>
+          <div className={vehicleClicked}>
+
+          </div>
           <div className="model-menu">
             <button onClick={modelMenu} className='vehicle'>model</button>
+          </div>
+          <div className={modelClicked}>
+
           </div>
           <div className='account'>
             <button className='btn-account'></button>
@@ -126,7 +139,7 @@ function Home({ id, page, logo, guest, username }) {
 
       <ul className='cars-ul'>
         {cars.map(car => {
-          console.log(car.id)
+          // console.log(car.id)
           return (
             // eslint-disable-next-line react/jsx-key
             <li >

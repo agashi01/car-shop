@@ -93,7 +93,8 @@ export default function CarCard({ id, isit, guest, car }) {
                 <div className="specification" >{carObj[9]}: {car.vehicle_type}</div>
                 <div className="specification" >{carObj[7]}: {transmission(car.transmission)}</div>
                 <div className="specification" >{carObj[6]}: {car.color}</div>
-                {(purchased || car.owner_id) ? <button className="purchased">Purchased</button>:
+                {(purchased || (car.owner_id!=null &&id!=null&&car.owner_id===id)) ?<button className="purchased">owned</button> :
+                 car.owner_id ? <button className="purchased">Out of stock</button>:
                 <button className='purchase' onClick={purchasing(car.id)} type='btn' >Purchase</button>}
 
 
