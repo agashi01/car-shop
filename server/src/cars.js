@@ -83,7 +83,7 @@ const func = async (db, vehicle = null, model = null, id) => {
 
             return a
         } else {
-            console.log('id')
+            
             const a = await db("cars")
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
                 .select("cars.*")
@@ -130,28 +130,25 @@ const func = async (db, vehicle = null, model = null, id) => {
 }
 
 const readAllGuest = (db) => async (req, res) => {
-    const { vehicle, model } = req.body;
+    const { vehicle, model } = req.query;
 
     try {
 
         const cars = await func(db, vehicle, model)
 
-        res.status(200).json(cars)
+        res.status(200).json([cars])
     } catch (err) {
         res.status(400).json("something went wrong")
     }
 };
 
 const readAll = (db) => async (req, res) => {
-    const { vehicle, model, id } = req.body
-    console.log(req.body)
-    console.log(req.params)
-    console.log(req.qs)
-    setTimeout(() => console.log(req.body), 5000)
+    const { vehicle, model, id } = req.query
+
     try {
 
-        const cars = func(db, vehicle, model, id)
-
+        const cars = await func(db, vehicle, model, id)
+        console.log(cars)
         res.status(200).json(cars)
     } catch (err) {
         res.status(400).json("something went wrong")

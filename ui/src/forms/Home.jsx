@@ -7,8 +7,8 @@ import Logo from '../Logo';
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username }) {
 
-  const [vehiclePicked, setVehiclePicked] = useState()
-  const [modelPicked, setmodelPicked] = useState()
+  const [vehicleType, setVehicleType] = useState("")
+  const [modelType, setModelType] = useState("")
   const [modelClicked, setModelClicked] = useState("model-unclicked")
   const [vehicleClicked, setVehicleClicked] = useState("vehicle-unclicked")
   const [isit, setIsit] = useState(false)
@@ -28,7 +28,7 @@ function Home({ id, page, logo, guest, username }) {
     console.log(guest)
     console.log(vehicleClicked)
     console.log(modelClicked)
-    const params = { vehicle: vehicleClicked, model: modelClicked }
+    const params = { vehicle: vehicleType, model: modelType }
     if (!guest) params.id = id
     console.log(params)
     axios
@@ -36,6 +36,7 @@ function Home({ id, page, logo, guest, username }) {
         params
       })
       .then(res => {
+        console.log(res)
         setCars(res.data)
       })
       .catch(err => {
@@ -43,10 +44,8 @@ function Home({ id, page, logo, guest, username }) {
         console.log(err)
       })
     console.log('hgi')
-    return
 
-
-  }, [vehiclePicked, modelPicked])
+  }, [vehicleType, modelType])
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
@@ -95,7 +94,11 @@ function Home({ id, page, logo, guest, username }) {
             <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
           </div>
           <div className={vehicleClicked}>
-
+            <ul>
+              <li>BMW</li>
+              <li>Audi</li>
+              <li>Mercedes-benz</li>
+            </ul>
           </div>
           <div className="model-menu">
             <button onClick={modelMenu} className='vehicle'>model</button>

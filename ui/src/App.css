@@ -146,8 +146,21 @@
   align-items: center;
 }
 
-.vehicle-clicked,
-.model-clicked {}
+.vehicle-clicked {
+  display: inline-block;
+  position: sticky;
+  bottom:1000px;
+  padding: 30px;
+  height: 200px;
+  width: 150px;
+  background-color: #474747;
+  border-radius: 3%;
+  z-index: 1002;
+}
+
+.model-clicked{
+
+}
 
 .vehicle-unclicked,
 .model-unclicked {
@@ -258,6 +271,9 @@ ul {
 .vehicles-menu,
 .model-menu {
   display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
 }
 
