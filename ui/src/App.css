@@ -147,23 +147,51 @@
 }
 
 .vehicle-clicked {
+  right: 49.8%;
+  background-color: #555;
   display: inline-block;
-  position: sticky;
-  bottom:1000px;
+  position:absolute;
+  top:70px;
   padding: 30px;
   height: 200px;
   width: 150px;
-  background-color: #474747;
-  border-radius: 3%;
+  border-right:solid 4px black ;
+  border-radius: 5%;
   z-index: 1002;
+  box-shadow: 0 10px 10px(0, 0, 0, 0.1);
+  transition: opacity 1s ease-in-out,visibility 1s ease-in-out;
+}
+
+.vehicle-clicked:hover{
+  background-color: #414040;
 }
 
 .model-clicked{
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  right: 42%;
+  border-left:solid 4px black ;
+  background-color: #555;
+  display: inline-block;
+  position:absolute;
+  top:70px;
+  padding: 30px;
+  height: 200px;
+  width: 150px;
+  border-radius: 5%;
+  z-index: 1002;
+  box-shadow: 0 10px 10px(0, 0, 0, 0.1);
+  transition: opacity 1s ease-in-out, visibility  ease-in-out;
+}
 
+.model-clicked:hover{
+  transition: opacity ease-in-out 0.2s;
+  background-color: #414040;
 }
 
 .vehicle-unclicked,
 .model-unclicked {
+
   display: none;
 }
 
@@ -270,7 +298,6 @@ ul {
 
 .vehicles-menu,
 .model-menu {
-  display: inline-block;
   display: flex;
   justify-content: center;
   align-items: center;

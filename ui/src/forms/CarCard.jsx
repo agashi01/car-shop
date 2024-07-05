@@ -13,18 +13,6 @@ export default function CarCard({ id, isit, guest, car }) {
     const [flip, setFlip] = useState(false)
     const carObj = Object.keys(car)
 
-
-    const modelUpdate = (s) => {
-
-        if ("12345678".includes(s)) {
-            return s + "-Series";
-        } else if ("SEC".includes(s)) {
-            return s + "-Class"
-        }
-        return s;
-
-    }
-
     const transmission=(e)=>{
         if(e==="automatic_transmission")
             return "automatic"
@@ -80,14 +68,14 @@ export default function CarCard({ id, isit, guest, car }) {
                 <div className="card-png"></div>
                 <div className="marka">{car.make}</div>
                 <div className="card-features">
-                    <div className="car-model">{modelUpdate(car.model)}</div>
+                    <div className="car-model">{car.model}</div>
                     <div className="car-mileage">{mileageUpdate(car.mileage)}</div>
                 </div>
             </div>
             <div className="back">
 
                 <div className="specification" >{carObj[3]}: {car.make}</div>
-                <div className="specification" >{carObj[4]}: {modelUpdate(car.model)}</div>
+                <div className="specification" >{carObj[4]}: {car.model}</div>
                 <div className="specification" >{carObj[5]}: {mileageUpdate(car.mileage)}</div>
                 <div className="specification" >{carObj[8]}: {car.fuel_type}</div>
                 <div className="specification" >{carObj[9]}: {car.vehicle_type}</div>

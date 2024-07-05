@@ -83,7 +83,7 @@ const func = async (db, vehicle = null, model = null, id) => {
 
             return a
         } else {
-            
+
             const a = await db("cars")
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
                 .select("cars.*")
@@ -136,11 +136,25 @@ const readAllGuest = (db) => async (req, res) => {
 
         const cars = await func(db, vehicle, model)
 
-        res.status(200).json([cars])
+        res.status(200).json(cars)
     } catch (err) {
         res.status(400).json("something went wrong")
     }
 };
+
+const make = (db) => async (req, res)=>{
+    try{
+        const rows = await db('cars').select(db.raw("DISTINCT make"))
+        if(!rows){
+            console.log('err')
+        }
+        console.log(rows)
+        res.json(rows)
+    }catch(err){
+        res.status(400).json(err)
+    }
+   
+}
 
 const readAll = (db) => async (req, res) => {
     const { vehicle, model, id } = req.query
@@ -228,6 +242,7 @@ module.exports = {
     , deleteCar: delet
     , readAll
     , readAllGuest
+    , make
 
 }
 

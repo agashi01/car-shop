@@ -6,9 +6,9 @@ import Logo from '../Logo';
 
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username }) {
-
-  const [vehicleType, setVehicleType] = useState("")
-  const [modelType, setModelType] = useState("")
+  []
+  const [vehicleType, setVehicleType] = useState([])
+  const [modelType, setModelType] = useState([])
   const [modelClicked, setModelClicked] = useState("model-unclicked")
   const [vehicleClicked, setVehicleClicked] = useState("vehicle-unclicked")
   const [isit, setIsit] = useState(false)
@@ -17,7 +17,22 @@ function Home({ id, page, logo, guest, username }) {
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
 
-
+  useEffect(() => {
+    axios.get('http://localhost:3000/make')
+      .then(row => {
+        const res=row.data
+        const list = []
+        for (let x = 0; x < res.length; x++) {
+          list[x] = { ...res[x], checked: false }
+        }
+        setVehicleType(list)
+        console.log(list)
+        console.log(cars)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [])
 
   useEffect(() => {
     logo("logo-home")
@@ -25,25 +40,19 @@ function Home({ id, page, logo, guest, username }) {
 
   useEffect(() => {
     const url = guest ? 'http://localhost:3000/cars/guest' : 'http://localhost:3000/cars'
-    console.log(guest)
-    console.log(vehicleClicked)
-    console.log(modelClicked)
     const params = { vehicle: vehicleType, model: modelType }
     if (!guest) params.id = id
-    console.log(params)
     axios
       .get(url, {
         params
       })
       .then(res => {
-        console.log(res)
         setCars(res.data)
       })
       .catch(err => {
 
         console.log(err)
       })
-    console.log('hgi')
 
   }, [vehicleType, modelType])
 
@@ -102,9 +111,13 @@ function Home({ id, page, logo, guest, username }) {
           </div>
           <div className="model-menu">
             <button onClick={modelMenu} className='vehicle'>model</button>
-          </div>
-          <div className={modelClicked}>
-
+            <div className={modelClicked}>
+              <ul>
+                <li>BMW</li>
+                <li>Audi</li>
+                <li>Mercedes-benz</li>
+              </ul>
+            </div>
           </div>
           <div className="home-guest-sign">
             <button className="signIn-home">Sign in  </button>
@@ -123,7 +136,13 @@ function Home({ id, page, logo, guest, username }) {
             <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
           </div>
           <div className={vehicleClicked}>
-
+            < ul>
+              <li>
+                <input type="checkbox"></input>
+              </li>
+              <li>Audi</li>
+              <li>Mercedes-benz</li>
+            </ul>
           </div>
           <div className="model-menu">
             <button onClick={modelMenu} className='vehicle'>model</button>
