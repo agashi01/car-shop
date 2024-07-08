@@ -139,6 +139,104 @@
 
 /* vehicle menu */
 
+
+
+
+.vehicle-clicked {
+  list-style: none;
+  padding: 0;
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.vehicle-clicked li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* padding: 15px; */
+  border-bottom: 1px solid #ddd;
+}
+
+.vehicle-clicked li:last-child {
+  border-bottom: none;
+}
+
+.vehicle-clicked li:first-child {
+  border-bottom: none;
+  margin-top: 40px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.checkbox-container input[type="checkbox"] {
+  display: none;
+}
+
+.custom-checkbox {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 2px solid #007bff;
+  border-radius: 50%; /* Makes the checkbox round */
+  margin-right: 15px;
+  position: relative;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .custom-checkbox {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.custom-checkbox:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0);
+  transition: transform 0.3s;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .custom-checkbox:after {
+  transform: translate(-50%, -50%) rotate(45deg) scale(1);
+}
+
+.checkbox-container:hover .custom-checkbox {
+  background-color: #f0f0f0;
+}
+
+.checkbox-container input[type="checkbox"]:focus + .custom-checkbox {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+
+
+.type-input{
+  color: whitesmoke;
+  width: 100%;
+}
+
+.type-input:hover{
+  background-color: #3f3f3f;
+} */
+
 .home-guest-sign {
   margin-left: 620px;
   display: flex;
@@ -152,7 +250,8 @@
   display: inline-block;
   position:absolute;
   top:70px;
-  padding: 30px;
+  padding-top:5px ;
+  padding-bottom:5px ;
   height: 200px;
   width: 150px;
   border-right:solid 4px black ;
@@ -163,7 +262,7 @@
 }
 
 .vehicle-clicked:hover{
-  background-color: #414040;
+  background-color: #4e4d4d;
 }
 
 .model-clicked{
@@ -186,7 +285,7 @@
 
 .model-clicked:hover{
   transition: opacity ease-in-out 0.2s;
-  background-color: #414040;
+  background-color:  #4e4d4d;
 }
 
 .vehicle-unclicked,

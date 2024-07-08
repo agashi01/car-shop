@@ -52,6 +52,7 @@ const create = (db) => async function (req, res) {
 }
 
 const func = async (db, vehicle = null, model = null, id) => {
+
     console.log(id)
 
     if (id) {
@@ -60,7 +61,7 @@ const func = async (db, vehicle = null, model = null, id) => {
                 console.log('!model')
                 const a = await db("cars")
                     .join('dealers', 'cars.dealer_id', 'dealers.id')
-                    .where('make', vehicle)
+                    .whereIn('make', vehicle)
                     .select("cars.*")
                     .orderBy("cars.owner_id", id);
 
@@ -68,8 +69,8 @@ const func = async (db, vehicle = null, model = null, id) => {
             }
             const a = await db("cars")
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .where('make', vehicle)
-                .where('model', model)
+                .whereIn('make', vehicle)
+                .whereIn('model', model)
                 .select("cars.*")
                 .orderBy("cars.owner_id", id);
 
@@ -77,7 +78,7 @@ const func = async (db, vehicle = null, model = null, id) => {
         } else if (model) {
             const a = await db("cars")
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .where('model', model)
+                .whereIn('model', model)
                 .select("cars.*")
                 .orderBy("cars.owner_id", id);
 
@@ -97,7 +98,7 @@ const func = async (db, vehicle = null, model = null, id) => {
             if (!model) {
                 const a = await db("cars")
                     .join('dealers', 'cars.dealer_id', 'dealers.id')
-                    .where('make', vehicle)
+                    .whereIn('make', vehicle)
                     .select("cars.*");
 
                 return a
@@ -105,15 +106,15 @@ const func = async (db, vehicle = null, model = null, id) => {
             }
             const a = await db("cars")
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .where('make', vehicle)
-                .where('model', model)
+                .whereIn('make', vehicle)
+                .whereIn('model', model)
                 .select("cars.*");
 
             return a
         } else if (model) {
             const a = await db("cars")
                 .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .where('model', model)
+                .whereIn('model', model)
                 .select("cars.*");
             return a
         } else {
@@ -142,18 +143,18 @@ const readAllGuest = (db) => async (req, res) => {
     }
 };
 
-const make = (db) => async (req, res)=>{
-    try{
+const make = (db) => async (req, res) => {
+    try {
         const rows = await db('cars').select(db.raw("DISTINCT make"))
-        if(!rows){
+        if (!rows) {
             console.log('err')
         }
         console.log(rows)
         res.json(rows)
-    }catch(err){
+    } catch (err) {
         res.status(400).json(err)
     }
-   
+
 }
 
 const readAll = (db) => async (req, res) => {

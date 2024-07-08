@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import CarCard from './CarCard'
 import axios from 'axios';
 import Logo from '../Logo';
@@ -6,9 +6,11 @@ import Logo from '../Logo';
 
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username }) {
-  []
-  const [vehicleType, setVehicleType] = useState([])
-  const [modelType, setModelType] = useState([])
+  const [use, setUse] = useState(false)
+  const [vehicleInput, setVehicleInput] = useState([])
+  const [modelInput, setModelInput] = useState([])
+  const [vehicleList, setVehicleList] = useState([])
+  const [modelList, setModelList] = useState([])
   const [modelClicked, setModelClicked] = useState("model-unclicked")
   const [vehicleClicked, setVehicleClicked] = useState("vehicle-unclicked")
   const [isit, setIsit] = useState(false)
@@ -19,28 +21,54 @@ function Home({ id, page, logo, guest, username }) {
 
   useEffect(() => {
     axios.get('http://localhost:3000/make')
-      .then(row => {
-        const res=row.data
-        const list = []
-        for (let x = 0; x < res.length; x++) {
-          list[x] = { ...res[x], checked: false }
-        }
-        setVehicleType(list)
-        console.log(list)
-        console.log(cars)
+      .then(response => {
+        const res = response.data;
+        const list = res.map((item, index) => ({ index, ...item, checked: false }));
+        setVehicleInput(list);
       })
       .catch(err => {
-        console.log(err)
-      })
-  }, [])
+        console.log(err);
+      });
+  }, []); // Note the empty dependency array
 
   useEffect(() => {
-    logo("logo-home")
-  }, [])
+    const listM = []
+    const listV = []
+    let count = 0;
+
+    for (let x = 0; x < vehicleInput.length; x++) {
+      if (vehicleInput[x].checked) {
+        listV[count] = vehicleInput[x].make
+        count++;
+      }
+    }
+    if (!count) {
+      for (let x = 0; x < vehicleInput.length; x++) {
+        listV[x] = vehicleInput[x].make
+      }
+    }
+
+    count = 0
+    for (let x = 0; x < modelInput.length; x++) {
+      if (modelInput[x].checked) {
+        listM[count] = modelInput[x].make
+        count++;
+      }
+    }
+    if (!count) {
+      for (let x = 0; x < modelInput.length; x++) {
+        console.log('i got here')
+        listM[x] = modelInput[x].make
+      }
+    }
+    setVehicleList(listV)
+    setModelList(listM)
+    setUse(!use)
+  }, [vehicleInput, modelInput])
 
   useEffect(() => {
     const url = guest ? 'http://localhost:3000/cars/guest' : 'http://localhost:3000/cars'
-    const params = { vehicle: vehicleType, model: modelType }
+    const params = { vehicle: vehicleList, model: modelList }
     if (!guest) params.id = id
     axios
       .get(url, {
@@ -54,7 +82,7 @@ function Home({ id, page, logo, guest, username }) {
         console.log(err)
       })
 
-  }, [vehicleType, modelType])
+  }, [use])
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
@@ -81,6 +109,17 @@ function Home({ id, page, logo, guest, username }) {
     e.preventDefault()
     setVehicleClicked(vehicleClicked === "vehicle-unclicked" ? 'vehicle-clicked' : 'vehicle-unclicked')
 
+  }
+
+  const checked = (obj) => ()=> {
+    setVehicleInput(()=>{
+      return vehicleInput.map((el)=>{
+        if(el.index===obj.index){
+          return {...el,checked:(!el.checked)}
+        }
+        return el
+      })
+    })
   }
 
 
@@ -137,11 +176,16 @@ function Home({ id, page, logo, guest, username }) {
           </div>
           <div className={vehicleClicked}>
             < ul>
-              <li>
-                <input type="checkbox"></input>
-              </li>
-              <li>Audi</li>
-              <li>Mercedes-benz</li>
+              {vehicleInput.map(obj => {
+                console.log(obj)
+
+               // eslint-disable-next-line react/jsx-key
+               return <li onClick={checked(obj)} className="type-input">{obj.make} <label onClick={checked(obj)} className="checkbox-container">
+                <input onClick={checked(obj)} type="checkbox" checked={obj.checked}>
+                </input>
+                <span onClick={checked(obj)} className="custom-checkbox"></span>
+                </label></li>
+              })}
             </ul>
           </div>
           <div className="model-menu">
