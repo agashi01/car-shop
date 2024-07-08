@@ -161,7 +161,25 @@ const sortModel = async (list) => {
         }
     
         for(let x=0;x<audi.length;x++){
-            const num=audi[x][1]
+            const num=parseInt(audi[x][1])
+
+            let min =999
+            let index=0;
+
+            for (let y=0;audi.length;y++){
+                if(!Number.isInteger(audi[y])){
+                    var numy=parseInt(audi[y][1])
+                }else{
+                    numy=audi[y]
+                }
+               
+                if(numy<=min){
+                    min=numy;
+                    index=y
+                }
+            }   
+            audi[x]=audi[index]
+            dudi[index]=999
 
         }
 
