@@ -28,6 +28,7 @@ app.get('/', (req, res) => { return res.status(200).json("Server is up and runni
 app.post('/sign-up', (req, res) => auth.signUp(db)(req, res));
 app.post('/log-in', (req, res) => auth.logIn(db)(req, res));
 
+app.get('/model',(req,res)=>cars.model(db)(req,res))
 app.post('/cars', (req, res) => cars.createCar(db)(req, res))
 app.get('/make',(req,res)=>cars.make(db)(req,res))
 app.get('/cars/guest',(req,res)=> cars.readAllGuest(db)(req,res))

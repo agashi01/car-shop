@@ -143,6 +143,7 @@
 
 
 .vehicle-clicked {
+  position:sticky;
   list-style: none;
   padding: 0;
   max-width: 400px;
@@ -153,6 +154,7 @@
 }
 
 .vehicle-clicked li {
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;

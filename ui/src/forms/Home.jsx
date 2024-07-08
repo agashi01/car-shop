@@ -19,6 +19,22 @@ function Home({ id, page, logo, guest, username }) {
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
 
+  useEffect(()=>{
+      axios.
+      get('http://localhost:3000/model',{
+          params:{
+            vehicleList
+        }
+      })
+      .then((res)=>{
+        console.log(res)
+      })
+      .catch(()=>{
+        console.log(err)
+      })
+      return 
+    },[vehicleList])
+  
   useEffect(() => {
     axios.get('http://localhost:3000/make')
       .then(response => {

@@ -130,6 +130,36 @@ const func = async (db, vehicle = null, model = null, id) => {
     }
 }
 
+const func2 = async (db, list) => {
+    if (list) {
+        return await db('cars')
+            .select('model')
+            .whereIn("model", list)
+            
+    }
+    return await db('cars').select('model')
+    
+
+}
+
+
+const model = (db) => async (req, res) => {
+    const [vehicleList] = req.query
+    try {
+        const models = await func2(db, vehicleList)
+        if (models) {
+            console.log(models)
+            res.json(models)
+        } else {
+            res.status(400).json('failed')
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(400).json(err)
+    }
+
+}
+
 const readAllGuest = (db) => async (req, res) => {
     const { vehicle, model } = req.query;
 
