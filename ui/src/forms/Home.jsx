@@ -23,13 +23,13 @@ function Home({ id, page, logo, guest, username }) {
       axios.
       get('http://localhost:3000/model',{
           params:{
-            vehicleList
+            vehicleList:vehicleList
         }
       })
       .then((res)=>{
         console.log(res)
       })
-      .catch(()=>{
+      .catch((err)=>{
         console.log(err)
       })
       return 

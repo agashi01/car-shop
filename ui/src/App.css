@@ -143,18 +143,25 @@
 
 
 .vehicle-clicked {
-  position:sticky;
-  list-style: none;
-  padding: 0;
-  max-width: 400px;
-  margin: 0 auto;
-  background-color: #fff;
-  border-radius: 5px;
+  right: 49.8%;
+  background-color: #555;
+  display: inline-block;
+  position:absolute;
+  top:70px;
+  height: auto;
+  border-right:solid 4px black ;
+  z-index: 1002;
+  border-radius: 5%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  width:150px;
+  margin: 0 auto;
 }
 
 .vehicle-clicked li {
   cursor: pointer;
+  border-radius: 10%;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -166,9 +173,16 @@
   border-bottom: none;
 }
 
-.vehicle-clicked li:first-child {
-  border-bottom: none;
-  margin-top: 40px;
+.vehicle-clicked:hover{
+  background-color: #3f3f3f;
+}
+
+.vehicle-clicked li:active{
+  background-color: #303030;
+}
+
+.vehicle-clicked:hover{
+  background-color: #4e4d4d;
 }
 
 .checkbox-container {
@@ -246,26 +260,7 @@
   align-items: center;
 }
 
-.vehicle-clicked {
-  right: 49.8%;
-  background-color: #555;
-  display: inline-block;
-  position:absolute;
-  top:70px;
-  padding-top:5px ;
-  padding-bottom:5px ;
-  height: 200px;
-  width: 150px;
-  border-right:solid 4px black ;
-  border-radius: 5%;
-  z-index: 1002;
-  box-shadow: 0 10px 10px(0, 0, 0, 0.1);
-  transition: opacity 1s ease-in-out,visibility 1s ease-in-out;
-}
 
-.vehicle-clicked:hover{
-  background-color: #4e4d4d;
-}
 
 .model-clicked{
   perspective: 1000px;

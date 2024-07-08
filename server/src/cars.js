@@ -133,21 +133,53 @@ const func = async (db, vehicle = null, model = null, id) => {
 const func2 = async (db, list) => {
     if (list) {
         return await db('cars')
-            .select('model')
-            .whereIn("model", list)
-            
-    }
-    return await db('cars').select('model')
-    
+            .select(db.raw('DISTINCT model'))
+            .whereIn("make", list)
 
+    }
+    return await db('cars').select(db.raw('DISTINCT model'))
+
+
+}
+
+const sortModel = async (list) => {
+    const audi = []
+    let count1 = 0
+    const bmw = []
+    const bmwList = ['1', '2', '3', '4', '5', '6', '7', '8']
+    let count2 = 0
+    const mercedes = []
+    let count3 = 0
+
+    for (let x = 0; x < list.length; x++) {
+        if (list[x].model[0]==='A') {
+            audi[count1++] = list[x].model
+        } else if (bmwList.some(el => list[x].model.startsWith(el))) {
+            bmw[count2++] = list[x].model
+        } else {
+            mercedes[count3] = list[x].m
+        }
+    
+        for(let x=0;x<audi.length;x++){
+            const num=audi[x][1]
+
+        }
+
+
+    console.log(audi,bmw,mercedes)
+
+}
 }
 
 
 const model = (db) => async (req, res) => {
-    const [vehicleList] = req.query
+    console.log(req.query)
+    const { vehicleList } = req.query
+    const list = []
     try {
-        const models = await func2(db, vehicleList)
+        const models = func2(db, vehicleList)
         if (models) {
+            const finalModels= sortModel(models)
             console.log(models)
             res.json(models)
         } else {
@@ -179,7 +211,6 @@ const make = (db) => async (req, res) => {
         if (!rows) {
             console.log('err')
         }
-        console.log(rows)
         res.json(rows)
     } catch (err) {
         res.status(400).json(err)
@@ -193,7 +224,6 @@ const readAll = (db) => async (req, res) => {
     try {
 
         const cars = await func(db, vehicle, model, id)
-        console.log(cars)
         res.status(200).json(cars)
     } catch (err) {
         res.status(400).json("something went wrong")
@@ -274,6 +304,7 @@ module.exports = {
     , readAll
     , readAllGuest
     , make
+    , model
 
 }
 
