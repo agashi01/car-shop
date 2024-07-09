@@ -53,12 +53,9 @@ const create = (db) => async function (req, res) {
 
 const func = async (db, vehicle = null, model = null, id) => {
 
-    console.log(id)
-
     if (id) {
         if (vehicle) {
             if (!model) {
-                console.log('!model')
                 const a = await db("cars")
                     .join('dealers', 'cars.dealer_id', 'dealers.id')
                     .whereIn('make', vehicle)
@@ -142,7 +139,7 @@ const func2 = async (db, list) => {
 
 }
 
-const sortModel = async (list) => {
+const sortModel = (list) => {
     let finalCount=0
     let finalList=[]
     const audi = []
@@ -159,9 +156,10 @@ const sortModel = async (list) => {
         } else if (bmwList.some(el => list[x].model.startsWith(el))) {
             bmw[count2++] = list[x].model
         } else {
-            mercedes[count3] = list[x].m
+            mercedes[count3++] = list[x].model
         }
     }
+    // console.log(audi,mercedes,bmw)
     if (audi) {
         for (let x = 0; x < audi.length; x++) {
 
@@ -181,7 +179,6 @@ const sortModel = async (list) => {
                     index = y
                 }
             }
-            console.log(audi)
             if (index !== x) {
                 let num2 = audi[x]
                 audi[x] = audi[index]
@@ -208,7 +205,6 @@ const sortModel = async (list) => {
                     index = y
                 }
             }
-            console.log(bmw)
             if (index !== x) {
                 let num2 = bmw[x]
                 bmw[x] = bmw[index]
@@ -224,9 +220,7 @@ const sortModel = async (list) => {
     if (mercedes) {
 
         for (let y = 0; y < mercedes.length; y++) {
-            console.log(y)
             let letter = mercedes[y][0]
-            console.log(letter)
             switch (letter) {
                 case 'C':
                     if (y != 0) {
@@ -244,7 +238,6 @@ const sortModel = async (list) => {
                     break
                 case 'E':
                     if (y != 1) {
-                        console.log('hi')
                         let car = mercedes[1]
                         mercedes[1] = mercedes[y]
                         mercedes[y] = car
@@ -254,19 +247,21 @@ const sortModel = async (list) => {
         }
         finalList[finalCount++]=mercedes
     }
+    console.log(finalList)
     return finalList
 }
 
 
 const model = (db) => async (req, res) => {
-    console.log(req.query)
+
     const { vehicleList } = req.query
     const list = []
     try {
-        const models = func2(db, vehicleList)
+        const models = await func2(db, vehicleList)
         if (models) {
+            console.log(models,'models for models')
             const finalModels = sortModel(models)
-            console.log(finalModels)
+            console.log(finalModels,'models')
             res.json(finalModels)
         } else {
             res.status(400).json('failed')
@@ -338,7 +333,6 @@ const read = (db) => (req, res) => {
 const update = (db) => async (req, res) => {
 
     const { id, carId } = req.body;
-    console.log("id:", id, "carId:", carId);
 
     try {
         // Check if a car with carId exists
