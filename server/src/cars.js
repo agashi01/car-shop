@@ -143,6 +143,8 @@ const func2 = async (db, list) => {
 }
 
 const sortModel = async (list) => {
+    let finalCount=0
+    let finalList=[]
     const audi = []
     let count1 = 0
     const bmw = []
@@ -152,41 +154,107 @@ const sortModel = async (list) => {
     let count3 = 0
 
     for (let x = 0; x < list.length; x++) {
-        if (list[x].model[0]==='A') {
+        if (list[x].model[0] === 'A') {
             audi[count1++] = list[x].model
         } else if (bmwList.some(el => list[x].model.startsWith(el))) {
             bmw[count2++] = list[x].model
         } else {
             mercedes[count3] = list[x].m
         }
-    
-        for(let x=0;x<audi.length;x++){
-            const num=parseInt(audi[x][1])
+    }
+    if (audi) {
+        for (let x = 0; x < audi.length; x++) {
 
-            let min =999
-            let index=0;
+            let min = 999
+            let index = 0;
 
-            for (let y=0;audi.length;y++){
-                if(!Number.isInteger(audi[y])){
-                    var numy=parseInt(audi[y][1])
-                }else{
-                    numy=audi[y]
+            for (let y = x; y < audi.length; y++) {
+                let numy = 0
+                if (!Number.isInteger(audi[y])) {
+                    numy = parseInt(audi[y][1])
+                } else {
+                    numy = audi[y]
                 }
-               
-                if(numy<=min){
-                    min=numy;
-                    index=y
+
+                if (numy <= min) {
+                    min = numy;
+                    index = y
                 }
-            }   
-            audi[x]=audi[index]
-            dudi[index]=999
+            }
+            console.log(audi)
+            if (index !== x) {
+                let num2 = audi[x]
+                audi[x] = audi[index]
+                audi[index] = num2
+            }
+
+            
 
         }
 
+        finalList[finalCount++]=audi
+    }
+    if (bmw) {
+        for (let x = 0; x < bmw.length; x++) {
 
-    console.log(audi,bmw,mercedes)
+            let min = 999
+            let index = 0;
 
-}
+            for (let y = x; y < bmw.length; y++) {
+                let numy = parseInt(bmw[y][0])
+
+                if (numy <= min) {
+                    min = numy;
+                    index = y
+                }
+            }
+            console.log(bmw)
+            if (index !== x) {
+                let num2 = bmw[x]
+                bmw[x] = bmw[index]
+                bmw[index] = num2
+            }
+
+
+
+        }
+        finalList[finalCount++]=bmw
+    }
+
+    if (mercedes) {
+
+        for (let y = 0; y < mercedes.length; y++) {
+            console.log(y)
+            let letter = mercedes[y][0]
+            console.log(letter)
+            switch (letter) {
+                case 'C':
+                    if (y != 0) {
+                        let car = mercedes[0]
+                        mercedes[0] = mercedes[y]
+                        mercedes[y] = car
+                    }
+                    break
+                case 'S':
+                    if (y != 2) {
+                        let car = mercedes[2]
+                        mercedes[2] = mercedes[y]
+                        mercedes[y] = car
+                    }
+                    break
+                case 'E':
+                    if (y != 1) {
+                        console.log('hi')
+                        let car = mercedes[1]
+                        mercedes[1] = mercedes[y]
+                        mercedes[y] = car
+                    }
+            }
+
+        }
+        finalList[finalCount++]=mercedes
+    }
+    return finalList
 }
 
 
@@ -197,9 +265,9 @@ const model = (db) => async (req, res) => {
     try {
         const models = func2(db, vehicleList)
         if (models) {
-            const finalModels= sortModel(models)
-            console.log(models)
-            res.json(models)
+            const finalModels = sortModel(models)
+            console.log(finalModels)
+            res.json(finalModels)
         } else {
             res.status(400).json('failed')
         }
