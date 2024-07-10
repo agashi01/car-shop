@@ -143,24 +143,27 @@
 
 
 .vehicle-clicked {
+  border:1px solid #ccc;
   right: 49.8%;
   background-color: #555;
   display: inline-block;
   position:absolute;
   top:70px;
   height: auto;
-  border-right:solid 4px black ;
   z-index: 1002;
+  margin-right: 20px;
   border-radius: 5%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   list-style: none;
-  width:150px;
-  margin: 0 auto;
+  width:170px;
+  padding-right: 20px ;
 }
 
 .vehicle-clicked li {
+  border-radius: 5%;
+  margin:5px 5px 0 5px;
+  width:100%;
   cursor: pointer;
-  border-radius: 10%;
   position: relative;
   display: flex;
   justify-content: center;
@@ -171,6 +174,7 @@
 
 .vehicle-clicked li:last-child {
   border-bottom: none;
+  margin-bottom: 10px;
 }
 
 .vehicle-clicked:hover{
@@ -184,19 +188,19 @@
 .vehicle-clicked:hover{
   background-color: #4e4d4d;
 }
-
 .checkbox-container {
+  position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
-  width: 100%;
   padding: 5px 10px;
   border-radius: 5px;
   transition: background-color 0.3s;
+  margin-left: auto;
 }
 
-.checkbox-container input[type="checkbox"] {
-  display: none;
+.checkbox-container input[type="checkbox"], .custom-checkbox {
+  display: none; 
 }
 
 .custom-checkbox {
@@ -205,8 +209,7 @@
   height: 20px;
   background-color: #fff;
   border: 2px solid #007bff;
-  border-radius: 50%; /* Makes the checkbox round */
-  margin-right: 15px;
+  border-radius: 50%; 
   position: relative;
   transition: background-color 0.3s, border-color 0.3s;
 }
@@ -225,7 +228,7 @@
   height: 10px;
   border: solid white;
   border-width: 0 2px 2px 0;
-  transform: translate(-50%, -50%) rotate(45deg) scale(0);
+  transform: translate(-50%, 50%) rotate(45deg) scale(0);
   transition: transform 0.3s;
 }
 
@@ -243,15 +246,15 @@
 }
 
 
-
 .type-input{
+  position: relative;
   color: whitesmoke;
   width: 100%;
 }
 
 .type-input:hover{
   background-color: #3f3f3f;
-} */
+} 
 
 .home-guest-sign {
   margin-left: 620px;
@@ -260,21 +263,26 @@
   align-items: center;
 }
 
-
+.ul{
+  list-style-type: none;
+}
 
 .model-clicked{
+  cursor: pointer;
+  overscroll-behavior: contain;
+  overflow-x: hidden;
+  overflow-y: auto;
   perspective: 1000px;
   transform-style: preserve-3d;
   right: 42%;
-  border-left:solid 4px black ;
   background-color: #555;
-  display: inline-block;
   position:absolute;
   top:70px;
-  padding: 30px;
-  height: 200px;
+  padding-left: 10px;
+  height: 180px;
   width: 150px;
   border-radius: 5%;
+  border:1px solid #ccc;
   z-index: 1002;
   box-shadow: 0 10px 10px(0, 0, 0, 0.1);
   transition: opacity 1s ease-in-out, visibility  ease-in-out;
@@ -283,6 +291,38 @@
 .model-clicked:hover{
   transition: opacity ease-in-out 0.2s;
   background-color:  #4e4d4d;
+}
+
+
+.model-clicked li {
+  border-radius: 5%;
+  margin:5px 5px 0 5px;
+  width:100%;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* padding: 15px; */
+  border-bottom: 1px solid #ddd;
+}
+front
+
+.model-clicked li:last-child {
+  border-bottom: none;
+  margin-bottom: 5px;
+}
+
+.model-clicked:hover{
+  background-color: #3f3f3f;
+}
+
+.model-clicked li:active{
+  background-color: #303030;
+}
+
+.model-clicked:hover{
+  background-color: #4e4d4d;
 }
 
 .vehicle-unclicked,

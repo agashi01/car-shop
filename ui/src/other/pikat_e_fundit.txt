@@ -1,7 +1,5 @@
-1. duhet me bo pruchase car
-2. pastaj duhet me bo find a dealer me form tnjejt qyh shfaqen kerret 
-3. duhet me i gjet krejt dealers qe e kan qat kerr edhe me bo ni list cilin me zgjedh pastaj mi dal nje liste tjeter i kerrit me emer te dealerit ehde me bo purchase,
- kur te bon pruchase mu kthy ne home edhe kur te sheh kerrin e evet me pa purchased edhe ni buton purchased cars.
-
-duhet te vehicle em te dal krejt listat e firmave t kerrit pastaj mu qel model edhe me t dal krejt modelet edhe kur ti prek me ti qit qato,
-kerre.
+1.logon
+2.me bo funksion qe kur te qeli ni menu veq me prek esc ose anash mu hek ren 
+3. bone ni reset
+5. optimizo funksionin func 
+7. ndreqe guestin

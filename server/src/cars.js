@@ -247,8 +247,16 @@ const sortModel = (list) => {
         }
         finalList[finalCount++]=mercedes
     }
-    console.log(finalList)
-    return finalList
+    finalList=finalList.flat()
+    const fList=[]
+    for(let x=0;x<finalList.length;x++){
+        let obj={}
+        obj.model=finalList[x]
+        obj.checked=false
+        obj.id=x
+        fList[x]=obj
+    }
+    return fList
 }
 
 

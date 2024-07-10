@@ -19,36 +19,61 @@ function Home({ id, page, logo, guest, username }) {
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
 
-  useEffect(()=>{
-      axios.
-      get('http://localhost:3000/model',{
-          params:{
-            vehicleList:vehicleList
+  useEffect(() => {
+    axios.
+      get('http://localhost:3000/model', {
+        params: {
+          vehicleList: vehicleList
         }
       })
-      .then((res)=>{
-        console.log(res)
+      .then((res) => {
+        setModelInput(res.data)
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.log(err)
       })
-      return 
-    },[vehicleList])
-  
+    return
+  }, [vehicleList])
+
+
+
+  const sorted = (list) => {
+    for (let x = 0; x < list.length; x++) {
+      let letter2 = 'Z'
+      loop2: for (let y = x; y < list.length; y++) {
+        let letterY = list[y].make[0]
+        if (letterY <= letter2) {
+          if (y === x) {
+            letter2 = letterY
+            console.log(letter2)
+            continue loop2
+          }
+          let car = list[x]
+          list[x] = list[y]
+          list[y] = car
+          letter2 = letterY
+        }
+      }
+    }
+    return list
+  }
+
+
   useEffect(() => {
     axios.get('http://localhost:3000/make')
       .then(response => {
         const res = response.data;
-        const list = res.map((item, index) => ({ index, ...item, checked: false }));
+        const list = sorted(res.map((item, index) => ({ id: index, ...item, checked: false })));
+        console.log(list, 'ddddd')
         setVehicleInput(list);
       })
       .catch(err => {
         console.log(err);
       });
+    setUse(!use)
   }, []); // Note the empty dependency array
 
   useEffect(() => {
-    const listM = []
     const listV = []
     let count = 0;
 
@@ -63,24 +88,28 @@ function Home({ id, page, logo, guest, username }) {
         listV[x] = vehicleInput[x].make
       }
     }
+    setVehicleList(listV)
+  }, [vehicleInput])
 
-    count = 0
+  useEffect(() => {
+    const listM = []
+    let count = 0
     for (let x = 0; x < modelInput.length; x++) {
       if (modelInput[x].checked) {
-        listM[count] = modelInput[x].make
+        listM[count] = modelInput[x].model
         count++;
       }
     }
     if (!count) {
       for (let x = 0; x < modelInput.length; x++) {
         console.log('i got here')
-        listM[x] = modelInput[x].make
+        listM[x] = modelInput[x].model
       }
     }
-    setVehicleList(listV)
+
     setModelList(listM)
     setUse(!use)
-  }, [vehicleInput, modelInput])
+  }, [modelInput])
 
   useEffect(() => {
     const url = guest ? 'http://localhost:3000/cars/guest' : 'http://localhost:3000/cars'
@@ -98,7 +127,7 @@ function Home({ id, page, logo, guest, username }) {
         console.log(err)
       })
 
-  }, [use])
+  }, [use, modelInput])
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
@@ -127,17 +156,27 @@ function Home({ id, page, logo, guest, username }) {
 
   }
 
-  const checked = (obj) => ()=> {
-    setVehicleInput(()=>{
-      return vehicleInput.map((el)=>{
-        if(el.index===obj.index){
-          return {...el,checked:(!el.checked)}
+  const checked = (obj) => () => {
+    setVehicleInput(() => {
+      return vehicleInput.map((el) => {
+        if (el.id === obj.id) {
+          return { ...el, checked: (!el.checked) }
         }
         return el
       })
     })
   }
 
+  const checkedM = (obj) => () => {
+    setModelInput(() => {
+      return modelInput.map((el) => {
+        if (obj.id === el.id) {
+          return { ...el, checked: (!el.checked) }
+        }
+        return el
+      })
+    })
+  }
 
   return (
     <div className="complet">
@@ -158,25 +197,56 @@ function Home({ id, page, logo, guest, username }) {
             <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
           </div>
           <div className={vehicleClicked}>
-            <ul>
-              <li>BMW</li>
-              <li>Audi</li>
-              <li>Mercedes-benz</li>
+            < ul>
+              {vehicleInput.map(obj => {
+
+                // eslint-disable-next-line react/jsx-key
+                return <li onClick={checked(obj)} className="type-input"> <label onClick={checked(obj)} className="checkbox-container">
+                  <input onClick={checked(obj)} type="checkbox" checked={obj.checked}>
+                  </input>
+                  <span onClick={checked(obj)} className="custom-checkbox"></span>
+                </label> {obj.make}</li>
+              })}
             </ul>
           </div>
           <div className="model-menu">
             <button onClick={modelMenu} className='vehicle'>model</button>
-            <div className={modelClicked}>
-              <ul>
-                <li>BMW</li>
-                <li>Audi</li>
-                <li>Mercedes-benz</li>
-              </ul>
-            </div>
+          </div>
+          <div className={modelClicked}>
+            <ul className="ul">
+              {modelInput.length > 0 && <li onClick={() => console.log('reset clicked')} className="type-input">Reset</li>}
+              {modelInput.map((obj) => {
+                return <li key={obj.id} onClick={checkedM(obj)} className="type-input"> <label onClick={checkedM(obj)} className="checkbox-container">
+                  <input onClick={checkedM(obj)} type="checkbox" checked={obj.checked}>
+                  </input>
+                  <span onClick={checkedM(obj)} className="custom-checkbox"></span>
+                </label>{obj.model}</li>
+              })}
+            </ul>
+
           </div>
           <div className="home-guest-sign">
             <button className="signIn-home">Sign in  </button>
             <button className="register-home"> Register </button>
+          </div>
+          <div className='account'>
+            <p className='username'>{username}</p>
+            <div onClick={burgerMenuFunc} className='burger-menu'>
+              <div className={burgerMenu}></div>
+              <div className={burgerMenu}></div>
+              <div className={burgerMenu}></div>
+            </div>
+          </div>
+          <div className={menu}>
+            <div className='help'>
+              <ul className='ul'>
+                <li><a>Home</a></li>
+                <li><a>about</a></li>
+                <li><a>Help</a></li>
+                <li><a>Services</a></li>
+              </ul>
+
+            </div>
           </div>
         </nav>
         :
@@ -193,13 +263,12 @@ function Home({ id, page, logo, guest, username }) {
           <div className={vehicleClicked}>
             < ul>
               {vehicleInput.map(obj => {
-                console.log(obj)
 
-               // eslint-disable-next-line react/jsx-key
-               return <li onClick={checked(obj)} className="type-input">{obj.make} <label onClick={checked(obj)} className="checkbox-container">
-                <input onClick={checked(obj)} type="checkbox" checked={obj.checked}>
-                </input>
-                <span onClick={checked(obj)} className="custom-checkbox"></span>
+                // eslint-disable-next-line react/jsx-key
+                return <li onClick={checked(obj)} className="type-input">{obj.make} <label onClick={checked(obj)} className="checkbox-container">
+                  <input onClick={checked(obj)} type="checkbox" checked={obj.checked}>
+                  </input>
+                  <span onClick={checked(obj)} className="custom-checkbox"></span>
                 </label></li>
               })}
             </ul>
@@ -208,6 +277,15 @@ function Home({ id, page, logo, guest, username }) {
             <button onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className={modelClicked}>
+            <ul className="ul">
+              {modelInput.map((obj) => {
+                return <li key={obj.id} onClick={checkedM(obj)} className="type-input">{obj.model} <label onClick={checkedM(obj)} className="checkbox-container">
+                  <input onClick={checkedM(obj)} type="checkbox" checked={obj.checked}>
+                  </input>
+                  <span onClick={checkedM(obj)} className="custom-checkbox"></span>
+                </label></li>
+              })}
+            </ul>
 
           </div>
           <div className='account'>
@@ -221,8 +299,8 @@ function Home({ id, page, logo, guest, username }) {
           </div>
           <div className={menu}>
             <div className='help'>
-              <ul>
-                <li><a href="https://www.google.com" target="_blank">Home</a></li>
+              <ul className='ul'>
+                <li><a>Home</a></li>
                 <li><a>about</a></li>
                 <li><a>Help</a></li>
                 <li><a>Services</a></li>
