@@ -143,26 +143,26 @@
 
 
 .vehicle-clicked {
-  border:1px solid #ccc;
+  border: 1px solid #ccc;
   right: 49.8%;
   background-color: #555;
   display: inline-block;
-  position:absolute;
-  top:70px;
+  position: absolute;
+  top: 70px;
   height: auto;
   z-index: 1002;
   margin-right: 20px;
   border-radius: 5%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   list-style: none;
-  width:170px;
-  padding-right: 20px ;
+  width: 170px;
+  padding-right: 20px;
 }
 
-.vehicle-clicked li {
+home .vehicle-clicked li {
   border-radius: 5%;
-  margin:5px 5px 0 5px;
-  width:100%;
+  margin: 5px 5px 0 5px;
+  width: 100%;
   cursor: pointer;
   position: relative;
   display: flex;
@@ -177,17 +177,18 @@
   margin-bottom: 10px;
 }
 
-.vehicle-clicked:hover{
+.vehicle-clicked:hover {
   background-color: #3f3f3f;
 }
 
-.vehicle-clicked li:active{
+.vehicle-clicked li:active {
   background-color: #303030;
 }
 
-.vehicle-clicked:hover{
+.vehicle-clicked:hover {
   background-color: #4e4d4d;
 }
+
 .checkbox-container {
   position: relative;
   display: flex;
@@ -199,9 +200,8 @@
   margin-left: auto;
 }
 
-.checkbox-container input[type="checkbox"], .custom-checkbox {
-  
-}
+.checkbox-container input[type="checkbox"],
+.custom-checkbox {}
 
 .custom-checkbox {
   display: inline-block;
@@ -210,12 +210,12 @@
   background-color: #fff;
   border: 2px solid #007bff;
   caret-color: transparent;
-  border-radius: 50%; 
+  border-radius: 50%;
   position: relative;
   transition: background-color 0.3s, border-color 0.3s;
 }
 
-.checkbox-container input[type="checkbox"]:checked + .custom-checkbox {
+.checkbox-container input[type="checkbox"]:checked+.custom-checkbox {
   background-color: #007bff;
   border-color: #007bff;
 }
@@ -233,7 +233,7 @@
   transition: transform 0.3s;
 }
 
-.checkbox-container input[type="checkbox"]:checked + .custom-checkbox:after {
+.checkbox-container input[type="checkbox"]:checked+.custom-checkbox:after {
   transform: translate(-50%, -50%) rotate(45deg) scale(1);
 }
 
@@ -241,21 +241,21 @@
   background-color: #f0f0f0;
 }
 
-.checkbox-container input[type="checkbox"]:focus + .custom-checkbox {
+.checkbox-container input[type="checkbox"]:focus+.custom-checkbox {
   outline: 2px solid #007bff;
   outline-offset: 2px;
 }
 
 
-.type-input{
+.type-input {
   position: relative;
   color: whitesmoke;
   width: 100%;
 }
 
-.type-input:hover{
+.type-input:hover {
   background-color: #3f3f3f;
-} 
+}
 
 .home-guest-sign {
   margin-left: 620px;
@@ -264,11 +264,11 @@
   align-items: center;
 }
 
-.ul{
+.ul {
   list-style-type: none;
 }
 
-.model-clicked{
+.model-clicked {
   cursor: pointer;
   overscroll-behavior: contain;
   overflow-x: hidden;
@@ -277,28 +277,28 @@
   transform-style: preserve-3d;
   right: 42%;
   background-color: #555;
-  position:absolute;
-  top:70px;
+  position: absolute;
+  top: 70px;
   padding-left: 10px;
   height: 180px;
   width: 150px;
   border-radius: 5%;
-  border:1px solid #ccc;
+  border: 1px solid #ccc;
   z-index: 1002;
   box-shadow: 0 10px 10px(0, 0, 0, 0.1);
-  transition: opacity 1s ease-in-out, visibility  ease-in-out;
+  transition: opacity 1s ease-in-out, visibility ease-in-out;
 }
 
-.model-clicked:hover{
+.model-clicked:hover {
   transition: opacity ease-in-out 0.2s;
-  background-color:  #4e4d4d;
+  background-color: #4e4d4d;
 }
 
 
 .model-clicked li {
   border-radius: 5%;
-  margin:5px 5px 0 5px;
-  width:100%;
+  margin: 5px 5px 0 5px;
+  width: 100%;
   cursor: pointer;
   position: relative;
   display: flex;
@@ -306,22 +306,21 @@
   /* padding: 15px; */
   border-bottom: 1px solid #ddd;
 }
-front
 
-.model-clicked li:last-child {
+front .model-clicked li:last-child {
   border-bottom: none;
   margin-bottom: 5px;
 }
 
-.model-clicked:hover{
+.model-clicked:hover {
   background-color: #3f3f3f;
 }
 
-.model-clicked li:active{
+.model-clicked li:active {
   background-color: #303030;
 }
 
-.model-clicked:hover{
+.model-clicked:hover {
   background-color: #4e4d4d;
 }
 
@@ -386,14 +385,14 @@ front
 }
 
 .account {
-  margin-left: 620px;
   display: flex;
-  justify-content: center;
+  justify-self: flex-end;
   align-items: center;
 }
 
 .vehicle {
   margin-left: 15px;
+  justify-self: center;
   background-color: rgb(189, 195, 199);
 
 }
@@ -404,14 +403,7 @@ ul {
   margin: 0;
 }
 
-
-.welcome-home {
-  display: flex;
-  justify-content: flex-start;
-  margin-left: 30px;
-  margin-right: 470px;
-}
-
+/* 
 @media (max-width:1900px) {
   .account {
     margin-left: auto;
@@ -422,7 +414,7 @@ ul {
   .welcome-home {
     margin-right: auto;
   }
-}
+} */
 
 .btn-account {
   border-radius: 50%;
@@ -432,13 +424,6 @@ ul {
   margin-right: 20px;
 }
 
-.vehicles-menu,
-.model-menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-}
 
 nav.home {
   position: fixed;
@@ -448,7 +433,6 @@ nav.home {
   z-index: 1000;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   display: flex;
-  align-items: center;
   background-color: rgb(189, 195, 199);
   height: 75px;
   color: #333;
@@ -480,16 +464,18 @@ nav.home {
   align-items: center;
   justify-content: space-evenly;
   cursor: pointer;
+  justify-self: flex-end;
   padding: 5px;
   margin-left: 50px;
   margin-right: 20px;
 }
 
+/* 
 @media (max-width:814px) {
   .burger-menu {
     margin-left: auto;
   }
-}
+} */
 
 .burger.clicked:nth-child(1) {
   transform: rotate(45deg) translate(0.25em, 0.25em);
@@ -502,7 +488,7 @@ nav.home {
 }
 
 .burger.clicked:nth-child(3) {
-  transform: rotate(-45deg) translate(0.3em, -0.25em);
+  transform: rotate(-45deg) translate(0.3em, -0.30em);
   transition: ease-out 0.4s;
 }
 
@@ -578,6 +564,73 @@ nav.home {
 
 .help a {
   color: white;
+}
+
+
+.home {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #333;
+}
+
+.home-logo {
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100px;
+  flex: 1;
+}
+
+.vehicles-menu {
+  margin-left: 30px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 1;
+  /* Adjust this flex value as needed */
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: white;
+  flex:1;
+}
+
+.ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.type-input {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.custom-checkbox {
+  margin-right: 0.5rem;
+}
+
+
+.help ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help ul li {
+  margin-bottom: 0.5rem;
+}
+
+.help ul li a {
+  color: white;
+  text-decoration: none;
 }
 
 /* stop */

@@ -190,11 +190,11 @@ function Home({ id, page, logo, guest, username }) {
       </div>}
       {guest ?
         <nav className="home">
-          <div className="welcome-home">
-            <h2>The best car shop</h2>
-          </div>
+         
           <div className='vehicles-menu'>
             <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
+            <button onClick={modelMenu} className='vehicle'>model</button>
+
           </div>
           <div className={vehicleClicked}>
             < ul>
@@ -208,9 +208,6 @@ function Home({ id, page, logo, guest, username }) {
                 </label> {obj.make}</li>
               })}
             </ul>
-          </div>
-          <div className="model-menu">
-            <button onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className={modelClicked}>
             <ul className="ul">
@@ -251,18 +248,16 @@ function Home({ id, page, logo, guest, username }) {
         </nav>
         :
         <nav className="home">
+          <div className='vehicles-menu'>
+            <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
+            <button onClick={modelMenu} className='vehicle'>model</button>
+          </div>
           <div className="home-logo">
             <img className={logo} src={carLogo} alt='logo' style={{
               width: '100%',
               height: '100%',
               borderRadius: '50%'
             }} />
-          </div>
-          <div className="welcome-home">
-            <h2>The best car shop</h2>
-          </div>
-          <div className='vehicles-menu'>
-            <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
           </div>
           <div className={vehicleClicked}>
             < ul>
@@ -276,9 +271,6 @@ function Home({ id, page, logo, guest, username }) {
                 </li>
               })}
             </ul>
-          </div>
-          <div className="model-menu">
-            <button onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className={modelClicked}>
             <ul className="ul">
