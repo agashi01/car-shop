@@ -53,78 +53,21 @@ const create = (db) => async function (req, res) {
 
 const func = async (db, vehicle = null, model = null, id) => {
 
-    if (id) {
-        if (vehicle) {
-            if (!model) {
-                const a = await db("cars")
-                    .join('dealers', 'cars.dealer_id', 'dealers.id')
-                    .whereIn('make', vehicle)
-                    .select("cars.*")
-                    .orderBy("cars.owner_id", id);
+    let query = db("cars").join('dealers', 'cars.dealer_id', 'dealers.id')
 
-                return a
-            }
-            const a = await db("cars")
-                .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .whereIn('make', vehicle)
-                .whereIn('model', model)
-                .select("cars.*")
-                .orderBy("cars.owner_id", id);
-
-            return a
-        } else if (model) {
-            const a = await db("cars")
-                .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .whereIn('model', model)
-                .select("cars.*")
-                .orderBy("cars.owner_id", id);
-
-            return a
-        } else {
-
-            const a = await db("cars")
-                .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .select("cars.*")
-                .orderBy("cars.owner_id", id);
-
-            return a
-        }
-    } else {
-
-        if (vehicle) {
-            if (!model) {
-                const a = await db("cars")
-                    .join('dealers', 'cars.dealer_id', 'dealers.id')
-                    .whereIn('make', vehicle)
-                    .select("cars.*");
-
-                return a
-
-            }
-            const a = await db("cars")
-                .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .whereIn('make', vehicle)
-                .whereIn('model', model)
-                .select("cars.*");
-
-            return a
-        } else if (model) {
-            const a = await db("cars")
-                .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .whereIn('model', model)
-                .select("cars.*");
-            return a
-        } else {
-            console.log('!')
-
-            const a = await db("cars")
-                .join('dealers', 'cars.dealer_id', 'dealers.id')
-                .select("cars.*");
-
-            return a
-        }
-
+    if (vehicle) {
+        query = query.whereIn('make', vehicle);
     }
+
+    if (model) {
+        query = query.whereIn('model', model);
+    }
+
+    if (id) {
+        query = query.orderBy("cars.owner_id", id);
+    }
+
+    return query.select("cars.*").limit(30);
 }
 
 const func2 = async (db, list) => {
@@ -140,8 +83,8 @@ const func2 = async (db, list) => {
 }
 
 const sortModel = (list) => {
-    let finalCount=0
-    let finalList=[]
+    let finalCount = 0
+    let finalList = []
     const audi = []
     let count1 = 0
     const bmw = []
@@ -185,11 +128,11 @@ const sortModel = (list) => {
                 audi[index] = num2
             }
 
-            
+
 
         }
 
-        finalList[finalCount++]=audi
+        finalList[finalCount++] = audi
     }
     if (bmw) {
         for (let x = 0; x < bmw.length; x++) {
@@ -214,7 +157,7 @@ const sortModel = (list) => {
 
 
         }
-        finalList[finalCount++]=bmw
+        finalList[finalCount++] = bmw
     }
 
     if (mercedes) {
@@ -245,16 +188,16 @@ const sortModel = (list) => {
             }
 
         }
-        finalList[finalCount++]=mercedes
+        finalList[finalCount++] = mercedes
     }
-    finalList=finalList.flat()
-    const fList=[]
-    for(let x=0;x<finalList.length;x++){
-        let obj={}
-        obj.model=finalList[x]
-        obj.checked=false
-        obj.id=x
-        fList[x]=obj
+    finalList = finalList.flat()
+    const fList = []
+    for (let x = 0; x < finalList.length; x++) {
+        let obj = {}
+        obj.model = finalList[x]
+        obj.checked = false
+        obj.id = x
+        fList[x] = obj
     }
     return fList
 }
@@ -267,9 +210,9 @@ const model = (db) => async (req, res) => {
     try {
         const models = await func2(db, vehicleList)
         if (models) {
-            console.log(models,'models for models')
+            console.log(models, 'models for models')
             const finalModels = sortModel(models)
-            console.log(finalModels,'models')
+            console.log(finalModels, 'models')
             res.json(finalModels)
         } else {
             res.status(400).json('failed')

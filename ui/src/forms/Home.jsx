@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import CarCard from './CarCard'
 import axios from 'axios';
-import Logo from '../Logo';
+import carLogo from '../car_logo.png'
 
 
 // eslint-disable-next-line react/prop-types
@@ -23,7 +23,7 @@ function Home({ id, page, logo, guest, username }) {
     axios.
       get('http://localhost:3000/model', {
         params: {
-          vehicleList: vehicleList
+          vehicleList
         }
       })
       .then((res) => {
@@ -252,7 +252,11 @@ function Home({ id, page, logo, guest, username }) {
         :
         <nav className="home">
           <div className="home-logo">
-            < Logo />
+            <img className={logo} src={carLogo} alt='logo' style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '50%'
+            }} />
           </div>
           <div className="welcome-home">
             <h2>The best car shop</h2>
@@ -265,11 +269,11 @@ function Home({ id, page, logo, guest, username }) {
               {vehicleInput.map(obj => {
 
                 // eslint-disable-next-line react/jsx-key
-                return <li onClick={checked(obj)} className="type-input">{obj.make} <label onClick={checked(obj)} className="checkbox-container">
-                  <input onClick={checked(obj)} type="checkbox" checked={obj.checked}>
-                  </input>
-                  <span onClick={checked(obj)} className="custom-checkbox"></span>
-                </label></li>
+                return <li key={obj.id} onClick={checked(obj)} className="type-input">
+                  <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.make}`} />
+                  {obj.make}
+
+                </li>
               })}
             </ul>
           </div>
@@ -279,11 +283,11 @@ function Home({ id, page, logo, guest, username }) {
           <div className={modelClicked}>
             <ul className="ul">
               {modelInput.map((obj) => {
-                return <li key={obj.id} onClick={checkedM(obj)} className="type-input">{obj.model} <label onClick={checkedM(obj)} className="checkbox-container">
-                  <input onClick={checkedM(obj)} type="checkbox" checked={obj.checked}>
-                  </input>
-                  <span onClick={checkedM(obj)} className="custom-checkbox"></span>
-                </label></li>
+                return <li key={obj.id} onClick={checkedM(obj)} className="type-input">
+                  <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.model}`} />
+                  {obj.model}
+
+                </li>
               })}
             </ul>
 

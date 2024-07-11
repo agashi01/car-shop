@@ -9,36 +9,36 @@ import axios from 'axios'
 // eslint-disable-next-line react/prop-types
 export default function CarCard({ id, isit, guest, car }) {
 
-    const[purchased,setPurchased]=useState(false)
+    const [purchased, setPurchased] = useState(false)
     const [flip, setFlip] = useState(false)
     const carObj = Object.keys(car)
 
-    const transmission=(e)=>{
-        if(e==="automatic_transmission")
+    const transmission = (e) => {
+        if (e === "automatic_transmission")
             return "automatic"
         return e
-    }   
+    }
 
-    useEffect(()=>{
+    useEffect(() => {
 
-    },[])
+    }, [])
 
-    const purchasing=(carId)=>(e)=>{
+    const purchasing = (carId) => (e) => {
         console.log(id)
 
         e.stopPropagation()
-        if(guest){
+        if (guest) {
             isit(true)
             return
         }
-        
-        axios.put("http://localhost:3000/cars",{id,carId})
-        .then((res)=>{
-            setPurchased(true);
-            console.log(purchased)
-            console.log(res)
-        })
-        .catch(err=>console.log(err))
+
+        axios.put("http://localhost:3000/cars", { id, carId })
+            .then((res) => {
+                setPurchased(true);
+                console.log(purchased)
+                console.log(res)
+            })
+            .catch(err => console.log(err))
 
     }
 
@@ -61,7 +61,7 @@ export default function CarCard({ id, isit, guest, car }) {
 
     return (
         // eslint-disable-next-line react/prop-types
-        
+
         <div onClick={() => setFlip(!flip)}
             className={flip ? 'car-card flip' : "car-card"}>
             <div className="front">
@@ -81,11 +81,9 @@ export default function CarCard({ id, isit, guest, car }) {
                 <div className="specification" >{carObj[9]}: {car.vehicle_type}</div>
                 <div className="specification" >{carObj[7]}: {transmission(car.transmission)}</div>
                 <div className="specification" >{carObj[6]}: {car.color}</div>
-                {(purchased || (car.owner_id!=null &&id!=null&&car.owner_id===id)) ?<button className="purchased">owned</button> :
-                 car.owner_id ? <button className="purchased">Out of stock</button>:
-                <button className='purchase' onClick={purchasing(car.id)} type='btn' >Purchase</button>}
-
-
+                {(purchased || (car.owner_id != null && id != null && car.owner_id === id)) ? <button className="purchased">owned</button> :
+                    car.owner_id ? <button className="purchased">Out of stock</button> :
+                        <button className='purchase' onClick={purchasing(car.id)} type='btn' >Purchase</button>}
 
 
             </div>

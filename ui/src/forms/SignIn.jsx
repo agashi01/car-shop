@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
-export default function SignInForm({ id, logo3,logo, page, setGuest, username }) {
+export default function SignInForm({ id, logo3, logo, page, setGuest, username }) {
 
 
     const [signIn, setSignIn] = useState({ email: '', password: '' });
@@ -22,12 +22,12 @@ export default function SignInForm({ id, logo3,logo, page, setGuest, username })
         ref.focus();
     }
 
-    
-  useEffect(()=>{
-   
-    logo("logo")
-    console.log(logo3)
-  },[])
+
+    useEffect(() => {
+
+        logo("logo")
+        console.log(logo3)
+    }, [])
 
     useEffect(() => {
         if (backendError) {

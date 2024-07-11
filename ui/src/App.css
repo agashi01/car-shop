@@ -166,7 +166,7 @@
   cursor: pointer;
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   /* padding: 15px; */
   border-bottom: 1px solid #ddd;
@@ -200,7 +200,7 @@
 }
 
 .checkbox-container input[type="checkbox"], .custom-checkbox {
-  display: none; 
+  
 }
 
 .custom-checkbox {
@@ -209,6 +209,7 @@
   height: 20px;
   background-color: #fff;
   border: 2px solid #007bff;
+  caret-color: transparent;
   border-radius: 50%; 
   position: relative;
   transition: background-color 0.3s, border-color 0.3s;
@@ -301,8 +302,7 @@
   cursor: pointer;
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: left;
   /* padding: 15px; */
   border-bottom: 1px solid #ddd;
 }
@@ -745,10 +745,8 @@ input {
 }
 
 .home-logo {
-  margin-left: 30px;
-  margin-bottom: 10px;
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100%;
 }
 
 /* If you want to add hover effect or animation */
