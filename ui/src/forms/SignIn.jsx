@@ -332,6 +332,7 @@ export default function SignInForm({ id, logo3, logo, page, setGuest, username }
                     {errorPassword()}
                 </div>
                 <button className='register-button' type='btn' onClick={e => signInConfirm(e)}>Sign in</button>
+                
             </form >
         </>
     )

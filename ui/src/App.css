@@ -139,19 +139,96 @@
 
 /* vehicle menu */
 
+.filter {
+  top: 70px;
+  width: 370px;
+  height: 150px;
+  position: absolute;
+  display: flex;
+  justify-content: first baseline;
+  align-items: start;
+}
+
+.model-clicked {
+  justify-self: flex-end;
+  cursor: pointer;
+  overscroll-behavior: contain;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  background-color: #555;
+  /* top: 35px; */
+  height: 160px;
+  width: 150px;
+  border-radius: 5%;
+  border: 1px solid #ccc;
+  z-index: 1002;
+  box-shadow: 0 10px 10px(0, 0, 0, 0.1);
+  transition: opacity 1s ease-in-out, visibility ease-in-out;
+}
+
+.model-clicked:hover {
+  transition: opacity ease-in-out 0.2s;
+  background-color: #4e4d4d;
+}
+
+
+.model-clicked li {
+  border-radius: 5%;
+  margin: 5px 5px 0 5px;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: left;
+  /* padding: 15px; */
+  border-bottom: 1px solid #ddd;
+}
+
+front .model-clicked li:last-child {
+  border-bottom: none;
+  margin-bottom: 5px;
+}
+
+.model-clicked:hover {
+  background-color: #3f3f3f;
+}
+
+.model-clicked li:active {
+  background-color: #303030;
+}
+
+.model-clicked:hover {
+  background-color: #4e4d4d;
+}
+
+.vehicle-unclicked {
+  visibility: hidden;
+}
+
+.model-unclicked {
+
+  display: none;
+}
+
+.reset{
+  text-align: center;
+  color:#ab1313
+}
 
 
 
 .vehicle-clicked {
   border: 1px solid #ccc;
-  right: 49.8%;
   background-color: #555;
   display: inline-block;
-  position: absolute;
-  top: 70px;
+
   height: auto;
   z-index: 1002;
-  margin-right: 20px;
+
+  position: relative;
   border-radius: 5%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   list-style: none;
@@ -159,7 +236,7 @@
   padding-right: 20px;
 }
 
-home .vehicle-clicked li {
+.vehicle-clicked li {
   border-radius: 5%;
   margin: 5px 5px 0 5px;
   width: 100%;
@@ -257,78 +334,10 @@ home .vehicle-clicked li {
   background-color: #3f3f3f;
 }
 
-.home-guest-sign {
-  margin-left: 620px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.ul {
+.btn .ul {
   list-style-type: none;
 }
 
-.model-clicked {
-  cursor: pointer;
-  overscroll-behavior: contain;
-  overflow-x: hidden;
-  overflow-y: auto;
-  perspective: 1000px;
-  transform-style: preserve-3d;
-  right: 42%;
-  background-color: #555;
-  position: absolute;
-  top: 70px;
-  padding-left: 10px;
-  height: 180px;
-  width: 150px;
-  border-radius: 5%;
-  border: 1px solid #ccc;
-  z-index: 1002;
-  box-shadow: 0 10px 10px(0, 0, 0, 0.1);
-  transition: opacity 1s ease-in-out, visibility ease-in-out;
-}
-
-.model-clicked:hover {
-  transition: opacity ease-in-out 0.2s;
-  background-color: #4e4d4d;
-}
-
-
-.model-clicked li {
-  border-radius: 5%;
-  margin: 5px 5px 0 5px;
-  width: 100%;
-  cursor: pointer;
-  position: relative;
-  display: flex;
-  justify-content: left;
-  /* padding: 15px; */
-  border-bottom: 1px solid #ddd;
-}
-
-front .model-clicked li:last-child {
-  border-bottom: none;
-  margin-bottom: 5px;
-}
-
-.model-clicked:hover {
-  background-color: #3f3f3f;
-}
-
-.model-clicked li:active {
-  background-color: #303030;
-}
-
-.model-clicked:hover {
-  background-color: #4e4d4d;
-}
-
-.vehicle-unclicked,
-.model-unclicked {
-
-  display: none;
-}
 
 .complet {
   display: flex;
@@ -344,7 +353,6 @@ front .model-clicked li:last-child {
   margin-top: 20px;
 
 }
-
 .btn2 {
   width: 100px;
   background: hsl(200, 100%, 50%, 0.1);
@@ -356,6 +364,8 @@ front .model-clicked li:last-child {
   outline: none;
   margin-top: 20px;
 }
+
+
 
 .btn2:hover,
 .btn2:focus-visible {
@@ -488,7 +498,7 @@ nav.home {
 }
 
 .burger.clicked:nth-child(3) {
-  transform: rotate(-45deg) translate(0.3em, -0.30em);
+  transform: rotate(-45deg) translate(0.3em, -0.25em);
   transition: ease-out 0.4s;
 }
 
@@ -576,7 +586,7 @@ nav.home {
 }
 
 .home-logo {
-  
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -598,7 +608,7 @@ nav.home {
   align-items: center;
   justify-content: flex-end;
   color: white;
-  flex:1;
+  flex: 1;
 }
 
 .ul {
@@ -648,6 +658,13 @@ In {
 /* stop */
 
 /* sign in dhe register */
+
+.go-as-guest{
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  height:auto;
+}
 
 .register-button {
 
@@ -720,12 +737,24 @@ btn .prezantimi-register {
   box-shadow: 0px 10px 4px rgba(0, 0, 0, 0.5);
 }
 
+.text{
+  align-self: flex-start;
+}
 
+.text2{
+  align-self:flex-end ;
+  justify-self: flex-start;
+}
+
+.correct-guest{
+  display:flex;
+  flex-direction: column;
+}
 
 .register {
   display: flex;
-  flex-direction: row;
   justify-content: center;
+  height:auto;
   align-items: center;
 }
 
@@ -837,7 +866,7 @@ input {
   }
 }
 
-.card {
+btn .card {
   padding: 2em;
 }
 
@@ -891,21 +920,24 @@ body {
   outline: none;
 }
 
+
+
+.margin {
+  position:relative;
+  margin-right: 10px;
+  margin-bottom:20px ;
+}
+
+.btn:active {
+  background: hsl(200, 100%, 50%, 0.2);
+}
+
 .btn:hover,
 .btn:focus-visible {
   background: hsl(200, 100%, 50%, 0.2);
 }
 
-.btn.btn-danger {
-  background: hsl(0, 100%, 40%, 0.1);
-  border: 1px solid hsl(0, 100%, 40%);
-  color: hsl(0, 100%, 40%);
-}
 
-.btn.btn-danger:hover,
-.btn.btn-danger:focus-visible {
-  background: hsl(0, 100%, 40%, 0.2);
-}
 
 .new-item-form input {
   outline: none;

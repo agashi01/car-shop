@@ -1,5 +1,4 @@
-1.logon
-2.me bo funksion qe kur te qeli ni menu veq me prek esc ose anash mu hek ren 
-3. bone ni reset
-. ni buto go as guesti
-5. sign in register 
+
+1.me bo funksion qe kur te qeli ni menu veq me prek esc ose anash mu hek ren 
+2. bone ni reset
+

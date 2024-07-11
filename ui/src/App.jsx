@@ -13,7 +13,7 @@ import './App.css';
 
 export default function App() {
 
-  const [id,setId]=useState(null)
+  const [id, setId] = useState(null)
   const [logo, setLogo] = useState("logo");
   const [page, setPage] = useState('signIn');
   const [guest, setGuest] = useState(true);
@@ -44,17 +44,30 @@ export default function App() {
               <button
                 onClick={() => setPage('signIn')}
                 type='button'>Sign In</button>
-            </div>) : page === 'signIn' ? (<div className='register'>
-              <p className='text' style={{
-                fontSize: 13,
-                marginRight: 5,
-              }}>Do not have an account? </p>
-              <button onClick={() => setPage('register')} type='btn'>Register</button>
-            </div>) : null}
+            </div>) : page === 'signIn' ?
+              (<div className='register'>
+                <div className='correct-guest'>
+                  <p className='text' style={{
+                    fontSize: 13,
+                    marginRight: 5,
+                  }}>Do not have an account? </p>
+                  <p className='text2' style={{
+                    fontSize: 13,
+                    marginRight: 5,
+                  }}>Go as guest </p>
+                </div>
+    
+
+                <div className='go-as-guest'>
+                  <button onClick={() => setPage('register')} type='btn'>Register</button>
+                  <button onClick={() => setPage('home')} type='btn'>Go as guest</button>
+                </div>
+
+              </div>) : null}
           </div>
         </div>
 
-        : <Home id ={id} page={setPage} logo3={Logo} logo={setLogo} guest={guest} username={username} />}
+        : <Home id={id} page={setPage} logo3={Logo} logo={setLogo} guest={guest} username={username} />}
       {/* {page === 'home' && <Logo />} */}
     </>
   )

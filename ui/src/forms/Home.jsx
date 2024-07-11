@@ -18,7 +18,15 @@ function Home({ id, page, logo, guest, username }) {
   const [burgerMenu, setBurgerMenu] = useState("burger unclicked")
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
+  const [isHovered, setIsHovered] = useState(false);
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
   useEffect(() => {
     axios.
       get('http://localhost:3000/model', {
@@ -178,6 +186,20 @@ function Home({ id, page, logo, guest, username }) {
     })
   }
 
+  const changePage = (str) => () => {
+    page(str)
+
+  }
+
+  const check = (str) => {
+    for (let x of str) {
+      if (x.checked) {
+        return true
+      }
+    }
+    return false
+  }
+
   return (
     <div className="complet">
       {isit && <div className="isit">
@@ -190,44 +212,61 @@ function Home({ id, page, logo, guest, username }) {
       </div>}
       {guest ?
         <nav className="home">
-         
           <div className='vehicles-menu'>
             <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
             <button onClick={modelMenu} className='vehicle'>model</button>
+          </div>
+          <div className="home-logo">
+            <img onClick={changePage('signIn')}
+              className={`logo ${logo}`}
+              src={carLogo}
+              alt='logo'
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                boxShadow: '0px 4px 10px',
+                transition: 'transform 0.2s ease-in-out',
+                transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+              }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            />
+          </div>
+          <div className='filter'>
+            <div className={vehicleClicked}>
+              < ul>
+                {vehicleInput.map(obj => {
 
-          </div>
-          <div className={vehicleClicked}>
-            < ul>
-              {vehicleInput.map(obj => {
+                  // eslint-disable-next-line react/jsx-key
+                  return <li key={obj.id} onClick={checked(obj)} className="type-input">
+                    <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.make}`} />
+                    {obj.make}
 
-                // eslint-disable-next-line react/jsx-key
-                return <li onClick={checked(obj)} className="type-input"> <label onClick={checked(obj)} className="checkbox-container">
-                  <input onClick={checked(obj)} type="checkbox" checked={obj.checked}>
-                  </input>
-                  <span onClick={checked(obj)} className="custom-checkbox"></span>
-                </label> {obj.make}</li>
-              })}
-            </ul>
-          </div>
-          <div className={modelClicked}>
-            <ul className="ul">
-              {modelInput.length > 0 && <li onClick={() => console.log('reset clicked')} className="type-input">Reset</li>}
-              {modelInput.map((obj) => {
-                return <li key={obj.id} onClick={checkedM(obj)} className="type-input"> <label onClick={checkedM(obj)} className="checkbox-container">
-                  <input onClick={checkedM(obj)} type="checkbox" checked={obj.checked}>
-                  </input>
-                  <span onClick={checkedM(obj)} className="custom-checkbox"></span>
-                </label>{obj.model}</li>
-              })}
-            </ul>
+                  </li>
+                })}
+              </ul>
+            </div>
+            <div className={modelClicked}>
+              <ul className="ul">
+                {modelInput.map((obj) => {
+                  return <li key={obj.id} onClick={checkedM(obj)} className="type-input">
+                    <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.model}`} />
+                    {obj.model}
 
+                  </li>
+                })}
+              </ul>
+
+            </div>
           </div>
-          <div className="home-guest-sign">
-            <button className="signIn-home">Sign in  </button>
-            <button className="register-home"> Register </button>
-          </div>
+
+
           <div className='account'>
-            <p className='username'>{username}</p>
+
+            <button onClick={changePage('signIn')} className="btn2 margin">Sign in  </button>
+            <button onClick={changePage('register')} className="btn2 margin"> Register </button>
+
             <div onClick={burgerMenuFunc} className='burger-menu'>
               <div className={burgerMenu}></div>
               <div className={burgerMenu}></div>
@@ -253,37 +292,54 @@ function Home({ id, page, logo, guest, username }) {
             <button onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className="home-logo">
-            <img className={logo} src={carLogo} alt='logo' style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%'
-            }} />
+            <img onClick={changePage}
+              className={`logo ${logo}`}
+              src={carLogo}
+              alt='logo'
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                boxShadow: '0px 4px 10px',
+                transition: 'transform 0.2s ease-in-out',
+                transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+              }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            />
           </div>
-          <div className={vehicleClicked}>
-            < ul>
-              {vehicleInput.map(obj => {
+          <div className='filter'>
+            <div className={vehicleClicked}>
+              < ul>
+                {check(vehicleInput) ? <li className="type-input">
+                   <div className='reset'>reset</div>
+                   </li>:null}
+                {vehicleInput.map(obj => {
 
-                // eslint-disable-next-line react/jsx-key
-                return <li key={obj.id} onClick={checked(obj)} className="type-input">
-                  <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.make}`} />
-                  {obj.make}
+                  // eslint-disable-next-line react/jsx-key
+                  return <li key={obj.id} onClick={checked(obj)} className="type-input">
+                    <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.make}`} />
+                    {obj.make}
 
-                </li>
-              })}
-            </ul>
+                  </li>
+                })}
+              </ul>
+            </div>
+            <div className={modelClicked}>
+              <ul className="ul">
+                {modelInput.map((obj) => {
+                  return <li key={obj.id} onClick={checkedM(obj)} className="type-input">
+                    <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.model}`} />
+                    {obj.model}
+
+                  </li>
+                })}
+              </ul>
+
+            </div>
           </div>
-          <div className={modelClicked}>
-            <ul className="ul">
-              {modelInput.map((obj) => {
-                return <li key={obj.id} onClick={checkedM(obj)} className="type-input">
-                  <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.model}`} />
-                  {obj.model}
 
-                </li>
-              })}
-            </ul>
 
-          </div>
           <div className='account'>
             <button className='btn-account'></button>
             <p className='username'>{username}</p>
@@ -320,7 +376,7 @@ function Home({ id, page, logo, guest, username }) {
       </ul>
 
 
-    </div>
+    </div >
   )
 }
 
