@@ -213,10 +213,6 @@ front .model-clicked li:last-child {
   display: none;
 }
 
-.reset{
-  text-align: center;
-  color:#ab1313
-}
 
 
 
@@ -249,6 +245,10 @@ front .model-clicked li:last-child {
   border-bottom: 1px solid #ddd;
 }
 
+.vehicle-clicked li div{
+  border-bottom: #000000;
+}
+
 .vehicle-clicked li:last-child {
   border-bottom: none;
   margin-bottom: 10px;
@@ -265,6 +265,15 @@ front .model-clicked li:last-child {
 .vehicle-clicked:hover {
   background-color: #4e4d4d;
 }
+
+
+.reset{
+  color: #000000;
+  height: 35px;
+  text-align: center;
+  transform: scale(0.9);
+}
+
 
 .checkbox-container {
   position: relative;
@@ -330,6 +339,7 @@ front .model-clicked li:last-child {
   width: 100%;
 }
 
+
 .type-input:hover {
   background-color: #3f3f3f;
 }
@@ -387,7 +397,7 @@ front .model-clicked li:last-child {
 }
 
 .cars-ul {
-  margin-top: 150px;
+  margin-top: 350px;
   margin-bottom: 150px;
   display: grid;
   grid-template-columns: repeat(3, minmax(350px, 1fr));

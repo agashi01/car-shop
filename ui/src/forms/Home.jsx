@@ -217,7 +217,7 @@ function Home({ id, page, logo, guest, username }) {
             <button onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className="home-logo">
-            <img onClick={changePage('signIn')}
+            <img
               className={`logo ${logo}`}
               src={carLogo}
               alt='logo'
@@ -292,7 +292,7 @@ function Home({ id, page, logo, guest, username }) {
             <button onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className="home-logo">
-            <img onClick={changePage}
+            <img
               className={`logo ${logo}`}
               src={carLogo}
               alt='logo'
@@ -309,22 +309,23 @@ function Home({ id, page, logo, guest, username }) {
             />
           </div>
           <div className='filter'>
-            <div className={vehicleClicked}>
-              < ul>
-                {check(vehicleInput) ? <li className="type-input">
-                   <div className='reset'>reset</div>
-                   </li>:null}
-                {vehicleInput.map(obj => {
 
-                  // eslint-disable-next-line react/jsx-key
-                  return <li key={obj.id} onClick={checked(obj)} className="type-input">
+            <div className={vehicleClicked}>
+              <ul>
+                {check(vehicleInput) ? (
+                  <li className="reset-li">
+                    <div className='reset'>reset</div>
+                  </li>
+                ) : null}
+                {vehicleInput.map(obj => (
+                  <li key={obj.id} onClick={checked(obj)} className="type-input">
                     <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.make}`} />
                     {obj.make}
-
                   </li>
-                })}
+                ))}
               </ul>
             </div>
+
             <div className={modelClicked}>
               <ul className="ul">
                 {modelInput.map((obj) => {
