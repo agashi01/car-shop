@@ -59,6 +59,7 @@ export default function CarCard({ id, isit, guest, car }) {
         return final + " km"
     }
 
+
     return (
         // eslint-disable-next-line react/prop-types
 

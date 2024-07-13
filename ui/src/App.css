@@ -169,6 +169,11 @@
   transition: opacity 1s ease-in-out, visibility ease-in-out;
 }
 
+.custom{
+  height:200px
+  
+}
+
 .model-clicked:hover {
   transition: opacity ease-in-out 0.2s;
   background-color: #4e4d4d;
@@ -269,8 +274,10 @@ front .model-clicked li:last-child {
 
 .reset {
   text-align: center;
-  color: #000;
+  color: whitesmoke;
+  transform: scale(0.8);  
 }
+
 .reset-li:hover{
   background-color:  #3f3f3f;
 
@@ -404,6 +411,14 @@ front .model-clicked li:last-child {
   display: grid;
   grid-template-columns: repeat(3, minmax(350px, 1fr));
   gap: 20px
+}
+
+.page{
+  margin:0 auto 50px auto
+}
+
+.page button, .page span{
+  margin:10px
 }
 
 .account {
@@ -543,7 +558,7 @@ nav.home {
   top: 70px;
   right: 0;
   width: 300px;
-  height: 250px;
+  height: auto;
   background-color: #555;
   box-shadow: 0 10px 10px(0, 0, 0, 0.1);
   border-radius: 3%;
@@ -627,6 +642,7 @@ nav.home {
   list-style-type: none;
   padding: 0;
   margin: 0;
+  color: whitesmoke
 }
 
 .type-input {

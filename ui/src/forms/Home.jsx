@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import CarCard from './CarCard'
 import axios from 'axios';
 import carLogo from '../car_logo.png'
 
 
 // eslint-disable-next-line react/prop-types
-function Home({ id, page, logo, guest, username }) {
+function Home({ id, page, logo, guest, username, guestFunc }) {
   const [use, setUse] = useState(false)
   const [vehicleInput, setVehicleInput] = useState([])
   const [modelInput, setModelInput] = useState([])
@@ -19,6 +19,12 @@ function Home({ id, page, logo, guest, username }) {
   const [menu, setMenu] = useState('menu-hidden')
   const [cars, setCars] = useState([])
   const [isHovered, setIsHovered] = useState(false);
+  const [limit] = useState(21)
+  const [pageNumber, setPageNumber] = useState(1)
+  const account = useRef(null)
+  const [modelClass,setModelClass]=useState(false)
+
+
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -72,7 +78,6 @@ function Home({ id, page, logo, guest, username }) {
       .then(response => {
         const res = response.data;
         const list = sorted(res.map((item, index) => ({ id: index, ...item, checked: false })));
-        console.log(list, 'ddddd')
         setVehicleInput(list);
       })
       .catch(err => {
@@ -94,7 +99,7 @@ function Home({ id, page, logo, guest, username }) {
   useEffect(() => {
     const fetchCars = async () => {
       const url = guest ? 'http://localhost:3000/cars/guest' : 'http://localhost:3000/cars';
-      const params = { vehicle: vehicleList, model: modelList, ...(guest ? {} : { id }) };
+      const params = { vehicle: vehicleList, model: modelList, pageNumber, limit, ...(guest ? {} : { id }) };
       try {
         const res = await axios.get(url, { params });
         setCars(res.data);
@@ -104,7 +109,7 @@ function Home({ id, page, logo, guest, username }) {
     };
 
     fetchCars();
-  }, [vehicleList, modelList]);
+  }, [vehicleList, modelList, pageNumber]);
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
@@ -169,14 +174,25 @@ function Home({ id, page, logo, guest, username }) {
     return false
   }
 
-  const all = (str, setStr) => () => {
-    setStr(str.map(obj => ({ ...obj, checked: true })));
+  const all = () =>  {
+
+    setVehicleInput(vehicleInput.map(obj => ({ ...obj, checked: true })));
   };
 
-  const reset = (str, setStr) => () => {
-    setStr(str.map(obj => ({ ...obj, checked: false })));
+  const reset = () =>{
+
+    setVehicleInput(vehicleInput.map(obj => ({ ...obj, checked: false })));
   };
 
+  const allModel=()=>{
+    setModelClicked(false)
+    setModelInput(modelInput.map(obj => ({ ...obj, checked: true })));
+  }
+
+  const resetModel=()=>{
+    setModelClass(true)
+    setModelInput(modelInput.map(obj => ({ ...obj, checked: false })));
+  }
 
   return (
     <div className="complet">
@@ -215,19 +231,19 @@ function Home({ id, page, logo, guest, username }) {
             <div className={vehicleClicked}>
               <ul className="ul">
 
-            
-                    <li onClick={all(vehicleInput, setVehicleInput)} className="reset-li">
-                      <div className='reset'>
-                        Select all
-                      </div>
-                    </li>
+
+                <li onClick={all} className="reset-li">
+                  <div className='reset'>
+                    Select all
+                  </div>
+                </li>
                 {check(vehicleInput) ? (
-                 
-                    <li onClick={reset(vehicleInput, setVehicleInput)} className="reset-li">
-                      <div className='reset'>
-                        Reset
-                      </div>
-                    </li>
+
+                  <li onClick={reset} className="reset-li">
+                    <div className='reset'>
+                      Reset
+                    </div>
+                  </li>
 
                 ) : null}
                 {vehicleInput.map(obj => {
@@ -242,21 +258,21 @@ function Home({ id, page, logo, guest, username }) {
               </ul>
 
             </div>
-            <div className={modelClicked}>
+            <div className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
               <ul className="ul">
 
-                    <li onClick={all(modelInput, setModelInput)} className="reset-li">
-                      <div className='reset'>
-                        Select all
-                      </div>
-                    </li>
+                <li onClick={allModel} className="reset-li">
+                  <div className='reset'>
+                    Select all
+                  </div>
+                </li>
                 {check(modelInput) ? (
-                 
-                    <li onClick={reset(modelInput, setModelInput)} className="reset-li">
-                      <div className='reset'>
-                        Reset
-                      </div>
-                    </li>
+
+                  <li onClick={resetModel} className="reset-li">
+                    <div className='reset'>
+                      Reset
+                    </div>
+                  </li>
 
                 ) : null}
                 {modelInput.map((obj) => {
@@ -286,10 +302,9 @@ function Home({ id, page, logo, guest, username }) {
           <div className={menu}>
             <div className='help'>
               <ul className='ul'>
-                <li><a>Home</a></li>
-                <li><a>about</a></li>
-                <li><a>Help</a></li>
-                <li><a>Services</a></li>
+                <li onClick={() => page('singIn')}>Sign In</li>
+                <li onClick={() => page('register')}>Register</li>
+                <li>Home</li>
               </ul>
 
             </div>
@@ -322,14 +337,14 @@ function Home({ id, page, logo, guest, username }) {
 
             <div className={vehicleClicked}>
               <ul>
-                <li onClick={all(vehicleInput, setVehicleInput)} className="reset-li">
+                <li onClick={all} className="reset-li">
                   <div className='reset'>
                     Select all
                   </div>
                 </li>
 
                 {check(vehicleInput) ? (
-                  <li onClick={reset(vehicleInput, setVehicleInput)} className="reset-li">
+                  <li onClick={reset} className="reset-li">
                     <div className='reset'>
                       Reset
                     </div>
@@ -345,17 +360,17 @@ function Home({ id, page, logo, guest, username }) {
               </ul>
             </div>
 
-            <div className={modelClicked}>
+            <div  className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
               <ul className="ul">
 
 
-                <li onClick={all(modelInput, setModelInput)} className="reset-li">
+                <li onClick={allModel} className="reset-li">
                   <div className='reset'>
                     Select all
                   </div>
                 </li>
                 {check(modelInput) ? (
-                  <li onClick={reset(modelInput, setModelInput)} className="reset-li">
+                  <li onClick={resetModel} className="reset-li">
                     <div className='reset'>
                       Reset
                     </div>
@@ -374,7 +389,7 @@ function Home({ id, page, logo, guest, username }) {
           </div>
 
 
-          <div className='account'>
+          <div ref={account} className='account'>
             <button className='btn-account'></button>
             <p className='username'>{username}</p>
             <div onClick={burgerMenuFunc} className='burger-menu'>
@@ -386,28 +401,42 @@ function Home({ id, page, logo, guest, username }) {
           <div className={menu}>
             <div className='help'>
               <ul className='ul'>
-                <li><a>Home</a></li>
-                <li><a>about</a></li>
-                <li><a>Help</a></li>
-                <li><a>Services</a></li>
+                <li onClick={() => page('register')}>New account</li>
+                <li onClick={() => page('signIn')}>Sign Out</li>
+                <li onClick={guestFunc}>Guest</li>
               </ul>
 
             </div>
           </div>
         </nav>
       }
+      <div className='cars-page'>
+        <ul className='cars-ul'>
+          {cars.map((car, index) => {
+            // console.log(car.id)
+            return (
+              // eslint-disable-next-line react/jsx-key
+              <li >
+                <CarCard key={index} id={id} isit={setIsit} guest={guest} car={car} />
+              </li>
+            )
+          })}
+        </ul>
 
-      <ul className='cars-ul'>
-        {cars.map((car,index) => {
-          // console.log(car.id)
-          return (
-            // eslint-disable-next-line react/jsx-key
-            <li >
-              <CarCard key={index} id={id} isit={setIsit} guest={guest} car={car} />
-            </li>
-          )
-        })}
-      </ul>
+        <div className='page'>
+          <button className='btn'
+            onClick={() => setPageNumber(pageNumber - 1)}
+            disabled={pageNumber <= 1}
+          >Previous</button>
+          <span>Page {pageNumber}</span>
+          <button
+            className='btn'
+            onClick={() => setPageNumber(pageNumber + 1)}
+            disabled={cars.length < limit}
+          >Next</button>
+        </div>
+      </div>
+
 
 
     </div >

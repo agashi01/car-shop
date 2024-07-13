@@ -25,6 +25,13 @@ export default function App() {
     setPage(text)
   }
 
+  const guestFunc=()=>{ 
+    setGuest(true)
+    setPage('home')
+    setId(null)
+    setUsername('')
+  }
+
   return (
     <>
       {page !== 'home' ?
@@ -67,7 +74,7 @@ export default function App() {
           </div>
         </div>
 
-        : <Home id={id} page={setPage} logo3={Logo} logo={setLogo} guest={guest} username={username} />}
+        : <Home id={id} guestFunc={guestFunc} page={setPage} logo3={Logo} logo={setLogo} guest={guest} username={username} />}
       {/* {page === 'home' && <Logo />} */}
     </>
   )

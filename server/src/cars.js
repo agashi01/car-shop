@@ -51,37 +51,6 @@ const create = (db) => async function (req, res) {
     }
 }
 
-const func = async (db, vehicle = null, model = null, id) => {
-
-    let query = db("cars").join('dealers', 'cars.dealer_id', 'dealers.id')
-
-    if (vehicle) {
-        query = query.whereIn('make', vehicle);
-    }
-
-    if (model) {
-        query = query.whereIn('model', model);
-    }
-
-    if (id) {
-        query = query.orderBy("cars.owner_id", id);
-    }
-
-    return query.select("cars.*").limit(30);
-}
-
-const func2 = async (db, list) => {
-    if (list) {
-        return await db('cars')
-            .select(db.raw('DISTINCT model'))
-            .whereIn("make", list)
-
-    }
-    return await db('cars').select(db.raw('DISTINCT model'))
-
-
-}
-
 const sortModel = (list) => {
     let finalCount = 0
     let finalList = []
@@ -224,12 +193,48 @@ const model = (db) => async (req, res) => {
 
 }
 
+
+const func = async (db, vehicle, model,limit,offset,id) => {
+
+    let query = db("cars").join('dealers', 'cars.dealer_id', 'dealers.id')
+
+    if (vehicle) {
+        query = query.whereIn('make', vehicle);
+    }
+
+    if (model) {
+        query = query.whereIn('model', model);
+    }
+
+    if (id) {
+        query = query.orderBy("cars.owner_id", id);
+    }
+
+    const cars =await query.select("cars.*").limit(limit).offset(offset);
+
+    return cars
+}
+
+const func2 = async (db, list) => {
+    if (list) {
+        return await db('cars')
+            .select(db.raw('DISTINCT model'))
+            .whereIn("make", list)
+
+    }
+    return await db('cars').select(db.raw('DISTINCT model'))
+
+
+}
+
 const readAllGuest = (db) => async (req, res) => {
-    const { vehicle, model } = req.query;
+    const { vehicle, model,limit,pageNumber } = req.query;
+    const offset=(pageNumber-1)*limit
 
-    try {
+    console.log(limit)
+        try {
 
-        const cars = await func(db, vehicle, model)
+        const cars = await func(db, vehicle, model,limit,offset)
 
         res.status(200).json(cars)
     } catch (err) {
@@ -251,11 +256,13 @@ const make = (db) => async (req, res) => {
 }
 
 const readAll = (db) => async (req, res) => {
-    const { vehicle, model, id } = req.query
+    const { vehicle, model, id,limit,pageNumber } = req.query
+    const offset=(pageNumber-1)*limit
+    
 
     try {
 
-        const cars = await func(db, vehicle, model, id)
+        const cars = await func(db, vehicle, model, limit,offset,id)
         res.status(200).json(cars)
     } catch (err) {
         res.status(400).json("something went wrong")
