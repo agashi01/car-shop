@@ -82,60 +82,29 @@ function Home({ id, page, logo, guest, username }) {
   }, []); // Note the empty dependency array
 
   useEffect(() => {
-    const listV = []
-    let count = 0;
-
-    for (let x = 0; x < vehicleInput.length; x++) {
-      if (vehicleInput[x].checked) {
-        listV[count] = vehicleInput[x].make
-        count++;
-      }
-    }
-    if (!count) {
-      for (let x = 0; x < vehicleInput.length; x++) {
-        listV[x] = vehicleInput[x].make
-      }
-    }
-    setVehicleList(listV)
-  }, [vehicleInput])
+    const listV = vehicleInput.filter(item => item.checked).map(item => item.make);
+    setVehicleList(listV.length ? listV : vehicleInput.map(item => item.make));
+  }, [vehicleInput]);
 
   useEffect(() => {
-    const listM = []
-    let count = 0
-    for (let x = 0; x < modelInput.length; x++) {
-      if (modelInput[x].checked) {
-        listM[count] = modelInput[x].model
-        count++;
-      }
-    }
-    if (!count) {
-      for (let x = 0; x < modelInput.length; x++) {
-        console.log('i got here')
-        listM[x] = modelInput[x].model
-      }
-    }
-
-    setModelList(listM)
-    setUse(!use)
-  }, [modelInput])
+    const listM = modelInput.filter(item => item.checked).map(item => item.model);
+    setModelList(listM.length ? listM : modelInput.map(item => item.model));
+  }, [modelInput]);
 
   useEffect(() => {
-    const url = guest ? 'http://localhost:3000/cars/guest' : 'http://localhost:3000/cars'
-    const params = { vehicle: vehicleList, model: modelList }
-    if (!guest) params.id = id
-    axios
-      .get(url, {
-        params
-      })
-      .then(res => {
-        setCars(res.data)
-      })
-      .catch(err => {
+    const fetchCars = async () => {
+      const url = guest ? 'http://localhost:3000/cars/guest' : 'http://localhost:3000/cars';
+      const params = { vehicle: vehicleList, model: modelList, ...(guest ? {} : { id }) };
+      try {
+        const res = await axios.get(url, { params });
+        setCars(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-        console.log(err)
-      })
-
-  }, [use, modelInput])
+    fetchCars();
+  }, [vehicleList, modelList]);
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
@@ -200,6 +169,15 @@ function Home({ id, page, logo, guest, username }) {
     return false
   }
 
+  const all = (str, setStr) => () => {
+    setStr(str.map(obj => ({ ...obj, checked: true })));
+  };
+
+  const reset = (str, setStr) => () => {
+    setStr(str.map(obj => ({ ...obj, checked: false })));
+  };
+
+
   return (
     <div className="complet">
       {isit && <div className="isit">
@@ -235,7 +213,23 @@ function Home({ id, page, logo, guest, username }) {
           </div>
           <div className='filter'>
             <div className={vehicleClicked}>
-              < ul>
+              <ul className="ul">
+
+            
+                    <li onClick={all(vehicleInput, setVehicleInput)} className="reset-li">
+                      <div className='reset'>
+                        Select all
+                      </div>
+                    </li>
+                {check(vehicleInput) ? (
+                 
+                    <li onClick={reset(vehicleInput, setVehicleInput)} className="reset-li">
+                      <div className='reset'>
+                        Reset
+                      </div>
+                    </li>
+
+                ) : null}
                 {vehicleInput.map(obj => {
 
                   // eslint-disable-next-line react/jsx-key
@@ -246,9 +240,25 @@ function Home({ id, page, logo, guest, username }) {
                   </li>
                 })}
               </ul>
+
             </div>
             <div className={modelClicked}>
               <ul className="ul">
+
+                    <li onClick={all(modelInput, setModelInput)} className="reset-li">
+                      <div className='reset'>
+                        Select all
+                      </div>
+                    </li>
+                {check(modelInput) ? (
+                 
+                    <li onClick={reset(modelInput, setModelInput)} className="reset-li">
+                      <div className='reset'>
+                        Reset
+                      </div>
+                    </li>
+
+                ) : null}
                 {modelInput.map((obj) => {
                   return <li key={obj.id} onClick={checkedM(obj)} className="type-input">
                     <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.model}`} />
@@ -312,11 +322,20 @@ function Home({ id, page, logo, guest, username }) {
 
             <div className={vehicleClicked}>
               <ul>
+                <li onClick={all(vehicleInput, setVehicleInput)} className="reset-li">
+                  <div className='reset'>
+                    Select all
+                  </div>
+                </li>
+
                 {check(vehicleInput) ? (
-                  <li className="reset-li">
-                    <div className='reset'>reset</div>
+                  <li onClick={reset(vehicleInput, setVehicleInput)} className="reset-li">
+                    <div className='reset'>
+                      Reset
+                    </div>
                   </li>
                 ) : null}
+
                 {vehicleInput.map(obj => (
                   <li key={obj.id} onClick={checked(obj)} className="type-input">
                     <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.make}`} />
@@ -328,6 +347,20 @@ function Home({ id, page, logo, guest, username }) {
 
             <div className={modelClicked}>
               <ul className="ul">
+
+
+                <li onClick={all(modelInput, setModelInput)} className="reset-li">
+                  <div className='reset'>
+                    Select all
+                  </div>
+                </li>
+                {check(modelInput) ? (
+                  <li onClick={reset(modelInput, setModelInput)} className="reset-li">
+                    <div className='reset'>
+                      Reset
+                    </div>
+                  </li>
+                ) : null}
                 {modelInput.map((obj) => {
                   return <li key={obj.id} onClick={checkedM(obj)} className="type-input">
                     <input type="checkbox" className="custom-checkbox" checked={obj.checked} id={`input-${obj.model}`} />
@@ -365,12 +398,12 @@ function Home({ id, page, logo, guest, username }) {
       }
 
       <ul className='cars-ul'>
-        {cars.map(car => {
+        {cars.map((car,index) => {
           // console.log(car.id)
           return (
             // eslint-disable-next-line react/jsx-key
             <li >
-              <CarCard id={id} isit={setIsit} guest={guest} car={car} />
+              <CarCard key={index} id={id} isit={setIsit} guest={guest} car={car} />
             </li>
           )
         })}
