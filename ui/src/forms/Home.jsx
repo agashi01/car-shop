@@ -6,7 +6,8 @@ import carLogo from '../car_logo.png'
 
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username, guestFunc }) {
-  const [use, setUse] = useState(false)
+  const [use, setUse] = useState([false,false,false])
+
   const [vehicleInput, setVehicleInput] = useState([])
   const [modelInput, setModelInput] = useState([])
   const [vehicleList, setVehicleList] = useState([])
@@ -22,7 +23,14 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
   const [limit] = useState(21)
   const [pageNumber, setPageNumber] = useState(1)
   const account = useRef(null)
-  const [modelClass,setModelClass]=useState(false)
+  const [modelClass, setModelClass] = useState(false)
+
+  const modelRef = useRef()
+  const modelMenuRef = useRef()
+  const vehicleRef = useRef()
+  const vehicleMenuRef = useRef()
+  const burgerMenuRef = useRef()
+  const burgerRef = useRef()
 
 
 
@@ -59,7 +67,6 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
         if (letterY <= letter2) {
           if (y === x) {
             letter2 = letterY
-            console.log(letter2)
             continue loop2
           }
           let car = list[x]
@@ -72,6 +79,99 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
     return list
   }
 
+  const checkMenu = (e) => {
+    const list = [modelMenuRef, vehicleMenuRef, burgerMenuRef]
+    for (let x of list) {
+      if (x.current && x.current.contains(e.target)) {
+        return true
+      }
+    }
+    return false
+  }
+
+
+  const checkButton = (e) => {
+    const list = [modelRef, vehicleRef, burgerRef]
+    let switchEl=0
+    for (let x=0 ;x< list.length;x++) {
+      if (list[x].current && list[x].current.contains(e.target)) {
+        console.log(x)
+
+         switchEl=x+1
+        }
+      }
+
+      if(switchEl){
+        setUse(()=>{
+          return use.map((el,index)=>{
+            if(index===switchEl-1){
+              return !use[index]
+            }
+          })
+        })
+        return 1
+      }
+      if(!checkMenu(e)){
+       
+        return -1
+    
+      }
+      return 0
+      
+      }
+    
+  
+
+  useEffect(() => {
+    // checkButton if one of elements is open if so set all states to false and open the one that the user touched 
+
+   
+
+    // checkButton if user touched one of the menus inside if so dont react else run the func checkButton to se if it touched any other menu 
+
+   
+    const defaultClass = (e) => {
+
+      const res= checkButton(e)
+      console.log(res)
+      if (res>0) {
+        let count=0;
+        let first=0;
+        for(let x=0;x<use.length;x++){
+
+          if(use[x]){
+            count++
+          }
+          if(count===1){
+            first=x+1
+          }
+
+        }
+        if(count>1){
+          setUse(()=>{
+            return use.map((el,index)=>{
+              if(index=first-1){
+                return !use[index]
+              }
+            })
+          })
+        }        
+       
+      } else if(!res){
+        setBurgerMenu("burger unclicked")
+        setMenu('menu-hidden')
+        setModelClicked("model-unclicked")
+        setVehicleClicked("vehicle-unclicked")
+      }
+     
+    }
+    document.body.addEventListener('click', defaultClass)
+
+    return () => {
+      document.removeEventListener('clicl', defaultClass)
+    }
+  }, [checkButton,checkMenu])
+
 
   useEffect(() => {
     axios.get('http://localhost:3000/make')
@@ -83,7 +183,6 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
       .catch(err => {
         console.log(err);
       });
-    setUse(!use)
   }, []); // Note the empty dependency array
 
   useEffect(() => {
@@ -128,7 +227,6 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
 
   const modelMenu = (e) => {
     e.preventDefault()
-    console.log('ersg')
     setModelClicked(modelClicked === "model-unclicked" ? 'model-clicked' : 'model-unclicked')
   }
 
@@ -139,6 +237,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
   }
 
   const checked = (obj) => () => {
+    setModelClass(false)
     setVehicleInput(() => {
       return vehicleInput.map((el) => {
         if (el.id === obj.id) {
@@ -150,6 +249,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
   }
 
   const checkedM = (obj) => () => {
+    setModelClass(true)
     setModelInput(() => {
       return modelInput.map((el) => {
         if (obj.id === el.id) {
@@ -174,25 +274,26 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
     return false
   }
 
-  const all = () =>  {
-
+  const all = () => {
+    setModelClass(false)
     setVehicleInput(vehicleInput.map(obj => ({ ...obj, checked: true })));
   };
 
-  const reset = () =>{
-
+  const reset = () => {
+    setModelClass(false)
     setVehicleInput(vehicleInput.map(obj => ({ ...obj, checked: false })));
   };
 
-  const allModel=()=>{
-    setModelClicked(false)
+  const allModel = () => {
+    setModelClass(true)
     setModelInput(modelInput.map(obj => ({ ...obj, checked: true })));
   }
 
-  const resetModel=()=>{
-    setModelClass(true)
+  const resetModel = () => {
+    setModelClass(false)
     setModelInput(modelInput.map(obj => ({ ...obj, checked: false })));
   }
+
 
   return (
     <div className="complet">
@@ -207,8 +308,8 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
       {guest ?
         <nav className="home">
           <div className='vehicles-menu'>
-            <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
-            <button onClick={modelMenu} className='vehicle'>model</button>
+            <button ref={vehicleRef} onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
+            <button ref={modelRef} onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className="home-logo">
             <img
@@ -228,7 +329,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
             />
           </div>
           <div className='filter'>
-            <div className={vehicleClicked}>
+            <div ref={vehicleMenuRef} className={vehicleClicked}>
               <ul className="ul">
 
 
@@ -258,7 +359,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
               </ul>
 
             </div>
-            <div className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
+            <div ref={modelMenuRef} className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
               <ul className="ul">
 
                 <li onClick={allModel} className="reset-li">
@@ -299,7 +400,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
               <div className={burgerMenu}></div>
             </div>
           </div>
-          <div className={menu}>
+          <div ref={burgerMenuRef} className={menu}>
             <div className='help'>
               <ul className='ul'>
                 <li onClick={() => page('singIn')}>Sign In</li>
@@ -313,8 +414,8 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
         :
         <nav className="home">
           <div className='vehicles-menu'>
-            <button onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
-            <button onClick={modelMenu} className='vehicle'>model</button>
+            <button ref={vehicleRef} onClick={vehicleMenu} className='vehicle here'>Vehicle</button>
+            <button ref={modelRef} onClick={modelMenu} className='vehicle'>model</button>
           </div>
           <div className="home-logo">
             <img
@@ -335,7 +436,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
           </div>
           <div className='filter'>
 
-            <div className={vehicleClicked}>
+            <div ref={vehicleMenuRef} className={vehicleClicked}>
               <ul>
                 <li onClick={all} className="reset-li">
                   <div className='reset'>
@@ -360,7 +461,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
               </ul>
             </div>
 
-            <div  className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
+            <div ref={modelMenuRef} className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
               <ul className="ul">
 
 
@@ -392,13 +493,13 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
           <div ref={account} className='account'>
             <button className='btn-account'></button>
             <p className='username'>{username}</p>
-            <div onClick={burgerMenuFunc} className='burger-menu'>
+            <div ref={burgerRef} onClick={burgerMenuFunc} className='burger-menu'>
               <div className={burgerMenu}></div>
               <div className={burgerMenu}></div>
               <div className={burgerMenu}></div>
             </div>
           </div>
-          <div className={menu}>
+          <div ref={burgerMenuRef} className={menu}>
             <div className='help'>
               <ul className='ul'>
                 <li onClick={() => page('register')}>New account</li>

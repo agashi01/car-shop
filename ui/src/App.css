@@ -160,18 +160,17 @@
   transform-style: preserve-3d;
   background-color: #555;
   /* top: 35px; */
-  height: 173px;
+  height:173px;
+
   width: 150px;
   border-radius: 5%;
   border: 1px solid #ccc;
   z-index: 1002;
   box-shadow: 0 10px 10px(0, 0, 0, 0.1);
-  transition: opacity 1s ease-in-out, visibility ease-in-out;
 }
 
-.custom{
-  height:200px
-  
+.model-clicked.custom{
+  height: 219px;  
 }
 
 .model-clicked:hover {
@@ -525,7 +524,7 @@ nav.home {
 }
 
 .burger.clicked:nth-child(3) {
-  transform: rotate(-45deg) translate(0.3em, -0.25em);
+  transform: rotate(-45deg) translate(0.35em, -0.25em);
   transition: ease-out 0.4s;
 }
 

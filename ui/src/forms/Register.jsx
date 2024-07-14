@@ -311,6 +311,7 @@ export default function Register({ logo, page }) {
         };
     }, [arrowDown, arrowUp]);
 
+
     // functions when user types 
     const setEmri = (e) => {
         setRegister((current) => {
