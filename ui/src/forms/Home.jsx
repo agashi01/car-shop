@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import CarCard from './CarCard'
 import axios from 'axios';
 import carLogo from '../car_logo.png'
+import debounce from 'lodash/debounce'
 
 
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username, guestFunc }) {
-  const [use, setUse] = useState([false,false,false])
+  const [use, setUse] = useState([false, false, false])
 
   const [vehicleInput, setVehicleInput] = useState([])
   const [modelInput, setModelInput] = useState([])
@@ -80,97 +81,77 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
   }
 
   const checkMenu = (e) => {
-    const list = [modelMenuRef, vehicleMenuRef, burgerMenuRef]
-    for (let x of list) {
-      if (x.current && x.current.contains(e.target)) {
-        return true
-      }
-    }
-    return false
-  }
-
+    const list = [modelMenuRef, vehicleMenuRef, burgerMenuRef];
+    return list.some(ref => ref.current && ref.current.contains(e.target));
+  };
 
   const checkButton = (e) => {
-    const list = [modelRef, vehicleRef, burgerRef]
-    let switchEl=0
-    for (let x=0 ;x< list.length;x++) {
-      if (list[x].current && list[x].current.contains(e.target)) {
-        console.log(x)
+    const list = [modelRef, vehicleRef, burgerRef];
+    let switchEl = null;
 
-         switchEl=x+1
-        }
+    list.forEach((ref, index) => {
+      if (ref.current && ref.current.contains(e.target)) {
+        switchEl = index;
       }
+    });
 
-      if(switchEl){
-        setUse(()=>{
-          return use.map((el,index)=>{
-            if(index===switchEl-1){
-              return !use[index]
-            }
-          })
-        })
-        return 1
-      }
-      if(!checkMenu(e)){
-       
-        return -1
-    
-      }
-      return 0
-      
-      }
-    
-  
+    if (switchEl !== null) {
+      setUse((prevUse) => prevUse.map((use, index) => index === switchEl ? !use : use));
+      return true;
+    }
+
+    return checkMenu(e) ? 0 : -1;
+  };
 
   useEffect(() => {
-    // checkButton if one of elements is open if so set all states to false and open the one that the user touched 
 
-   
-
-    // checkButton if user touched one of the menus inside if so dont react else run the func checkButton to se if it touched any other menu 
-
-   
-    const defaultClass = (e) => {
-
-      const res= checkButton(e)
-      console.log(res)
-      if (res>0) {
-        let count=0;
-        let first=0;
-        for(let x=0;x<use.length;x++){
-
-          if(use[x]){
-            count++
+    const onEscapePress=()=>{
+      let timeout
+      return (e)=>{
+        clearTimeout(timeout)
+        console.log('timeout')
+        timeout=setTimeout(()=>{
+          if(e.key==='Esc'||e.key==='Escape'){
+            setBurgerMenu("burger unclicked");
+            setMenu('menu-hidden');
+            setModelClicked("model-unclicked");
+            setVehicleClicked("vehicle-unclicked");
           }
-          if(count===1){
-            first=x+1
-          }
-
-        }
-        if(count>1){
-          setUse(()=>{
-            return use.map((el,index)=>{
-              if(index=first-1){
-                return !use[index]
-              }
-            })
-          })
-        }        
-       
-      } else if(!res){
-        setBurgerMenu("burger unclicked")
-        setMenu('menu-hidden')
-        setModelClicked("model-unclicked")
-        setVehicleClicked("vehicle-unclicked")
+        },1000)
       }
-     
+      
     }
-    document.body.addEventListener('click', defaultClass)
+    const result=onEscapePress()
+
+    document.addEventListener('keydown', result)
+
+    return ()=>{
+      document.removeEventListener('keydown',result)
+    }
+  }, [])
+
+  useEffect(() => {
+    const defaultClass = debounce((e) => {
+      const res = checkButton(e);
+      if (res > 0) {
+        const activeCount = use.filter(Boolean).length;
+        if (activeCount > 1) {
+          setUse((prevUse) => prevUse.map((use, index) => activeCount === 1 ? use : false));
+        }
+      } else if (res === -1) {
+        setBurgerMenu("burger unclicked");
+        setMenu('menu-hidden');
+        setModelClicked("model-unclicked");
+        setVehicleClicked("vehicle-unclicked");
+      }
+    }, 100);
+
+    document.addEventListener('click', defaultClass);
 
     return () => {
-      document.removeEventListener('clicl', defaultClass)
-    }
-  }, [checkButton,checkMenu])
+      document.removeEventListener('click', defaultClass);
+    };
+  }, []);
 
 
   useEffect(() => {
