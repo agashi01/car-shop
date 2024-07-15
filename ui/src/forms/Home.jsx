@@ -87,8 +87,8 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
 
   const checkButton = (e) => {
     const list = [modelRef, vehicleRef, burgerRef];
-    let switchEl = null;
 
+    let switchEl = null;
     list.forEach((ref, index) => {
       if (ref.current && ref.current.contains(e.target)) {
         switchEl = index;
@@ -96,49 +96,68 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
     });
 
     if (switchEl !== null) {
-      setUse((prevUse) => prevUse.map((use, index) => index === switchEl ? !use : use));
-      return true;
+      const value = use.map((use1, index) => index === switchEl ? !use1 : use1);
+      setUse(value);
+      return { value, switchEl };
     }
 
-    return checkMenu(e) ? 0 : -1;
+    return checkMenu(e) ? null : { value: null, switchEl: -1 };
   };
 
   useEffect(() => {
 
-    const onEscapePress=()=>{
+    const onEscapePress = () => {
       let timeout
-      return (e)=>{
+      return (e) => {
         clearTimeout(timeout)
-        console.log('timeout')
-        timeout=setTimeout(()=>{
-          if(e.key==='Esc'||e.key==='Escape'){
+        timeout = setTimeout(() => {
+          if (e.key === 'Esc' || e.key === 'Escape') {
+
             setBurgerMenu("burger unclicked");
             setMenu('menu-hidden');
             setModelClicked("model-unclicked");
             setVehicleClicked("vehicle-unclicked");
           }
-        },1000)
+        }, 100)
       }
-      
+
     }
-    const result=onEscapePress()
+    const result = onEscapePress()
+
 
     document.addEventListener('keydown', result)
 
-    return ()=>{
-      document.removeEventListener('keydown',result)
+    return () => {
+      document.removeEventListener('keydown', result)
     }
   }, [])
 
   useEffect(() => {
     const defaultClass = debounce((e) => {
-      const res = checkButton(e);
-      if (res > 0) {
-        const activeCount = use.filter(Boolean).length;
-        if (activeCount > 1) {
-          setUse((prevUse) => prevUse.map((use, index) => activeCount === 1 ? use : false));
-        }
-      } else if (res === -1) {
+      const { value, switchEl } = checkButton(e);
+      console.log(switchEl)
+      if (switchEl > -1) {
+        value.forEach((_use, index) => {
+          if (index !== switchEl) {
+            switch (index) {
+              case 0:
+                setModelClicked('model-unclicked')
+                setBurgerMenu('burger unclicked')
+                break;
+              case 1:
+                setVehicleClicked('vehicle-unclicked')
+                setBurgerMenu('burger unclicked')
+                break;
+              case 2:
+                setBurgerMenu('burger unclicked')
+                setMenu('menu-hidden')
+                break
+
+            }
+          }
+        });
+      } else if (switchEl === -1) {
+        console.log('test')
         setBurgerMenu("burger unclicked");
         setMenu('menu-hidden');
         setModelClicked("model-unclicked");
@@ -375,7 +394,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
             <button onClick={changePage('signIn')} className="btn2 margin">Sign in  </button>
             <button onClick={changePage('register')} className="btn2 margin"> Register </button>
 
-            <div onClick={burgerMenuFunc} className='burger-menu'>
+            <div ref={burgerRef} onClick={burgerMenuFunc} className='burger-menu'>
               <div className={burgerMenu}></div>
               <div className={burgerMenu}></div>
               <div className={burgerMenu}></div>
@@ -384,7 +403,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
           <div ref={burgerMenuRef} className={menu}>
             <div className='help'>
               <ul className='ul'>
-                <li onClick={() => page('singIn')}>Sign In</li>
+                <li onClick={() => page('signIn')}>Sign In</li>
                 <li onClick={() => page('register')}>Register</li>
                 <li>Home</li>
               </ul>
@@ -494,12 +513,12 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
       }
       <div className='cars-page'>
         <ul className='cars-ul'>
-          {cars.map((car, index) => {
+          {cars.map((car) => {
             // console.log(car.id)
             return (
               // eslint-disable-next-line react/jsx-key
-              <li >
-                <CarCard key={index} id={id} isit={setIsit} guest={guest} car={car} />
+              <li key={car.id}  >
+                <CarCard id={id} isit={setIsit} guest={guest} car={car} />
               </li>
             )
           })}
