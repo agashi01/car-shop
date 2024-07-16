@@ -7,8 +7,6 @@ import debounce from 'lodash/debounce'
 
 // eslint-disable-next-line react/prop-types
 function Home({ id, page, logo, guest, username, guestFunc }) {
-  const [use, setUse] = useState([false, false, false])
-
   const [vehicleInput, setVehicleInput] = useState([])
   const [modelInput, setModelInput] = useState([])
   const [vehicleList, setVehicleList] = useState([])
@@ -96,7 +94,6 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
     });
 
     if (switchEl !== null) {
-      setUse(use.map((use1, index) => index === switchEl ? !use1 : use1))
       return switchEl
     }
 
@@ -134,13 +131,12 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
   useEffect(() => {
     const defaultClass = debounce((e) => {
     let switchEl  = checkButton(e);
-    setUse(prevUse=>prevUse.map((use,index)=>switchEl===index?true:false) )
 
       console.log(switchEl,'s')
       if (switchEl > -1) {
-        use.forEach((_use, index) => {
-          if (index !== switchEl) {
-            switch (index) {
+        for(let x=0;x<3;x++){
+          if (x !== switchEl) {
+            switch (x) {
               case 0:
                 setModelClicked('model-unclicked')
                 // setBurgerMenu('burger unclicked')
@@ -156,7 +152,9 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
 
             }
           }
-        });
+
+        }
+
       } else if (switchEl === -1) {
         console.log('test')
         setBurgerMenu("burger unclicked");
@@ -213,12 +211,10 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
 
   const burgerMenuFunc = (e) => {
     e.preventDefault()
-    if (isClicked) {
-      setIsClicked(false)
+  if ( burgerMenu==="burger clicked"){
       setBurgerMenu("burger unclicked")
       setMenu('menu-hidden')
     } else {
-      setIsClicked(true)
       setBurgerMenu("burger clicked")
       setMenu('menu-visible')
     }
