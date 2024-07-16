@@ -96,12 +96,11 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
     });
 
     if (switchEl !== null) {
-      const value = use.map((use1, index) => index === switchEl ? !use1 : use1);
-      setUse(value);
-      return { value, switchEl };
+      setUse(use.map((use1, index) => index === switchEl ? !use1 : use1))
+      return switchEl
     }
 
-    return checkMenu(e) ? null : { value: null, switchEl: -1 };
+    return checkMenu(e) ? null :  -1 ;
   };
 
   useEffect(() => {
@@ -134,19 +133,21 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
 
   useEffect(() => {
     const defaultClass = debounce((e) => {
-      const { value, switchEl } = checkButton(e);
-      console.log(switchEl)
+    let switchEl  = checkButton(e);
+    setUse(prevUse=>prevUse.map((use,index)=>switchEl===index?true:false) )
+
+      console.log(switchEl,'s')
       if (switchEl > -1) {
-        value.forEach((_use, index) => {
+        use.forEach((_use, index) => {
           if (index !== switchEl) {
             switch (index) {
               case 0:
                 setModelClicked('model-unclicked')
-                setBurgerMenu('burger unclicked')
+                // setBurgerMenu('burger unclicked')
                 break;
               case 1:
                 setVehicleClicked('vehicle-unclicked')
-                setBurgerMenu('burger unclicked')
+                // setBurgerMenu('burger unclicked')
                 break;
               case 2:
                 setBurgerMenu('burger unclicked')
