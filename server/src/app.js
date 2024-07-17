@@ -5,7 +5,6 @@ const cors = require("cors");
 const cars = require("./cars");
 const dealers = require("./dealers");
 const auth = require("./auth");
-
 const path = require("path");
 
 const db = knex({

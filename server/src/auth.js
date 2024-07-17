@@ -30,12 +30,13 @@ const objToList = (list) => {
 // }
 
 const signUp = (db) => async (req, res) => {
-  const { name, surname, email, password, username } = req.body;
+  const { name, surname, email, password, username,type } = req.body;
   const hash = await bcrypt.hash(password, 10);
 
   db.transaction((trx) => {
     trx("users")
       .insert({
+        type,
         name,
         surname,
         email,

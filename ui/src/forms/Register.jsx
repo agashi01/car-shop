@@ -31,6 +31,8 @@ export default function Register({ logo, page }) {
     username: "",
   });
 
+  const [type,setType]=useState("Buying")
+
   const arrowUp = (ref) => {
     ref.focus();
   };
@@ -52,6 +54,7 @@ export default function Register({ logo, page }) {
           email: register.email,
           password: register.password,
           username: register.username,
+          type
         })
         .then((res) => {
           setBackendError(false);
@@ -87,6 +90,9 @@ export default function Register({ logo, page }) {
     }
     return false;
   };
+
+  // function for op[tions
+
 
   // function when user submits
   const registerConfirm = async (e) => {
@@ -539,9 +545,20 @@ export default function Register({ logo, page }) {
         ></input>
       </label>
       <div className="error">{errorPassword()}</div>
-      <button className="register-button" type="btn" onClick={registerConfirm}>
-        Register
-      </button>
-    </form>
+      <div className="type">
+        <div className="next-to-select">
+        <label htmlFor="user-type"></label>
+        <select onChange={(e)=>setType(e.target.value)} className='select' name="user-type" id="user-type">
+            <option value="buying">Buying</option>
+            <option value="selling">Selling</option>
+          </select> 
+        </div>
+       
+        <button className="register-button" type="btn" onClick={registerConfirm}>
+          Register
+        </button>
+      </div>
+
+    </form >
   );
 }

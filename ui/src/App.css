@@ -660,6 +660,44 @@ In {
 
 /* sign in dhe register */
 
+.type{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.select{
+  margin-bottom: 20px;
+  width: 189px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+ 
+}
+
+.next-to-select{
+  /* display: flex;
+  justify-content: flex-start;
+  align-items: center; */
+}
+
+/* .select{
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+} */
+
+.select option {
+  text-align: center;
+  background-color: #f8f8f8;
+  color: #333;
+}
+
+
 .go-as-guest {
   display: flex;
   flex-direction: column;
