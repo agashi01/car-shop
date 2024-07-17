@@ -1,7 +1,7 @@
 # Requirements
 
-1. introduce "Type" for a user which has values "Dealer" and "Client".
-    - Client types are clients who want to use the website as a car shop to buy vehicles
+1. introduce "Type" for a user which has values "Dealer" and "Shopper".
+    - Shopper types are clients who want to use the website as a car shop to buy vehicles
 	- Dealer types are essentially dealers that want to use the website to sell vehicles (they have extra permissions such as add car, remove car etc), this must be validated on back-end too
 	- Remove dealers table and all related routes in server
 	- Introduce new column with values (dealer/shopper) in the users table (column name: type)
