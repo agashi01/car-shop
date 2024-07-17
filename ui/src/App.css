@@ -6,13 +6,11 @@
 }
 
 @font-face {
-  font-family: 'Cassandra';
-  src: url('./other/Fira_Code/FiraCode-VariableFont_wght.ttf') format('truetype');
+  font-family: "Cassandra";
+  src: url("./other/Fira_Code/FiraCode-VariableFont_wght.ttf") format("truetype");
 }
 
 /* car card */
-
-
 
 .card-png {
   height: 240px;
@@ -50,13 +48,12 @@
   border: 1px solid #ccc;
   /* backface-visibility: hidden; */
   perspective: 1000px;
-  transform: rotateY(var(--rotate-y))
+  transform: rotateY(var(--rotate-y));
 }
 
 .car-card.flip {
   --rotate-y: 180deg;
 }
-
 
 .front,
 .back {
@@ -66,8 +63,6 @@
   /* transition: 0.2s; */
   text-align: center;
   position: absolute;
-
-
 }
 
 .specification {
@@ -84,26 +79,24 @@
 .purchase {
   outline: none;
   width: 50%;
-  background-color: hsl(200, 100%, 70%)
+  background-color: hsl(200, 100%, 70%);
 }
 
 .purchase:hover {
   transform: translateY(-3px);
   /* transition: 0.1s`; */
   border: none;
-  background-color: hsl(200, 86%, 55%)
+  background-color: hsl(200, 86%, 55%);
 }
 
 .purchase:focus {
   outline: none;
-
 }
 
 .purchase:active {
   outline: none;
-  background-color: hsl(200, 72%, 41%)
+  background-color: hsl(200, 72%, 41%);
 }
-
 
 .back {
   display: flex;
@@ -160,24 +153,23 @@
   transform-style: preserve-3d;
   background-color: #555;
   /* top: 35px; */
-  height:173px;
+  height: 173px;
 
   width: 150px;
   border-radius: 5%;
   border: 1px solid #ccc;
   z-index: 1002;
-  box-shadow: 0 10px 10px(0, 0, 0, 0.1);
+  box-shadow: 0 10px 10px (0, 0, 0, 0.1);
 }
 
-.model-clicked.custom{
-  height: 219px;  
+.model-clicked.custom {
+  height: 219px;
 }
 
 .model-clicked:hover {
   transition: opacity ease-in-out 0.2s;
   background-color: #4e4d4d;
 }
-
 
 .model-clicked li {
   border-radius: 5%;
@@ -213,12 +205,8 @@ front .model-clicked li:last-child {
 }
 
 .model-unclicked {
-
   display: none;
 }
-
-
-
 
 .vehicle-clicked {
   border: 1px solid #ccc;
@@ -274,14 +262,12 @@ front .model-clicked li:last-child {
 .reset {
   text-align: center;
   color: whitesmoke;
-  transform: scale(0.8);  
+  transform: scale(0.8);
 }
 
-.reset-li:hover{
-  background-color:  #3f3f3f;
-
+.reset-li:hover {
+  background-color: #3f3f3f;
 }
-
 
 .checkbox-container {
   position: relative;
@@ -295,7 +281,8 @@ front .model-clicked li:last-child {
 }
 
 .checkbox-container input[type="checkbox"],
-.custom-checkbox {}
+.custom-checkbox {
+}
 
 .custom-checkbox {
   display: inline-block;
@@ -306,16 +293,18 @@ front .model-clicked li:last-child {
   caret-color: transparent;
   border-radius: 50%;
   position: relative;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
 }
 
-.checkbox-container input[type="checkbox"]:checked+.custom-checkbox {
+.checkbox-container input[type="checkbox"]:checked + .custom-checkbox {
   background-color: #007bff;
   border-color: #007bff;
 }
 
 .custom-checkbox:after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -327,7 +316,7 @@ front .model-clicked li:last-child {
   transition: transform 0.3s;
 }
 
-.checkbox-container input[type="checkbox"]:checked+.custom-checkbox:after {
+.checkbox-container input[type="checkbox"]:checked + .custom-checkbox:after {
   transform: translate(-50%, -50%) rotate(45deg) scale(1);
 }
 
@@ -335,18 +324,16 @@ front .model-clicked li:last-child {
   background-color: #f0f0f0;
 }
 
-.checkbox-container input[type="checkbox"]:focus+.custom-checkbox {
+.checkbox-container input[type="checkbox"]:focus + .custom-checkbox {
   outline: 2px solid #007bff;
   outline-offset: 2px;
 }
-
 
 .type-input {
   position: relative;
   color: whitesmoke;
   width: 100%;
 }
-
 
 .type-input:hover {
   background-color: #3f3f3f;
@@ -355,7 +342,6 @@ front .model-clicked li:last-child {
 .btn .ul {
   list-style-type: none;
 }
-
 
 .complet {
   display: flex;
@@ -369,7 +355,6 @@ front .model-clicked li:last-child {
 
 .isit-second {
   margin-top: 20px;
-
 }
 .btn2 {
   width: 100px;
@@ -382,8 +367,6 @@ front .model-clicked li:last-child {
   outline: none;
   margin-top: 20px;
 }
-
-
 
 .btn2:hover,
 .btn2:focus-visible {
@@ -409,15 +392,16 @@ front .model-clicked li:last-child {
   margin-bottom: 150px;
   display: grid;
   grid-template-columns: repeat(3, minmax(350px, 1fr));
-  gap: 20px
+  gap: 20px;
 }
 
-.page{
-  margin:0 auto 50px auto
+.page {
+  margin: 0 auto 50px auto;
 }
 
-.page button, .page span{
-  margin:10px
+.page button,
+.page span {
+  margin: 10px;
 }
 
 .account {
@@ -430,7 +414,6 @@ front .model-clicked li:last-child {
   margin-left: 15px;
   justify-self: center;
   background-color: rgb(189, 195, 199);
-
 }
 
 ul {
@@ -460,7 +443,6 @@ ul {
   margin-right: 20px;
 }
 
-
 nav.home {
   position: fixed;
   top: 0;
@@ -473,7 +455,6 @@ nav.home {
   height: 75px;
   color: #333;
 }
-
 
 .vehicle:hover {
   border-color: #bdc3c7;
@@ -537,8 +518,6 @@ nav.home {
   background-color: rgb(170, 172, 171);
 }
 
-
-
 .burger-menu:active {
   background-color: rgb(144, 146, 144);
 }
@@ -559,7 +538,7 @@ nav.home {
   width: 300px;
   height: auto;
   background-color: #555;
-  box-shadow: 0 10px 10px(0, 0, 0, 0.1);
+  box-shadow: 0 10px 10px (0, 0, 0, 0.1);
   border-radius: 3%;
   transition: opacity 1s ease-in-out visibility 1s ease-in-out;
 }
@@ -588,11 +567,9 @@ nav.home {
   display: block;
 }
 
-
 .help li:hover {
   background-color: #474747;
 }
-
 
 .help li:active {
   background-color: #3f3f3f;
@@ -601,7 +578,6 @@ nav.home {
 .help a {
   color: white;
 }
-
 
 .home {
   display: flex;
@@ -612,7 +588,6 @@ nav.home {
 }
 
 .home-logo {
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -641,7 +616,7 @@ nav.home {
   list-style-type: none;
   padding: 0;
   margin: 0;
-  color: whitesmoke
+  color: whitesmoke;
 }
 
 .type-input {
@@ -653,7 +628,6 @@ nav.home {
 .custom-checkbox {
   margin-right: 0.5rem;
 }
-
 
 .help ul {
   list-style-type: none;
@@ -686,18 +660,16 @@ In {
 
 /* sign in dhe register */
 
-.go-as-guest{
+.go-as-guest {
   display: flex;
   flex-direction: column;
-  gap:10px;
-  height:auto;
+  gap: 10px;
+  height: auto;
 }
 
 .register-button {
-
   width: 185px;
   margin-bottom: 20px;
-
 }
 
 .wrong-sign-in {
@@ -738,15 +710,15 @@ btn .prezantimi-register {
 }
 
 .wrong-prezantimi-register {
-  border: 2px solid red
+  border: 2px solid red;
 }
 
 .half-good-prezantimi {
-  border: 2px solid yellow
+  border: 2px solid yellow;
 }
 
 .good-prezantimi-register {
-  border: 2px solid green
+  border: 2px solid green;
 }
 
 /* stop */
@@ -764,39 +736,36 @@ btn .prezantimi-register {
   box-shadow: 0px 10px 4px rgba(0, 0, 0, 0.5);
 }
 
-.text{
+.text {
   align-self: flex-start;
 }
 
-.text2{
-  align-self:flex-end ;
+.text2 {
+  align-self: flex-end;
   justify-self: flex-start;
 }
 
-.correct-guest{
-  display:flex;
+.correct-guest {
+  display: flex;
   flex-direction: column;
 }
 
 .register {
   display: flex;
   justify-content: center;
-  height:auto;
+  height: auto;
   align-items: center;
 }
-
 
 .prezantimi {
   display: flex;
   flex-direction: column;
-
 }
 
 .box input {
   margin-bottom: 10px;
   padding: 8px;
 }
-
 
 .box button {
   background-color: rgb(189, 195, 199);
@@ -810,8 +779,7 @@ btn .prezantimi-register {
 
 .box button:hover {
   background-color: hsl(200, 100%, 90%);
-  ;
-  transform: translateY(-2px)
+  transform: translateY(-2px);
 }
 
 input {
@@ -871,11 +839,8 @@ input {
 }
 
 .register-home {
-
   margin: 0px 0px 0px 5px;
 }
-
-
 
 @keyframes logo-spin {
   from {
@@ -901,18 +866,14 @@ btn .card {
   color: #888;
 }
 
-
-
 .card-grid {
   display: grid;
   grid-template-rows: repeat(2, minmax(200px, 1fr));
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-
 }
 
 /* already made  */
 * {
-
   box-sizing: border-box;
 }
 
@@ -922,7 +883,7 @@ body {
   min-width: 100vh;
   min-height: 100vh;
   margin: 0 auto;
-  font-family: 'Cassandra', Helvetica, sans-serif;
+  font-family: "Cassandra", Helvetica, sans-serif;
 }
 
 .new-item-form {
@@ -947,12 +908,10 @@ body {
   outline: none;
 }
 
-
-
 .margin {
-  position:relative;
+  position: relative;
   margin-right: 10px;
-  margin-bottom:20px ;
+  margin-bottom: 20px;
 }
 
 .btn:active {
@@ -963,8 +922,6 @@ body {
 .btn:focus-visible {
   background: hsl(200, 100%, 50%, 0.2);
 }
-
-
 
 .new-item-form input {
   outline: none;
