@@ -9,6 +9,9 @@
 3. Images must be saved in the server side and their path must be saved in the database
 	- Introduce new column to cars table called "image_path" that saves the path of the file, relative to the public folder
 4. Only dealers can add cars
-5. Enable delete button for cars of the dealer that is logged in in the homepage (optional)
-6. Enable edit button for cars of the  dealer that is logged in in the homepage (optional)
-7. Implement login with JWT (lots of videos online), save JWT in local storage and then play with the user info and type, controlling what to show to the user/guest.
+6. Add a "Dealer: {dealerName}" to the card so that people know who they're buying the car from
+7. Change theme to more bright and lively colors
+8. Enable delete button for cars of the dealer that is logged in in the homepage (optional)
+9. Enable edit button for cars of the  dealer that is logged in in the homepage (optional)
+10. Implement login with JWT (lots of videos online), save JWT in local storage and then play with the user info and type, controlling what to show to the user/guest.
+11. Refactor (optional)
