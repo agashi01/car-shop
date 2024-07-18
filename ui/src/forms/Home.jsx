@@ -5,7 +5,7 @@ import carLogo from "../car_logo.png";
 import debounce from "lodash/debounce";
 
 // eslint-disable-next-line react/prop-types
-function Home({ id, page, logo, guest, username, guestFunc }) {
+function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   const [vehicleInput, setVehicleInput] = useState([]);
   const [modelInput, setModelInput] = useState([]);
   const [vehicleList, setVehicleList] = useState([]);
@@ -194,6 +194,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
       };
       try {
         const res = await axios.get(url, { params });
+        console.log(res.data)
         setCars(res.data);
       } catch (err) {
         console.log(err);
@@ -407,7 +408,7 @@ function Home({ id, page, logo, guest, username, guestFunc }) {
             </div>
           </div>
         </nav>
-      ) : (
+      ) : dealer==="Selling"?null:(
         <nav className="home">
           <div className="vehicles-menu">
             <button ref={vehicleRef} onClick={vehicleMenu} className="vehicle here">

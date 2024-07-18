@@ -11,6 +11,7 @@ import AfterRegister from "./forms/AfterRegister.jsx";
 import "./App.css";
 
 export default function App() {
+  const [dealer,setDealer]=useState(false)
   const [id, setId] = useState(null);
   const [logo, setLogo] = useState("logo");
   const [page, setPage] = useState("signIn");
@@ -39,6 +40,7 @@ export default function App() {
           <div className="box">
             {page === "signIn" ? (
               <SignInForm
+              dealer={setDealer}
                 id={setId}
                 logo3={logo}
                 logo={setLogo}
@@ -102,6 +104,7 @@ export default function App() {
         </div>
       ) : (
         <Home
+        dealer={dealer}
           id={id}
           guestFunc={guestFunc}
           page={setPage}

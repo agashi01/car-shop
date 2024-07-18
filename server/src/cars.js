@@ -35,9 +35,9 @@ const create = (db) =>
           .returning("*")
           .then(async ([car]) => {
             await trx
-              .select("dealers.*")
+              .select("users.*")
               .from("cars")
-              .innerJoin("dealers", "dealers.id", "cars.dealer_id")
+              .innerJoin("users", "users.id", "cars.dealer_id")
               .where("cars.id", car.id)
               .returning("*")
               .then(([dealer]) => {
@@ -96,7 +96,6 @@ const sortModel = (list) => {
         } else {
           numy = audi[y];
         }
-
         if (numy <= min) {
           min = numy;
           index = y;
@@ -193,7 +192,7 @@ const model = (db) => async (req, res) => {
 };
 
 const func = async (db, vehicle, model, limit, offset, id) => {
-  let query = db("cars").join("dealers", "cars.dealer_id", "dealers.id");
+  let query = db("cars").join("users", "cars.dealer_id", "users.id");
 
   if (vehicle) {
     query = query.whereIn("make", vehicle);
@@ -207,7 +206,7 @@ const func = async (db, vehicle, model, limit, offset, id) => {
     query = query.orderBy("cars.owner_id", id);
   }
 
-  const cars = await query.select("cars.*").limit(limit).offset(offset);
+  const cars = await query.select("cars.*","users.name","users.surname").limit(limit).offset(offset);
 
   return cars;
 };
@@ -229,6 +228,7 @@ const readAllGuest = (db) => async (req, res) => {
 
     res.status(200).json(cars);
   } catch (err) {
+    console.log(err)
     res.status(400).json("something went wrong");
   }
 };

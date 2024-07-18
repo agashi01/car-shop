@@ -17,7 +17,6 @@ const objToList = (list) => {
 
   return answer.flat();
 };
-
 // const spread=(...list)=>{
 //     console.log(list[0])
 //     const object={}
@@ -81,8 +80,8 @@ const logIn = (db) => async (req, res) => {
     .where({
       email,
     })
-    .select("email")
-    .returning("email")
+    .select("*")
+    .returning("*")
     .then((logInEmail) => {
       db("users_info")
         .where({
@@ -94,33 +93,9 @@ const logIn = (db) => async (req, res) => {
           const isValidPassword = await bcrypt.compare(password, userInfo[0].hash);
 
           if (isValidPassword) {
-            db("users")
-              .where({
-                email: userInfo[0].email,
-              })
-              .select("*")
-              .returning("*")
-              .then(([user]) => {
-                db.select(
-                  "c.*",
-                  "dealer_name",
-                  "d.id as dealer_id",
-                  "d.date_of_creation as dealer_date_of_creation",
-                  "d.date_of_last_update as dealer_date_of_last_update"
-                )
-                  .from("cars as c")
-                  .join("dealers as d", "c.dealer_id", "d.id")
-                  .where({ owner_id: user.id })
-
-                  .then((cars) => {
-                    console.log({ ...cars, ...user, username: userInfo[0].username });
-                    res.json({ ...cars, ...user, username: userInfo[0].username });
-                  })
-                  .catch((err) => {
-                    res.status(500).json(err.message);
-                  });
-              })
-              .catch((err) => res.status(500).json("problem in the server"));
+           
+                    return res.json({...logInEmail[0], username: userInfo[0].username });
+              
           } else {
             return res.status(400).json("wrong password");
           }

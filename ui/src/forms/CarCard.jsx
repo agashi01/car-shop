@@ -31,8 +31,6 @@ export default function CarCard({ id, isit, guest, car }) {
       .put("http://localhost:3000/cars", { id, carId })
       .then((res) => {
         setPurchased(true);
-        console.log(purchased);
-        console.log(res);
       })
       .catch((err) => console.log(err));
   };
@@ -67,8 +65,11 @@ export default function CarCard({ id, isit, guest, car }) {
         </div>
       </div>
       <div className="back">
+      <div className="specification">
+          Dealer : {car.name} {car.surname}
+        </div>
         <div className="specification">
-          {carObj[3]}: {car.make}
+          {carObj[3]}: {car.make} 
         </div>
         <div className="specification">
           {carObj[4]}: {car.model}
