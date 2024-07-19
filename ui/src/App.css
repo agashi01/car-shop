@@ -142,6 +142,11 @@
   align-items: start;
 }
 
+.dealers-menu{
+  width: 100%;
+  height: 50px;
+}
+
 .model-clicked {
   justify-self: flex-end;
   cursor: pointer;
@@ -249,6 +254,28 @@ front .model-clicked li:last-child {
 
 .vehicle-clicked:hover {
   background-color: #4e4d4d;
+}
+
+.options{
+
+}
+
+.input-sell{
+  text-align: center;
+  width: 100px;
+  height: 45px;
+  border-radius: 40px;
+}
+
+
+.text{
+    color: hsl(200, 100%, 50%);
+}
+
+.sell-menu{
+display: flex;
+flex-direction: column;
+  /* background-color: hsla(200, 5%, 32%, 0.3); */
 }
 
 .reset-li {
@@ -387,8 +414,23 @@ front .model-clicked li:last-child {
   z-index: 1000;
 }
 
+.sell-cars-ul{
+  margin-top: 200px;
+  display: flex ;
+  flex-direction: column;
+  /* justify-content: flex-end; */
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.sell.ul{
+  margin: 0 !important;
+  width: 200px;
+  padding:20px;
+}
+
 .cars-ul {
-  margin-top: 350px;
+  /* margin-top: 350px; */
   margin-bottom: 150px;
   display: grid;
   grid-template-columns: repeat(3, minmax(350px, 1fr));
@@ -697,6 +739,31 @@ In {
   color: #333;
 }
 
+.sell{
+  margin-left: 50px;
+
+  border-radius: 40px !important;
+  cursor: pointer;
+  padding: 10px !important;
+  width: 100px;
+}
+
+.sell:focus{
+  outline:none
+}
+
+.remove{
+  margin-left: 10px;
+  border-radius: 40px !important;
+  cursor: pointer;
+  padding: 10px !important;
+  width: 100px;
+}
+
+.remove:focus{
+  outline:none
+}
+
 
 .go-as-guest {
   display: flex;
@@ -952,14 +1019,16 @@ body {
   margin-bottom: 20px;
 }
 
-.btn:active {
-  background: hsl(200, 100%, 50%, 0.2);
-}
-
 .btn:hover,
 .btn:focus-visible {
   background: hsl(200, 100%, 50%, 0.2);
 }
+
+
+.btn:active {
+  background: hsl(200, 100%, 50%, 0.3);
+}
+
 
 .new-item-form input {
   outline: none;

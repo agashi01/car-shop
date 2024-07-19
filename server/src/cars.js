@@ -206,7 +206,7 @@ const func = async (db, vehicle, model, limit, offset, id) => {
     query = query.orderBy("cars.owner_id", id);
   }
 
-  const cars = await query.select("cars.*","users.name","users.surname").limit(limit).offset(offset);
+  const cars = await query.select("cars.*", "users.name", "users.surname").limit(limit).offset(offset);
 
   return cars;
 };
@@ -256,6 +256,50 @@ const readAll = (db) => async (req, res) => {
     res.status(400).json("something went wrong");
   }
 };
+
+const dealerModel = (db) = (req, res) => {
+
+
+  const { make } = req.query
+  console.log('make')
+
+  const model = db('cars').distinct('model')
+  console.log('make')
+
+
+  if (make) {
+    model = model.where('make', make)
+  }
+  model.then((models) => {
+    console.log(models, 'models')
+    res.json(models)
+  })
+    .catch((err) => {
+      console.log(err)
+      res.status(400).json("something went wrong with the model query")
+
+    })
+}
+
+
+const dealerMake = (db) => (req, res)=>{
+  const { model } = req.query
+
+  const make = db('cars').distinct('make')
+  if (model) {
+    make = make.where('model', model)
+  }
+  make.then((makes) => {
+    console.log(makes, 'makes')
+    return res.json(makes)
+  })
+    .catch((err) => {
+      console.log(err)
+      res.status(400).json("something went wrong with the make query")
+    })
+
+
+}
 
 const read = (db) => (req, res) => {
   const { id } = req.params;
@@ -328,4 +372,6 @@ module.exports = {
   readAllGuest,
   make,
   model,
+  dealerModel,
+  dealerMake
 };

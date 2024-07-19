@@ -13,7 +13,6 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   const [modelClicked, setModelClicked] = useState("model-unclicked");
   const [vehicleClicked, setVehicleClicked] = useState("vehicle-unclicked");
   const [isit, setIsit] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
   const [burgerMenu, setBurgerMenu] = useState("burger unclicked");
   const [menu, setMenu] = useState("menu-hidden");
   const [cars, setCars] = useState([]);
@@ -124,7 +123,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
       let switchEl = checkButton(e);
 
       console.log(switchEl, "s");
-      if (switchEl > -1) {
+      if (switchEl > -1 && switchEl !== null) {
         for (let x = 0; x < 3; x++) {
           if (x !== switchEl) {
             switch (x) {
@@ -149,6 +148,8 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
         setMenu("menu-hidden");
         setModelClicked("model-unclicked");
         setVehicleClicked("vehicle-unclicked");
+      } else {
+        return
       }
     }, 100);
 
@@ -194,7 +195,6 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
       };
       try {
         const res = await axios.get(url, { params });
-        console.log(res.data)
         setCars(res.data);
       } catch (err) {
         console.log(err);
@@ -408,119 +408,230 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
             </div>
           </div>
         </nav>
-      ) : dealer==="Selling"?null:(
-        <nav className="home">
-          <div className="vehicles-menu">
-            <button ref={vehicleRef} onClick={vehicleMenu} className="vehicle here">
-              Vehicle
-            </button>
-            <button ref={modelRef} onClick={modelMenu} className="vehicle">
-              model
-            </button>
-          </div>
-          <div className="home-logo">
-            <img
-              className={`logo ${logo}`}
-              src={carLogo}
-              alt="logo"
-              style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                boxShadow: "0px 4px 10px",
-                transition: "transform 0.2s ease-in-out",
-                transform: isHovered ? "scale(1.1)" : "scale(1)",
-              }}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            />
-          </div>
-          <div className="filter">
-            <div ref={vehicleMenuRef} className={vehicleClicked}>
-              <ul>
-                <li onClick={all} className="reset-li">
-                  <div className="reset">Select all</div>
-                </li>
 
-                {check(vehicleInput) ? (
-                  <li onClick={reset} className="reset-li">
-                    <div className="reset">Reset</div>
-                  </li>
-                ) : null}
+        // logged in
 
-                {vehicleInput.map((obj) => (
-                  <li key={obj.id} onClick={checked(obj)} className="type-input">
-                    <input
-                      type="checkbox"
-                      className="custom-checkbox"
-                      checked={obj.checked}
-                      id={`input-${obj.make}`}
-                    />
-                    {obj.make}
-                  </li>
-                ))}
-              </ul>
+      ) : dealer === "Selling" ?
+        <>
+          <nav className="home">
+            <div className="vehicles-menu">
+              <button ref={vehicleRef} onClick={vehicleMenu} className="vehicle here">
+                Vehicle
+              </button>
+              <button ref={modelRef} onClick={modelMenu} className="vehicle">
+                model
+              </button>
+
             </div>
-
-            <div ref={modelMenuRef} className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
-              <ul className="ul">
-                <li onClick={allModel} className="reset-li">
-                  <div className="reset">Select all</div>
-                </li>
-                {check(modelInput) ? (
-                  <li onClick={resetModel} className="reset-li">
-                    <div className="reset">Reset</div>
+            <div className="home-logo">
+              <img
+                className={`logo ${logo}`}
+                src={carLogo}
+                alt="logo"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  boxShadow: "0px 4px 10px",
+                  transition: "transform 0.2s ease-in-out",
+                  transform: isHovered ? "scale(1.1)" : "scale(1)",
+                }}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              />
+            </div>
+            <div className="filter">
+              <div ref={vehicleMenuRef} className={vehicleClicked}>
+                <ul>
+                  <li onClick={all} className="reset-li">
+                    <div className="reset">Select all</div>
                   </li>
-                ) : null}
-                {modelInput.map((obj) => {
-                  return (
-                    <li key={obj.id} onClick={checkedM(obj)} className="type-input">
+
+                  {check(vehicleInput) ? (
+                    <li onClick={reset} className="reset-li">
+                      <div className="reset">Reset</div>
+                    </li>
+                  ) : null}
+
+                  {vehicleInput.map((obj) => (
+                    <li key={obj.id} onClick={checked(obj)} className="type-input">
                       <input
                         type="checkbox"
                         className="custom-checkbox"
                         checked={obj.checked}
-                        id={`input-${obj.model}`}
+                        id={`input-${obj.make}`}
                       />
-                      {obj.model}
+                      {obj.make}
                     </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
+                  ))}
+                </ul>
+              </div>
 
-          <div ref={account} className="account">
-            <button className="btn-account"></button>
-            <p className="username">{username}</p>
-            <div ref={burgerRef} onClick={burgerMenuFunc} className="burger-menu">
-              <div className={burgerMenu}></div>
-              <div className={burgerMenu}></div>
-              <div className={burgerMenu}></div>
+              <div ref={modelMenuRef} className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
+                <ul className="ul">
+                  <li onClick={allModel} className="reset-li">
+                    <div className="reset">Select all</div>
+                  </li>
+                  {check(modelInput) ? (
+                    <li onClick={resetModel} className="reset-li">
+                      <div className="reset">Reset</div>
+                    </li>
+                  ) : null}
+                  {modelInput.map((obj) => {
+                    return (
+                      <li key={obj.id} onClick={checkedM(obj)} className="type-input">
+                        <input
+                          type="checkbox"
+                          className="custom-checkbox"
+                          checked={obj.checked}
+                          id={`input-${obj.model}`}
+                        />
+                        {obj.model}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
-          </div>
-          <div ref={burgerMenuRef} className={menu}>
-            <div className="help">
-              <ul className="ul">
-                <li onClick={() => page("register")}>New account</li>
-                <li onClick={() => page("signIn")}>Sign Out</li>
-                <li onClick={guestFunc}>Guest</li>
-              </ul>
+
+            <div ref={account} className="account">
+              <button className="btn-account"></button>
+              <p className="username">{username}</p>
+              <div ref={burgerRef} onClick={burgerMenuFunc} className="burger-menu">
+                <div className={burgerMenu}></div>
+                <div className={burgerMenu}></div>
+                <div className={burgerMenu}></div>
+              </div>
             </div>
-          </div>
-        </nav>
-      )}
-      <div className="cars-page">
-        <ul className="cars-ul">
-          {cars.map((car) => {
-            // console.log(car.id)
-            return (
-              // eslint-disable-next-line react/jsx-key
-              <li key={car.id}>
-                <CarCard id={id} isit={setIsit} guest={guest} car={car} />
-              </li>
-            );
-          })}
-        </ul>
+            <div ref={burgerMenuRef} className={menu}>
+              <div className="help">
+                <ul className="ul">
+                  <li onClick={() => page("register")}>New account</li>
+                  <li onClick={() => page("signIn")}>Sign Out</li>
+                  <li onClick={guestFunc}>Guest</li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+         
+        </> : (
+          <nav className="home">
+            <div className="vehicles-menu">
+              <button ref={vehicleRef} onClick={vehicleMenu} className="vehicle here">
+                Vehicle
+              </button>
+              <button ref={modelRef} onClick={modelMenu} className="vehicle">
+                model
+              </button>
+            </div>
+            <div className="home-logo">
+              <img
+                className={`logo ${logo}`}
+                src={carLogo}
+                alt="logo"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  boxShadow: "0px 4px 10px",
+                  transition: "transform 0.2s ease-in-out",
+                  transform: isHovered ? "scale(1.1)" : "scale(1)",
+                }}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              />
+            </div>
+            <div className="filter">
+              <div ref={vehicleMenuRef} className={vehicleClicked}>
+                <ul>
+                  <li onClick={all} className="reset-li">
+                    <div className="reset">Select all</div>
+                  </li>
+
+                  {check(vehicleInput) ? (
+                    <li onClick={reset} className="reset-li">
+                      <div className="reset">Reset</div>
+                    </li>
+                  ) : null}
+
+                  {vehicleInput.map((obj) => (
+                    <li key={obj.id} onClick={checked(obj)} className="type-input">
+                      <input
+                        type="checkbox"
+                        className="custom-checkbox"
+                        checked={obj.checked}
+                        id={`input-${obj.make}`}
+                      />
+                      {obj.make}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div ref={modelMenuRef} className={`${modelClicked} ${modelClass ? "custom" : ""}`}>
+                <ul className="ul">
+                  <li onClick={allModel} className="reset-li">
+                    <div className="reset">Select all</div>
+                  </li>
+                  {check(modelInput) ? (
+                    <li onClick={resetModel} className="reset-li">
+                      <div className="reset">Reset</div>
+                    </li>
+                  ) : null}
+                  {modelInput.map((obj) => {
+                    return (
+                      <li key={obj.id} onClick={checkedM(obj)} className="type-input">
+                        <input
+                          type="checkbox"
+                          className="custom-checkbox"
+                          checked={obj.checked}
+                          id={`input-${obj.model}`}
+                        />
+                        {obj.model}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+
+            <div ref={account} className="account">
+              <button className="btn-account"></button>
+              <p className="username">{username}</p>
+              <div ref={burgerRef} onClick={burgerMenuFunc} className="burger-menu">
+                <div className={burgerMenu}></div>
+                <div className={burgerMenu}></div>
+                <div className={burgerMenu}></div>
+              </div>
+            </div>
+            <div ref={burgerMenuRef} className={menu}>
+              <div className="help">
+                <ul className="ul">
+                  <li onClick={() => page("register")}>New account</li>
+                  <li onClick={() => page("signIn")}>Sign Out</li>
+                  <li onClick={guestFunc}>Guest</li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        )
+      }
+      <div className="sell-cars-ul">
+        {dealer === "Selling" ? <button onClick={()=>page('add')}className="btn sell ul" style={{position:'relative'}}>Add a car</button> : null}
+        <div className="cars-page">
+          <ul className="cars-ul">
+            {cars.map((car) => {
+              // console.log(car.id)
+              return (
+                // eslint-disable-next-line react/jsx-key
+                <li key={car.id}>
+                  <CarCard id={id} isit={setIsit} guest={guest} car={car} />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
 
         <div className="page">
           <button
@@ -540,7 +651,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
           </button>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

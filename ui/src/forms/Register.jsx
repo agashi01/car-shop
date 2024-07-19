@@ -31,7 +31,7 @@ export default function Register({ logo, page }) {
     username: "",
   });
 
-  const [type,setType]=useState("Buying")
+  const [type, setType] = useState("Buying")
 
   const arrowUp = (ref) => {
     ref.focus();
@@ -59,10 +59,9 @@ export default function Register({ logo, page }) {
         .then((res) => {
           setBackendError(false);
           page("afterRegister");
-          console.log(res);
-          console.log(backendError);
         })
         .catch((err) => {
+
           setBackendError(true);
           if (err?.response?.data === "email is already in use") {
             setError((current) => {
@@ -73,7 +72,6 @@ export default function Register({ logo, page }) {
               return { ...current, username: "Username is already in use" };
             });
           } else {
-            console.log(err);
             setBackendMessage(err?.response?.data);
           }
         });
@@ -98,9 +96,7 @@ export default function Register({ logo, page }) {
   const registerConfirm = async (e) => {
     e.preventDefault();
     setError({ emri: "", mbiemri: "", email: "", password: "", username: "" });
-    console.log(register);
 
-    console.log("here");
 
     setError((current) => {
       if (!register.emri) {
@@ -151,7 +147,6 @@ export default function Register({ logo, page }) {
         return { ...current, password: " Correct form" };
       }
     });
-    console.log(error);
   };
 
   useEffect(() => {
@@ -302,7 +297,6 @@ export default function Register({ logo, page }) {
       return { ...current, username: e.target.value };
     });
   };
-
   // function when user submits
 
   // functions for classnames
@@ -547,13 +541,14 @@ export default function Register({ logo, page }) {
       <div className="error">{errorPassword()}</div>
       <div className="type">
         <div className="next-to-select">
-        <label htmlFor="user-type"></label>
-        <select onChange={(e)=>setType(e.target.value)} className='select' name="user-type" id="user-type">
-            <option value="buying">Buying</option>
-            <option value="selling">Selling</option>
-          </select> 
+          <label htmlFor="user-type"></label>
+          <select onChange={e=>setType(e.target.value)}
+            className='select' name="user-type" id="user-type">
+            <option value="Buying">Buying</option>
+            <option value="Selling">Selling</option>
+          </select>
         </div>
-       
+
         <button className="register-button" type="btn" onClick={registerConfirm}>
           Register
         </button>

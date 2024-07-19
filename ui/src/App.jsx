@@ -7,6 +7,7 @@ import SignInForm from "./forms/SignIn.jsx";
 import Register from "./forms/Register.jsx";
 import Home from "./forms/Home.jsx";
 import AfterRegister from "./forms/AfterRegister.jsx";
+import Add from './forms/Add.jsx'
 
 import "./App.css";
 
@@ -14,7 +15,7 @@ export default function App() {
   const [dealer,setDealer]=useState(false)
   const [id, setId] = useState(null);
   const [logo, setLogo] = useState("logo");
-  const [page, setPage] = useState("signIn");
+  const [page, setPage] = useState("add");
   const [guest, setGuest] = useState(true);
   const [username, setUsername] = useState("");
 
@@ -52,7 +53,7 @@ export default function App() {
               <Register logo={setLogo} page={changePage} />
             ) : page === "afterRegister" ? (
               <AfterRegister page={changePage} />
-            ) : null}
+            ) : page==='add'? <Add id={id}/>:null }
             {page === "register" ? (
               <div className="register">
                 <p
@@ -102,7 +103,8 @@ export default function App() {
             ) : null}
           </div>
         </div>
-      ) : (
+      ) : 
+      (
         <Home
         dealer={dealer}
           id={id}

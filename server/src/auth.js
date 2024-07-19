@@ -62,6 +62,7 @@ const signUp = (db) => async (req, res) => {
         }
       })
       .catch((err) => {
+        console.log(err)
         res.status(500).json("email is already in use");
       })
       .then(trx.commit)
