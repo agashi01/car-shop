@@ -14,7 +14,6 @@ const create = (db) =>
       owner_id,
     } = req.body;
     db.on("query", function (queryData) {
-      console.log(queryData);
     });
     {
       await db.transaction(async (trx) => {
@@ -178,9 +177,7 @@ const model = (db) => async (req, res) => {
   try {
     const models = await func2(db, vehicleList);
     if (models) {
-      console.log(models, "models for models");
       const finalModels = sortModel(models);
-      console.log(finalModels, "models");
       res.json(finalModels);
     } else {
       res.status(400).json("failed");
@@ -222,7 +219,6 @@ const readAllGuest = (db) => async (req, res) => {
   const { vehicle, model, limit, pageNumber } = req.query;
   const offset = (pageNumber - 1) * limit;
 
-  console.log(limit);
   try {
     const cars = await func(db, vehicle, model, limit, offset);
 
@@ -257,22 +253,23 @@ const readAll = (db) => async (req, res) => {
   }
 };
 
-const dealerModel = (db) = (req, res) => {
-
+const dealerModel = (db) => (req, res) => {
 
   const { make } = req.query
-  console.log('make')
 
-  const model = db('cars').distinct('model')
-  console.log('make')
-
+  let model = db('cars').distinct('model')
 
   if (make) {
     model = model.where('make', make)
+    console.log(model)
   }
   model.then((models) => {
-    console.log(models, 'models')
-    res.json(models)
+    const model = sortModel(models)
+    const fModel = []
+    for (let x = 0; x < model.length; x++) {
+      fModel[x] = model[x].model
+    }
+    res.json(fModel)
   })
     .catch((err) => {
       console.log(err)
@@ -282,15 +279,17 @@ const dealerModel = (db) = (req, res) => {
 }
 
 
-const dealerMake = (db) => (req, res)=>{
+const dealerMake = (db) => (req, res) => {
+
   const { model } = req.query
 
-  const make = db('cars').distinct('make')
+  console.log(model)
+
+  let make = db('cars').distinct('make')
   if (model) {
     make = make.where('model', model)
   }
   make.then((makes) => {
-    console.log(makes, 'makes')
     return res.json(makes)
   })
     .catch((err) => {
@@ -298,7 +297,44 @@ const dealerMake = (db) => (req, res)=>{
       res.status(400).json("something went wrong with the make query")
     })
 
+}
 
+const transmission = (db) => (req, res) => {
+  let transmission = db('cars').distinct('transmission')
+  transmission.then(transmission => {
+    let fTransmission=[]
+    for(let x=0;x<transmission.length;x++){
+      fTransmission[x]=transmission[x].transmission
+    }
+    console.log(fTransmission,'transmission')
+    res.json(fTransmission)
+  })
+
+
+}
+
+const fuelType = (db) => (req, res) => {
+  let fuelType = db('cars').distinct('fuel_type')
+  fuelType.then(fuelType => {
+    let finalFuelType=[]
+    for(let x=0;x<fuelType.length;x++){
+      finalFuelType[x]=fuelType[x].fuel_type
+    }
+    console.log(finalFuelType,'fuel')
+    res.json(finalFuelType)
+  })
+}
+
+const vehicleType = (db) => (req, res) => {
+  let vehicleType = db('cars').distinct('vehicle_type')
+  vehicleType.then(vehicleType => {
+    let finalVehicleType=[]
+    for(let x=0;x<vehicleType.length;x++){
+      finalVehicleType[x]=vehicleType[x].vehicle_type
+    }
+    console.log(vehicleType,'vehicle')
+    res.json(finalVehicleType)
+  })
 }
 
 const read = (db) => (req, res) => {
@@ -373,5 +409,8 @@ module.exports = {
   make,
   model,
   dealerModel,
-  dealerMake
+  dealerMake,
+  transmission,
+  fuelType,
+  vehicleType
 };

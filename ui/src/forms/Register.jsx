@@ -56,7 +56,7 @@ export default function Register({ logo, page }) {
           username: register.username,
           type
         })
-        .then((res) => {
+        .then(() => {
           setBackendError(false);
           page("afterRegister");
         })

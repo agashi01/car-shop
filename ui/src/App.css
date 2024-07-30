@@ -278,6 +278,22 @@ flex-direction: column;
   /* background-color: hsla(200, 5%, 32%, 0.3); */
 }
 
+.select-vehicle{
+    border-radius: 40px !important;
+    cursor: pointer;
+    padding: 10px !important;
+    width: 100px;
+    margin-bottom: 20px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+
+}
+
 .reset-li {
   border-bottom: 1px solid #000;
   display: flex;
@@ -740,12 +756,15 @@ In {
 }
 
 .sell{
-  margin-left: 50px;
 
   border-radius: 40px !important;
   cursor: pointer;
   padding: 10px !important;
   width: 100px;
+}
+
+.gap{
+  margin-left: 36px;
 }
 
 .sell:focus{
@@ -771,7 +790,6 @@ In {
   gap: 10px;
   height: auto;
 }
-
 .register-button {
   width: 185px;
   margin-bottom: 20px;
@@ -846,6 +864,7 @@ btn .prezantimi-register {
 }
 
 .text2 {
+  color: hsl(200, 100%, 50%);
   align-self: flex-end;
   justify-self: flex-start;
 }
@@ -873,14 +892,36 @@ btn .prezantimi-register {
 }
 
 .box button {
-  background-color: rgb(189, 195, 199);
-  color: #333;
-  padding: 5px 10px;
-  border: none;
+  background: hsl(200, 100%, 50%, 0.1) ;
+  border: 1px solid hsl(200, 100%, 50%);
+  color: hsl(200, 100%, 50%);
+  padding: 0.25em 0.5em;
+  border-radius: 0.25em;
   cursor: pointer;
-  border-radius: 4px;
-  height: 40px;
+  outline: none;
 }
+
+
+.box button:hover,
+.box button:focus-visible {
+  transform: translateY(-2px);
+  background: hsl(200, 100%, 50%, 0.2);
+}
+
+
+.box button:active {
+  background: hsl(200, 100%, 50%, 0.3);
+}
+
+/* width: 100px;
+background: hsl(200, 100%, 50%, 0.1);
+border: 1px solid hsl(200, 100%, 50%);
+color: hsl(200, 100%, 50%);
+padding: 0.25em 0.5em;
+border-radius: 0.25em;
+cursor: pointer;
+outline: none;
+margin-top: 20px; */
 
 .box button:hover {
   background-color: hsl(200, 100%, 90%);
@@ -1004,7 +1045,17 @@ body {
 }
 
 .btn {
-  background: hsl(200, 100%, 50%, 0.1);
+  background: hsl(200, 100%, 50%, 0.1) ;
+  border: 1px solid hsl(200, 100%, 50%);
+  color: hsl(200, 100%, 50%);
+  padding: 0.25em 0.5em;
+  border-radius: 0.25em;
+  cursor: pointer;
+  outline: none;
+}
+
+.create{
+  background: hsla(200, 95%, 43%, 0.1);
   border: 1px solid hsl(200, 100%, 50%);
   color: hsl(200, 100%, 50%);
   padding: 0.25em 0.5em;

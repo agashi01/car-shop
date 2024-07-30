@@ -30,6 +30,9 @@ app.get("/", (req, res) => {
 app.post("/sign-up", (req, res) => auth.signUp(db)(req, res));
 app.post("/log-in", (req, res) => auth.logIn(db)(req, res));
 
+app.get('/transmission',(req,res)=>cars.transmission(db)(req,res))
+app.get('/fuelType',(req,res)=>cars.fuelType(db)(req,res))
+app.get('/vehicleType',(req,res)=>cars.vehicleType(db)(req,res))
 app.get('/dealerModel', (req,res)=> cars.dealerModel(db)(req,res))
 app.get('/dealerMake', (req,res)=> cars.dealerMake(db)(req,res))
 app.get("/model", (req, res) => cars.model(db)(req, res));
@@ -49,10 +52,8 @@ app.delete("/dealers/:id", (req, res) => dealers.deleteDealer(db)(req, res));
 app.use("/static", express.static(path.join(__dirname, "../public")));
 
 app.use((err, req, res, next) => {
-  console.log("use");
   const errStatus = err.statusCode || 500;
   const errMsg = err.message || "Something went wrong";
-  console.log("hi");
   res.status(errStatus).json({
     success: false,
     status: errStatus,
