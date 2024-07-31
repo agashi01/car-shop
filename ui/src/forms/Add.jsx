@@ -10,6 +10,7 @@ export default function Add({ id }) {
   const [fuelType, setFuelType] = useState([]);
   const [transmission, setTransmission] = useState([]);
   const [vehicleType, setVehicleType] = useState([]);
+  const [errorMessage,setErrorMessage] =useState('');
   const [error, setError] = useState({
     make: "",
     model: "",
@@ -44,6 +45,25 @@ export default function Add({ id }) {
     console.log(message)
     setMessage(newMessages); // Update the message state once with the new values
   };
+
+  useEffect(()=>{
+    for(let key in message){
+      if(message[key]!=='correct-add'){
+        return
+      }
+    }
+    console.log(error)
+    axios.post('http://localhost:3000/cars',{
+      specs:{...error,id}
+    })
+    .then(res=>{
+      console.log('succes')
+    })
+    .catch(err=>{
+      console.log(err)
+      setErrorMessage(err.data)
+    })
+  },[message])
 
   useEffect(() => {
     axios
@@ -227,6 +247,7 @@ export default function Add({ id }) {
       <button  onClick={submit} type="btn" style={{ padding: "10px" }} className="create">
         Create
       </button>
+      {errorMessage?<p className="text">{errorMessage}</p>:null}
     </div>
   );
 }

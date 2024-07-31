@@ -8,14 +8,33 @@ const create = (db) =>
       mileage,
       color,
       transmission,
-      fuel_type,
-      vehicle_type,
-      dealer_id,
-      owner_id,
-    } = req.body;
+      fuelType,
+      vehicleType,
+      id
+    } = req.body.specs;
     db.on("query", function (queryData) {
     });
-    {
+    // {
+
+      db('users').select('*').where('id', id)
+        .then(([res]) => {
+          if (!res) {
+            return res.json('You are not a dealer')
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          return res.status(404).json('You are not a dealer')
+        })
+    console.log(
+      make,
+      model,
+      mileage,
+      color,
+      transmission,
+      fuelType,
+      vehicleType,
+      id)
       await db.transaction(async (trx) => {
         trx("cars")
           .insert({
@@ -26,41 +45,26 @@ const create = (db) =>
             mileage: mileage,
             color: color,
             transmission: transmission,
-            fuel_type: fuel_type,
-            vehicle_type: vehicle_type,
-            dealer_id: dealer_id,
-            owner_id: owner_id,
+            fuel_type:fuelType,
+            vehicle_type:vehicleType,
+            dealer_id: id,
           })
           .returning("*")
           .then(async ([car]) => {
-            await trx
-              .select("users.*")
-              .from("cars")
-              .innerJoin("users", "users.id", "cars.dealer_id")
-              .where("cars.id", car.id)
-              .returning("*")
-              .then(([dealer]) => {
-                res.json({
-                  dealer,
-                  car,
-                });
-              })
-              .catch(async (err) => {
-                console.error(err);
-                await trx.rollback();
-                res.status(404).json("this dealer does not exist");
-              });
+            if(car){
+              res.json('succes')
+             await trx.commit()
+            }
           })
-          .catch((err) => {
+          .catch(async (err) => {
             console.log(err);
             res.status(400).json("this car is missing something");
+            await trx.rollback()
           })
 
-          .then(await trx.commit)
-          .catch(await trx.rollback);
+          
       });
     }
-  };
 
 const sortModel = (list) => {
   let finalCount = 0;
@@ -302,11 +306,11 @@ const dealerMake = (db) => (req, res) => {
 const transmission = (db) => (req, res) => {
   let transmission = db('cars').distinct('transmission')
   transmission.then(transmission => {
-    let fTransmission=[]
-    for(let x=0;x<transmission.length;x++){
-      fTransmission[x]=transmission[x].transmission
+    let fTransmission = []
+    for (let x = 0; x < transmission.length; x++) {
+      fTransmission[x] = transmission[x].transmission
     }
-    console.log(fTransmission,'transmission')
+    console.log(fTransmission, 'transmission')
     res.json(fTransmission)
   })
 
@@ -316,11 +320,11 @@ const transmission = (db) => (req, res) => {
 const fuelType = (db) => (req, res) => {
   let fuelType = db('cars').distinct('fuel_type')
   fuelType.then(fuelType => {
-    let finalFuelType=[]
-    for(let x=0;x<fuelType.length;x++){
-      finalFuelType[x]=fuelType[x].fuel_type
+    let finalFuelType = []
+    for (let x = 0; x < fuelType.length; x++) {
+      finalFuelType[x] = fuelType[x].fuel_type
     }
-    console.log(finalFuelType,'fuel')
+    console.log(finalFuelType, 'fuel')
     res.json(finalFuelType)
   })
 }
@@ -328,11 +332,11 @@ const fuelType = (db) => (req, res) => {
 const vehicleType = (db) => (req, res) => {
   let vehicleType = db('cars').distinct('vehicle_type')
   vehicleType.then(vehicleType => {
-    let finalVehicleType=[]
-    for(let x=0;x<vehicleType.length;x++){
-      finalVehicleType[x]=vehicleType[x].vehicle_type
+    let finalVehicleType = []
+    for (let x = 0; x < vehicleType.length; x++) {
+      finalVehicleType[x] = vehicleType[x].vehicle_type
     }
-    console.log(vehicleType,'vehicle')
+    console.log(vehicleType, 'vehicle')
     res.json(finalVehicleType)
   })
 }

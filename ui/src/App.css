@@ -928,11 +928,11 @@ btn .prezantimi-register {
 
 
 .error-add {
-  border: 2px solid red;     /* Change the border color for error */
+  border: 3px solid red;     /* Change the border color for error */
 }
 
 .correct-add{
-  border: 2px solid green
+  border: 3px solid green
 }
 
 
