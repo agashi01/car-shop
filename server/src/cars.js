@@ -192,7 +192,7 @@ const model = (db) => async (req, res) => {
   }
 };
 
-const func = async (db, vehicle, model, limit, offset, id) => {
+const func = async (db, vehicle, model, limit, offset, id,dealer) => {
   let query = db("cars").join("users", "cars.dealer_id", "users.id");
 
   if (vehicle) {
@@ -205,6 +205,14 @@ const func = async (db, vehicle, model, limit, offset, id) => {
 
   if (id) {
     query = query.orderBy("cars.owner_id", id);
+  }
+
+  if(dealer){
+    query=query
+    .orderBy(knex.raw('dealer_id = ?',[dealer]),'DESC')
+    .orderBy(knex.raw('owner_id IS NULL'),'DESC')
+    .orderBy('date_of_creation','DESC')
+    .orderBy('date_of_last_update','DESC')
   }
 
   const cars = await query.select("cars.*", "users.name", "users.surname").limit(limit).offset(offset);
@@ -246,11 +254,11 @@ const make = (db) => async (req, res) => {
 };
 
 const readAll = (db) => async (req, res) => {
-  const { vehicle, model, id, limit, pageNumber } = req.query;
+  const { dealer,vehicle, model, id, limit, pageNumber } = req.query;
   const offset = (pageNumber - 1) * limit;
 
   try {
-    const cars = await func(db, vehicle, model, limit, offset, id);
+    const cars = await func(db, vehicle, model, limit, offset, id,dealer);
     res.status(200).json(cars);
   } catch (err) {
     res.status(400).json("something went wrong");

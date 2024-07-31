@@ -7,12 +7,12 @@ import SignInForm from "./forms/SignIn.jsx";
 import Register from "./forms/Register.jsx";
 import Home from "./forms/Home.jsx";
 import AfterRegister from "./forms/AfterRegister.jsx";
-import Add from './forms/Add.jsx'
+import Add from "./forms/Add.jsx";
 
 import "./App.css";
 
 export default function App() {
-  const [dealer,setDealer]=useState(false)
+  const [dealer, setDealer] = useState(false);
   const [id, setId] = useState(null);
   const [logo, setLogo] = useState("logo");
   const [page, setPage] = useState("signIn");
@@ -41,7 +41,7 @@ export default function App() {
           <div className="box">
             {page === "signIn" ? (
               <SignInForm
-              dealer={setDealer}
+                dealer={setDealer}
                 id={setId}
                 logo3={logo}
                 logo={setLogo}
@@ -53,7 +53,11 @@ export default function App() {
               <Register logo={setLogo} page={changePage} />
             ) : page === "afterRegister" ? (
               <AfterRegister page={changePage} />
-            ) : page==='add'? <Add id={id}/>:null }
+            ) : page === "afterAdd" ? (
+              <After_add />
+            ) : page === "add" ? (
+              <Add id={id} />
+            ) : null}
             {page === "register" ? (
               <div className="register">
                 <p
@@ -103,10 +107,9 @@ export default function App() {
             ) : null}
           </div>
         </div>
-      ) : 
-      (
+      ) : (
         <Home
-        dealer={dealer}
+          dealer={dealer}
           id={id}
           guestFunc={guestFunc}
           page={setPage}

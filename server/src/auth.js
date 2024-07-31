@@ -52,9 +52,11 @@ const signUp = (db) => async (req, res) => {
             })
             .returning("*")
             .then(([user2]) => {
+              trx.commit()
               return res.json({ ...user[0], username: user2.username, id: user2.id });
             })
             .catch((err) => {
+              trx.rollback()
               res.status(500).json("username is already in use");
             });
         } else {
@@ -62,11 +64,11 @@ const signUp = (db) => async (req, res) => {
         }
       })
       .catch((err) => {
+        trx.rollback()
         console.log(err)
         res.status(500).json("email is already in use");
       })
-      .then(trx.commit)
-      .catch((err) => trx.rollback);
+      
   });
 };
 

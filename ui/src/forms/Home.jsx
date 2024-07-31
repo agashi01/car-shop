@@ -187,6 +187,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
     const fetchCars = async () => {
       const url = guest ? "http://localhost:3000/cars/guest" : "http://localhost:3000/cars";
       const params = {
+        dealer,
         vehicle: vehicleList,
         model: modelList,
         pageNumber,

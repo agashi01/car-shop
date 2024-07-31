@@ -57,6 +57,7 @@ export default function Add({ id }) {
       specs:{...error,id}
     })
     .then(res=>{
+      page('afterAdd')
       console.log('succes')
     })
     .catch(err=>{
