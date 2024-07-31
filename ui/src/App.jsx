@@ -15,7 +15,7 @@ export default function App() {
   const [dealer,setDealer]=useState(false)
   const [id, setId] = useState(null);
   const [logo, setLogo] = useState("logo");
-  const [page, setPage] = useState("signIn");
+  const [page, setPage] = useState("add");
   const [guest, setGuest] = useState(true);
   const [username, setUsername] = useState("");
 

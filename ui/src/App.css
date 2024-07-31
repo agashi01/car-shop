@@ -79,14 +79,14 @@
 .purchase {
   outline: none;
   width: 50%;
-  background-color: hsl(200, 100%, 70%);
+  background-color: hsla(200, 100%, 70%);
 }
 
 .purchase:hover {
   transform: translateY(-3px);
   /* transition: 0.1s`; */
   border: none;
-  background-color: hsl(200, 86%, 55%);
+  background-color: hsla(200, 86%, 55%);
 }
 
 .purchase:focus {
@@ -95,7 +95,7 @@
 
 .purchase:active {
   outline: none;
-  background-color: hsl(200, 72%, 41%);
+  background-color: hsla(200, 72%, 41%);
 }
 
 .back {
@@ -256,8 +256,13 @@ front .model-clicked li:last-child {
   background-color: #4e4d4d;
 }
 
-.options{
-
+.options2{
+width:150px;
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+align-items:flex-end;
+text-align: end;
 }
 
 .input-sell{
@@ -267,10 +272,6 @@ front .model-clicked li:last-child {
   border-radius: 40px;
 }
 
-
-.text{
-    color: hsl(200, 100%, 50%);
-}
 
 .sell-menu{
 display: flex;
@@ -401,9 +402,9 @@ flex-direction: column;
 }
 .btn2 {
   width: 100px;
-  background: hsl(200, 100%, 50%, 0.1);
-  border: 1px solid hsl(200, 100%, 50%);
-  color: hsl(200, 100%, 50%);
+  background: hsla(200, 100%, 50%, 0.1);
+  border: 1px solid hsla(200, 100%, 50%);
+  color: hsla(200, 100%, 50%);
   padding: 0.25em 0.5em;
   border-radius: 0.25em;
   cursor: pointer;
@@ -414,7 +415,7 @@ flex-direction: column;
 .btn2:hover,
 .btn2:focus-visible {
   transform: translateY(-2px);
-  background: hsl(200, 100%, 50%, 0.2);
+  background: hsla(200, 100%, 50%, 0.2);
 }
 
 .isit {
@@ -764,7 +765,7 @@ In {
 }
 
 .gap{
-  margin-left: 36px;
+  /* margin-left: 36px; */
 }
 
 .sell:focus{
@@ -818,6 +819,7 @@ In {
   justify-content: center;
 }
 
+
 body .good-sign-in {
   color: green;
   display: flex;
@@ -861,12 +863,22 @@ btn .prezantimi-register {
 
 .text {
   align-self: flex-start;
+  color: hsla(200, 100%, 50%);
 }
 
 .text2 {
-  color: hsl(200, 100%, 50%);
+  color: hsla(200, 100%, 50%);
   align-self: flex-end;
   justify-self: flex-start;
+}
+
+
+
+.text3{
+  margin-right: 25px;
+  align-self: flex-end;
+  justify-self: flex-end;   
+   color: hsla(200, 100%, 50%);
 }
 
 .correct-guest {
@@ -892,9 +904,9 @@ btn .prezantimi-register {
 }
 
 .box button {
-  background: hsl(200, 100%, 50%, 0.1) ;
-  border: 1px solid hsl(200, 100%, 50%);
-  color: hsl(200, 100%, 50%);
+  background-color: hsla(200, 100%, 50%, 0.1) ;
+  border: 1px solid hsla(200, 100%, 50%);
+  color: hsla(200, 100%, 50%);
   padding: 0.25em 0.5em;
   border-radius: 0.25em;
   cursor: pointer;
@@ -905,28 +917,24 @@ btn .prezantimi-register {
 .box button:hover,
 .box button:focus-visible {
   transform: translateY(-2px);
-  background: hsl(200, 100%, 50%, 0.2);
+  background: hsla(200, 100%, 50%, 0.2);
 }
 
 
 .box button:active {
-  background: hsl(200, 100%, 50%, 0.3);
+  background: hsla(200, 100%, 50%, 0.3);
 }
 
-/* width: 100px;
-background: hsl(200, 100%, 50%, 0.1);
-border: 1px solid hsl(200, 100%, 50%);
-color: hsl(200, 100%, 50%);
-padding: 0.25em 0.5em;
-border-radius: 0.25em;
-cursor: pointer;
-outline: none;
-margin-top: 20px; */
 
-.box button:hover {
-  background-color: hsl(200, 100%, 90%);
-  transform: translateY(-2px);
+
+.error-add {
+  border: 2px solid red;     /* Change the border color for error */
 }
+
+.correct-add{
+  border: 2px solid green
+}
+
 
 input {
   border-radius: 20px;
@@ -954,7 +962,7 @@ input {
   border-radius: 50%;
   /* Creates a circular border for a circular logo (optional) */
   box-shadow: 0px 4px 10px;
-  color: hsl(200, 100%, 70%);
+  color: hsla(200, 100%, 70%);
   /* Adds a subtle shadow (optional) */
 }
 
@@ -964,7 +972,7 @@ input {
   border-radius: 50%;
   /* Creates a circular border for a circular logo (optional) */
   box-shadow: 0px 4px 10px;
-  color: hsl(200, 100%, 70%);
+  color: hsla(200, 100%, 70%);
 }
 
 .home-logo {
@@ -1025,7 +1033,7 @@ btn .card {
 
 body {
   background: #333;
-  color: hsl(200, 100%, 90%);
+  color: hsla(200, 100%, 90%);
   min-width: 100vh;
   min-height: 100vh;
   margin: 0 auto;
@@ -1045,9 +1053,9 @@ body {
 }
 
 .btn {
-  background: hsl(200, 100%, 50%, 0.1) ;
-  border: 1px solid hsl(200, 100%, 50%);
-  color: hsl(200, 100%, 50%);
+  background: hsla(200, 100%, 50%, 0.1) ;
+  border: 1px solid hsla(200, 100%, 50%);
+  color: hsla(200, 100%, 50%);
   padding: 0.25em 0.5em;
   border-radius: 0.25em;
   cursor: pointer;
@@ -1056,8 +1064,8 @@ body {
 
 .create{
   background: hsla(200, 95%, 43%, 0.1);
-  border: 1px solid hsl(200, 100%, 50%);
-  color: hsl(200, 100%, 50%);
+  border: 1px solid hsla(200, 100%, 50%);
+  color: hsla(200, 100%, 50%);
   padding: 0.25em 0.5em;
   border-radius: 0.25em;
   cursor: pointer;
@@ -1072,26 +1080,26 @@ body {
 
 .btn:hover,
 .btn:focus-visible {
-  background: hsl(200, 100%, 50%, 0.2);
+  background: hsla(200, 100%, 50%, 0.2);
 }
 
 
 .btn:active {
-  background: hsl(200, 100%, 50%, 0.3);
+  background: hsla(200, 100%, 50%, 0.3);
 }
 
 
 .new-item-form input {
   outline: none;
-  border: 1px solid hsl(200, 100%, 40%);
-  background: hsl(200, 100%, 30%);
+  border: 1px solid hsla(200, 100%, 40%);
+  background: hsla(200, 100%, 30%);
   border-radius: 0.25em;
   padding: 0.25em 0.5em;
-  color: hsl(200, 100%, 90%);
+  color: hsla(200, 100%, 90%);
 }
 
 .new-item-form input:focus {
-  border: 1px solid hsl(200, 100%, 70%);
+  border: 1px solid hsla(200, 100%, 70%);
 }
 
 .header {
@@ -1108,7 +1116,7 @@ body {
 }
 
 .list li:has(input:checked) label {
-  color: hsl(200, 20%, 40%);
+  color: hsla(200, 20%, 40%);
 }
 
 .list {
@@ -1131,7 +1139,7 @@ body {
 }
 
 .list li:has(input:focus-visible) label {
-  outline: 1px solid hsl(200, 100%, 50%);
+  outline: 1px solid hsla(200, 100%, 50%);
 }
 
 .list li input {
@@ -1148,7 +1156,7 @@ body {
   display: block;
   width: 0.9rem;
   height: 0.9rem;
-  background: hsl(200, 100%, 90%);
+  background: hsla(200, 100%, 90%);
   border-radius: 0.25em;
   display: flex;
   justify-content: center;
@@ -1156,17 +1164,17 @@ body {
 }
 
 .list li label:hover::before {
-  background: hsl(200, 100%, 80%);
+  background: hsla(200, 100%, 80%);
 }
 
 .list li:has(input:checked) label::before {
   content: "✔";
-  background: hsl(200, 100%, 40%);
-  color: hsl(200, 100%, 90%);
+  background: hsla(200, 100%, 40%);
+  color: hsla(200, 100%, 90%);
   font-size: 0.75rem;
   font-weight: bold;
 }
 
 .list li:has(input:checked) label:hover::before {
-  background: hsl(200, 100%, 30%);
+  background: hsla(200, 100%, 30%);
 }
