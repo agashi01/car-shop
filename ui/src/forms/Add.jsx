@@ -2,7 +2,7 @@
 import { React, useEffect, useState } from "react";
 import axios from "axios";
 
-export default function Add({ id }) {
+export default function Add({ page, id }) {
   const [allMake, setAllMake] = useState([]);
   const [allModel, setAllModel] = useState([]);
   const [make, setMake] = useState("");
@@ -56,7 +56,7 @@ export default function Add({ id }) {
     axios.post('http://localhost:3000/cars',{
       specs:{...error,id}
     })
-    .then(res=>{
+    .then(()=>{
       page('afterAdd')
       console.log('succes')
     })

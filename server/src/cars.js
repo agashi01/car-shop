@@ -1,31 +1,23 @@
 // optimizo fuksionin "func"
+const create = (db) => async (req, res) => {
+  const {
+    make,
+    model,
+    mileage,
+    color,
+    transmission,
+    fuelType,
+    vehicleType,
+    id
+  } = req.body.specs;
 
-const create = (db) =>
-  async function (req, res) {
-    const {
-      make,
-      model,
-      mileage,
-      color,
-      transmission,
-      fuelType,
-      vehicleType,
-      id
-    } = req.body.specs;
-    db.on("query", function (queryData) {
-    });
-    // {
+  try {
+    // Check if the dealer is valid
+    const dealer = await db('users').select('*').where('id', id).first();
+    if (!dealer) {
+      return res.status(404).json('You are not a dealer');
+    }
 
-      db('users').select('*').where('id', id)
-        .then(([res]) => {
-          if (!res) {
-            return res.json('You are not a dealer')
-          }
-        })
-        .catch(err => {
-          console.log(err)
-          return res.status(404).json('You are not a dealer')
-        })
     console.log(
       make,
       model,
@@ -34,37 +26,46 @@ const create = (db) =>
       transmission,
       fuelType,
       vehicleType,
-      id)
-      await db.transaction(async (trx) => {
-        trx("cars")
+      id
+    );
+
+    // Start transaction
+    await db.transaction(async (trx) => {
+      try {
+        const [car] = await trx('cars')
           .insert({
             date_of_creation: new Date().toISOString(),
             date_of_last_update: new Date().toISOString(),
-            make: make,
-            model: model,
-            mileage: mileage,
-            color: color,
-            transmission: transmission,
-            fuel_type:fuelType,
-            vehicle_type:vehicleType,
+            make,
+            model,
+            mileage,
+            color,
+            transmission,
+            fuel_type: fuelType,
+            vehicle_type: vehicleType,
             dealer_id: id,
           })
-          .returning("*")
-          .then(async ([car]) => {
-            if(car){
-              res.json('succes')
-             await trx.commit()
-            }
-          })
-          .catch(async (err) => {
-            console.log(err);
-            res.status(400).json("this car is missing something");
-            await trx.rollback()
-          })
+          .returning('*');
 
-          
-      });
-    }
+        if (car) {
+          res.json('success');
+        }
+
+        // Commit the transaction
+        await trx.commit();
+      } catch (err) {
+        console.error(err);
+        res.status(400).json('This car is missing something');
+        
+        // Rollback the transaction on error
+        await trx.rollback();
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json('An error occurred');
+  }
+};
 
 const sortModel = (list) => {
   let finalCount = 0;
@@ -207,12 +208,18 @@ const func = async (db, vehicle, model, limit, offset, id,dealer) => {
     query = query.orderBy("cars.owner_id", id);
   }
 
-  if(dealer){
-    query=query
-    .orderBy(knex.raw('dealer_id = ?',[dealer]),'DESC')
-    .orderBy(knex.raw('owner_id IS NULL'),'DESC')
-    .orderBy('date_of_creation','DESC')
-    .orderBy('date_of_last_update','DESC')
+
+  if (dealer==='Selling') {
+    console.log('hi')
+    query = query
+      .orderByRaw('dealer_id = ? DESC', [id])  
+      .orderByRaw('owner_id IS NULL DESC')          
+      .orderBy('date_of_creation', 'DESC')          
+      .orderBy('date_of_last_update', 'DESC');    
+  } else {
+    query = query
+      .orderBy('date_of_creation', 'DESC')         
+      .orderBy('date_of_last_update', 'DESC');    
   }
 
   const cars = await query.select("cars.*", "users.name", "users.surname").limit(limit).offset(offset);
@@ -256,6 +263,7 @@ const make = (db) => async (req, res) => {
 const readAll = (db) => async (req, res) => {
   const { dealer,vehicle, model, id, limit, pageNumber } = req.query;
   const offset = (pageNumber - 1) * limit;
+  console.log(dealer,id)
 
   try {
     const cars = await func(db, vehicle, model, limit, offset, id,dealer);

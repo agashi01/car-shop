@@ -1,11 +1,11 @@
 import React from "react";
 
 // eslint-disable-next-line react/prop-types
-export default function After_add({ page }) {
+export default function AfterAdd({ page }) {
   return (
     <div>
       <div>
-        <p>Your car has been created and published</p>
+        <p>Your car has been created and published!</p>
       </div>
       <div className="can-signIn">
         <button

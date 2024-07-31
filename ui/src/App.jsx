@@ -8,6 +8,7 @@ import Register from "./forms/Register.jsx";
 import Home from "./forms/Home.jsx";
 import AfterRegister from "./forms/AfterRegister.jsx";
 import Add from "./forms/Add.jsx";
+import AfterAdd from"./forms/AfterAdd.jsx"
 
 import "./App.css";
 
@@ -54,9 +55,9 @@ export default function App() {
             ) : page === "afterRegister" ? (
               <AfterRegister page={changePage} />
             ) : page === "afterAdd" ? (
-              <After_add />
+              <AfterAdd page={changePage} />
             ) : page === "add" ? (
-              <Add id={id} />
+              <Add page={setPage} id={id} />
             ) : null}
             {page === "register" ? (
               <div className="register">
