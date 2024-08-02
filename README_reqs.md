@@ -15,3 +15,4 @@
 9. Enable edit button for cars of the  dealer that is logged in in the homepage (optional)
 10. Implement login with JWT (lots of videos online), save JWT in local storage and then play with the user info and type, controlling what to show to the user/guest.
 11. Refactor (optional)
+12. programi po behet disa her render ne disa komponenta

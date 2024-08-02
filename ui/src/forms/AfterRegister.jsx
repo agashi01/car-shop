@@ -17,7 +17,7 @@ export default function AfterRegister({ page }) {
             page("signIn");
           }}
         >
-          Ok
+          Sign in 
         </button>
       </div>
     </div>

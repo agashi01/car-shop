@@ -7,7 +7,8 @@ export default function AfterAdd({ page }) {
       <div>
         <p>Your car has been created and published!</p>
       </div>
-      <div className="can-signIn">
+      <div>
+        <p>You Can Go Home</p>
         <button
           type="btn"
           className="btn2"
@@ -16,7 +17,7 @@ export default function AfterAdd({ page }) {
             page("home");
           }}
         >
-          Ok
+          Home
         </button>
       </div>
     </div>

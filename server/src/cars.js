@@ -56,7 +56,7 @@ const create = (db) => async (req, res) => {
       } catch (err) {
         console.error(err);
         res.status(400).json('This car is missing something');
-        
+
         // Rollback the transaction on error
         await trx.rollback();
       }
@@ -193,9 +193,8 @@ const model = (db) => async (req, res) => {
   }
 };
 
-const func = async (db, vehicle, model, limit, offset, id,dealer) => {
+const func = async (db, vehicle, model, limit, offset, id = null, dealer = null) => {
   let query = db("cars").join("users", "cars.dealer_id", "users.id");
-
   if (vehicle) {
     query = query.whereIn("make", vehicle);
   }
@@ -204,34 +203,53 @@ const func = async (db, vehicle, model, limit, offset, id,dealer) => {
     query = query.whereIn("model", model);
   }
 
-  if (id) {
-    query = query.orderBy("cars.owner_id", id);
-  }
-
-
-  if (dealer==='Selling') {
+  if (dealer === 'Selling') {
+    query = query
+      .orderByRaw('CASE WHEN dealer_id = ?  THEN 0 ELSE 1 END', [id])
+      .orderByRaw('CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END')
+      .orderBy('date_of_creation', 'DESC')
+      .orderBy('date_of_last_update', 'DESC')
+      .orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id]);
+  } else if (id) {
     console.log('hi')
-    query = query
-      .orderByRaw('dealer_id = ? DESC', [id])  
-      .orderByRaw('owner_id IS NULL DESC')          
-      .orderBy('date_of_creation', 'DESC')          
-      .orderBy('date_of_last_update', 'DESC');    
-  } else {
-    query = query
-      .orderBy('date_of_creation', 'DESC')         
-      .orderBy('date_of_last_update', 'DESC');    
+    query = query.orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
+      .orderBy('date_of_creation', 'DESC')
+      .orderBy('date_of_last_update', 'DESC');
   }
 
   const cars = await query.select("cars.*", "users.name", "users.surname").limit(limit).offset(offset);
+
+  const ownerIds = cars.map(car => car.owner_id).filter(id => id !== null);
+
+  // console.log('hi',0)
+
+  const owners = await db('users')
+    .whereIn('id', ownerIds)
+    .select('id', 'name', 'surname')
+
+
+  let finalIds = {}
+  for (let x of owners) {
+    finalIds[x.id] = `${x.name} ${x.surname}`
+  }
+
+
+  for (let x of cars) {
+    x.owner = finalIds[x.owner_id] || null
+  }
+
 
   return cars;
 };
 
 const func2 = async (db, list) => {
   if (list) {
-    return await db("cars").select(db.raw("DISTINCT model")).whereIn("make", list);
+    return await db("cars")
+      .select(db.raw("DISTINCT model"))
+      .whereIn("make", list);
   }
-  return await db("cars").select(db.raw("DISTINCT model"));
+  return await db("cars")
+    .select(db.raw("DISTINCT model"));
 };
 
 const readAllGuest = (db) => async (req, res) => {
@@ -261,12 +279,10 @@ const make = (db) => async (req, res) => {
 };
 
 const readAll = (db) => async (req, res) => {
-  const { dealer,vehicle, model, id, limit, pageNumber } = req.query;
+  const { dealer, vehicle, model, id, limit, pageNumber } = req.query;
   const offset = (pageNumber - 1) * limit;
-  console.log(dealer,id)
-
   try {
-    const cars = await func(db, vehicle, model, limit, offset, id,dealer);
+    const cars = await func(db, vehicle, model, limit, offset, id, dealer);
     res.status(200).json(cars);
   } catch (err) {
     res.status(400).json("something went wrong");
@@ -281,7 +297,6 @@ const dealerModel = (db) => (req, res) => {
 
   if (make) {
     model = model.where('make', make)
-    console.log(model)
   }
   model.then((models) => {
     const model = sortModel(models)
@@ -303,7 +318,6 @@ const dealerMake = (db) => (req, res) => {
 
   const { model } = req.query
 
-  console.log(model)
 
   let make = db('cars').distinct('make')
   if (model) {
@@ -326,7 +340,6 @@ const transmission = (db) => (req, res) => {
     for (let x = 0; x < transmission.length; x++) {
       fTransmission[x] = transmission[x].transmission
     }
-    console.log(fTransmission, 'transmission')
     res.json(fTransmission)
   })
 
@@ -340,7 +353,6 @@ const fuelType = (db) => (req, res) => {
     for (let x = 0; x < fuelType.length; x++) {
       finalFuelType[x] = fuelType[x].fuel_type
     }
-    console.log(finalFuelType, 'fuel')
     res.json(finalFuelType)
   })
 }
@@ -352,7 +364,6 @@ const vehicleType = (db) => (req, res) => {
     for (let x = 0; x < vehicleType.length; x++) {
       finalVehicleType[x] = vehicleType[x].vehicle_type
     }
-    console.log(vehicleType, 'vehicle')
     res.json(finalVehicleType)
   })
 }

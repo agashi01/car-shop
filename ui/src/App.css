@@ -73,7 +73,81 @@
   pointer-events: none;
   opacity: 0.5;
   cursor: not-allowed;
-  width: 50%;
+  width: 40.5%;
+}
+
+.cars-png {
+  position: relative;
+}
+
+.png-div {
+  position: absolute;
+  top: 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 15px;
+  border-radius: 0 20px 20px 0;
+  /* Right side corners rounded */
+  padding: 0px 10px 0px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carCars-buttons {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.remove {
+  z-index: 2000;
+  background-color: hsla(0, 70%, 60%, 0.3);
+  border: 2px solid hsla(0, 80%, 50%, 0.5);
+  transition: background-color 0.3s, border-color 0.3s;
+  opacity: 0.9;
+}
+
+.remove:hover {
+  background-color: hsla(0, 60%, 50%, 1);
+  border: 2px solid hsla(0, 80%, 50%, 0.5);
+  outline: none;
+}
+
+.remove:focus {
+  background-color: hsla(0, 70%, 60%, 0.3);
+  border: 2px solid hsla(0, 80%, 50%, 0.5);
+  transform: bakcground-color 1s;
+  outline: none;
+}
+
+.remove:active {
+  background-color: rgb(175, 25, 25);
+  border: 2px solid hsla(0, 60%, 40%, 1);
+  outline: none;
+}
+
+.remove:focus:hover {
+  background-color: hsla(0, 60%, 50%, 1);
+  border: 2px solid hsla(0, 80%, 50%, 0.5);
+}
+
+.remove:active:hover, .remove:active:focus {
+  background-color: rgb(175, 25, 25);
+  border: 2px solid hsla(0, 60%, 40%, 1);
+  outline: none;
+}
+
+.remove-menu{
+  color: white;
+  border-radius: 5px;
+  position: absolute;
+  background-color: rgb(0, 0, 0);
+  right:19px;
+  border: 1px solid rgb(35, 32, 32);
+  font-size: smaller;
+  margin-top: 2px;
+  padding: 0px 4px 0px 4px;
 }
 
 .purchase {
@@ -112,7 +186,7 @@
   background-color: rgb(178, 181, 184);
 }
 
-.car-card:active {
+.car-card:active:not(:has(:active)) {
   background-color: rgb(156, 158, 160);
 }
 
@@ -142,7 +216,7 @@
   align-items: start;
 }
 
-.dealers-menu{
+.dealers-menu {
   width: 100%;
   height: 50px;
 }
@@ -256,16 +330,16 @@ front .model-clicked li:last-child {
   background-color: #4e4d4d;
 }
 
-.options2{
-width:150px;
-display: flex;
-flex-direction: column;
-justify-content: flex-end;
-align-items:flex-end;
-text-align: end;
+.options2 {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  text-align: end;
 }
 
-.input-sell{
+.input-sell {
   text-align: center;
   width: 100px;
   height: 45px;
@@ -273,34 +347,37 @@ text-align: end;
 }
 
 
-.sell-menu{
-display: flex;
-flex-direction: column;
+.sell-menu {
+  display: flex;
+  flex-direction: column;
   /* background-color: hsla(200, 5%, 32%, 0.3); */
 }
 
-.select-vehicle{
-    border-radius: 40px !important;
-    cursor: pointer;
-    padding: 10px !important;
-    width: 100px;
-    margin-bottom: 20px;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    background-color: #f8f8f8;
-    font-size: 16px;
-    color: #333;
-    text-align: center;
+.select-vehicle {
+  border-radius: 40px !important;
+  cursor: pointer;
+  padding: 10px !important;
+  width: 100px;
+  margin-bottom: 20px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
 
 }
 
 .reset-li {
   border-bottom: 1px solid #000;
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  height: 40px; /* Ensure there's enough height for centering */
+  justify-content: center;
+  /* Center horizontally */
+  align-items: center;
+  /* Center vertically */
+  height: 40px;
+  /* Ensure there's enough height for centering */
 }
 
 .reset {
@@ -325,8 +402,7 @@ flex-direction: column;
 }
 
 .checkbox-container input[type="checkbox"],
-.custom-checkbox {
-}
+.custom-checkbox {}
 
 .custom-checkbox {
   display: inline-block;
@@ -342,7 +418,7 @@ flex-direction: column;
     border-color 0.3s;
 }
 
-.checkbox-container input[type="checkbox"]:checked + .custom-checkbox {
+.checkbox-container input[type="checkbox"]:checked+.custom-checkbox {
   background-color: #007bff;
   border-color: #007bff;
 }
@@ -360,7 +436,7 @@ flex-direction: column;
   transition: transform 0.3s;
 }
 
-.checkbox-container input[type="checkbox"]:checked + .custom-checkbox:after {
+.checkbox-container input[type="checkbox"]:checked+.custom-checkbox:after {
   transform: translate(-50%, -50%) rotate(45deg) scale(1);
 }
 
@@ -368,7 +444,7 @@ flex-direction: column;
   background-color: #f0f0f0;
 }
 
-.checkbox-container input[type="checkbox"]:focus + .custom-checkbox {
+.checkbox-container input[type="checkbox"]:focus+.custom-checkbox {
   outline: 2px solid #007bff;
   outline-offset: 2px;
 }
@@ -400,6 +476,8 @@ flex-direction: column;
 .isit-second {
   margin-top: 20px;
 }
+
+
 .btn2 {
   width: 100px;
   background: hsla(200, 100%, 50%, 0.1);
@@ -409,7 +487,7 @@ flex-direction: column;
   border-radius: 0.25em;
   cursor: pointer;
   outline: none;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .btn2:hover,
@@ -431,19 +509,19 @@ flex-direction: column;
   z-index: 1000;
 }
 
-.sell-cars-ul{
+.sell-cars-ul {
   margin-top: 200px;
-  display: flex ;
+  display: flex;
   flex-direction: column;
   /* justify-content: flex-end; */
   align-items: flex-end;
   gap: 20px;
 }
 
-.sell.ul{
+.sell.ul {
   margin: 0 !important;
   width: 200px;
-  padding:20px;
+  padding: 20px;
 }
 
 .cars-ul {
@@ -719,14 +797,14 @@ In {
 
 /* sign in dhe register */
 
-.type{
+.type {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.select{
+.select {
   margin-bottom: 20px;
   width: 189px;
   padding: 6px;
@@ -736,10 +814,10 @@ In {
   font-size: 16px;
   color: #333;
   text-align: center;
- 
+
 }
 
-.next-to-select{
+.next-to-select {
   /* display: flex;
   justify-content: flex-start;
   align-items: center; */
@@ -756,7 +834,7 @@ In {
   color: #333;
 }
 
-.sell{
+.sell {
 
   border-radius: 40px !important;
   cursor: pointer;
@@ -764,15 +842,15 @@ In {
   width: 100px;
 }
 
-.gap{
+.gap {
   /* margin-left: 36px; */
 }
 
-.sell:focus{
-  outline:none
+.sell:focus {
+  outline: none
 }
 
-.remove{
+.remove {
   margin-left: 10px;
   border-radius: 40px !important;
   cursor: pointer;
@@ -780,8 +858,8 @@ In {
   width: 100px;
 }
 
-.remove:focus{
-  outline:none
+.remove:focus {
+  outline: none
 }
 
 
@@ -791,6 +869,7 @@ In {
   gap: 10px;
   height: auto;
 }
+
 .register-button {
   width: 185px;
   margin-bottom: 20px;
@@ -874,11 +953,11 @@ btn .prezantimi-register {
 
 
 
-.text3{
+.text3 {
   margin-right: 25px;
   align-self: flex-end;
-  justify-self: flex-end;   
-   color: hsla(200, 100%, 50%);
+  justify-self: flex-end;
+  color: hsla(200, 100%, 50%);
 }
 
 .correct-guest {
@@ -904,7 +983,7 @@ btn .prezantimi-register {
 }
 
 .box button {
-  background-color: hsla(200, 100%, 50%, 0.1) ;
+  background-color: hsla(200, 100%, 50%, 0.1);
   border: 1px solid hsla(200, 100%, 50%);
   color: hsla(200, 100%, 50%);
   padding: 0.25em 0.5em;
@@ -928,10 +1007,11 @@ btn .prezantimi-register {
 
 
 .error-add {
-  border: 3px solid red;     /* Change the border color for error */
+  border: 3px solid red;
+  /* Change the border color for error */
 }
 
-.correct-add{
+.correct-add {
   border: 3px solid green
 }
 
@@ -1053,7 +1133,7 @@ body {
 }
 
 .btn {
-  background: hsla(200, 100%, 50%, 0.1) ;
+  background: hsla(200, 100%, 50%, 0.1);
   border: 1px solid hsla(200, 100%, 50%);
   color: hsla(200, 100%, 50%);
   padding: 0.25em 0.5em;
@@ -1062,7 +1142,7 @@ body {
   outline: none;
 }
 
-.create{
+.create {
   background: hsla(200, 95%, 43%, 0.1);
   border: 1px solid hsla(200, 100%, 50%);
   color: hsla(200, 100%, 50%);
