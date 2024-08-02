@@ -411,7 +411,7 @@ const update = (db) => async (req, res) => {
 };
 
 const delet = (db) => (req, res) => {
-  const { id: clientId } = req.params;
+  const { id } = req.query;
 
   if (clientId) {
     res.status(403).json("id is missing");
@@ -419,14 +419,14 @@ const delet = (db) => (req, res) => {
 
   db("cars")
     .where({
-      id: clientId,
+      id
     })
     .del()
     .then((user) => {
       res.json("Car is now deleted");
     })
     .catch((err) => {
-      res.status(404).json("wrong id");
+      res.status(404).json("this car doesnt exist");
     });
 };
 
