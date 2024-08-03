@@ -499,15 +499,17 @@ front .model-clicked li:last-child {
 .isit {
   border-radius: 2%;
   background-color: #3f3f3f;
-  height: 200px;
-  width: 500px;
+  height: auto;
+  width: auto;
   right: 700px;
+  padding: 0px 20px 40px 20px;
   top: 350px;
   position: fixed;
   display: inline-block;
 
   z-index: 1000;
 }
+
 
 .sell-cars-ul {
   margin-top: 200px;

@@ -23,6 +23,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   const [modelClass, setModelClass] = useState(false);
   const [deletMarket, setDeletMarket] = useState(false);
   const [deletSold, setDeletSold] = useState(false);
+  const [carId,setCarId]= useState(null)
 
   const modelRef = useRef();
   const modelMenuRef = useRef();
@@ -289,7 +290,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
 
   const soldDelete = (e) => {
     axios
-      .delete("http://localhost:3000/cars", { params: { id: car.id } })
+      .delete("http://localhost:3000/cars", { params: { id: carId } })
       .then(() => {
         deletSold(false);
       })
@@ -298,7 +299,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
 
   const marketDelete = (e) => {
     axios
-      .delete("http://localhost:3000/cars", { params: { id: car.id } })
+      .delete("http://localhost:3000/cars", { params: { id: carId } })
       .then(() => {
         deletMarket(false);
       })
@@ -308,17 +309,22 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   return (
     <div className="complet">
       {deletMarket && (
-        <div className="isit">
-          <p className="isit-first">Are you sure want to remove this car from market!</p>
-          <button type="btn" className="btn2" onClick={marketDelete}>
-            Ok
-          </button>
+        <div className="isit remove-card">
+          <p className="isit-first">Are you sure want to remove this car from the market!</p>
+          <div style={{display:'flex',justifyContent:"center",gap:'5px'}}>
+            <button type="btn" className="btn2" onClick={()=>setDeletMarket(false)}>
+              No
+            </button>
+            <button type="btn" className="btn2" onClick={marketDelete}>
+              Yes
+            </button>
+          </div>
         </div>
       )}
       {deletSold && (
-        <div className="isit">
+        <div className="isit remove-card">
           <p className="isit-first">Your sold car has been removed!</p>
-          <button type="btn" className="btn2" onClick={soldDelete}>
+          <button type="btn" className="remove" onClick={soldDelete}>
             Ok
           </button>
         </div>
@@ -668,6 +674,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
                 // eslint-disable-next-line react/jsx-key
                 <li key={car.id}>
                   <CarCard
+                  carId={setCarId}
                     deletMarket={setDeletMarket}
                     deletSold={setDeletSold}
                     id={id}

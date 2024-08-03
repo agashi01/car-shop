@@ -6,7 +6,7 @@ import { React, useEffect, useState } from "react";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-export default function CarCard({ deletMarket,deletSold, id, isit, guest, car }) {
+export default function CarCard({carId, deletMarket,deletSold, id, isit, guest, car }) {
   const [purchased, setPurchased] = useState(false);
   const [flip, setFlip] = useState(false);
   const [removeMenu, setRemoveMenu] = useState(false);
@@ -126,6 +126,7 @@ export default function CarCard({ deletMarket,deletSold, id, isit, guest, car })
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  carId(car.id)
                   deletMarket(true);
                 }}
                 className="remove"
@@ -141,7 +142,8 @@ export default function CarCard({ deletMarket,deletSold, id, isit, guest, car })
           ) : car.dealer_id === id ? (
             <div>
               <button onClick={(e) => {
-                e.stopPropagation
+                e.stopPropagation()
+                carId(car.id)
                 deletSold(true)
               }} className="remove">
                 Remove
