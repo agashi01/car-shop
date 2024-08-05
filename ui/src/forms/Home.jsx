@@ -318,7 +318,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
     console.log(document.body.scrollHeight)
     let position = direction === 'bottom' ? document.body.scrollHeight : 0;
     window.scrollTo({
-      top: 0,
+      top: position,
       behavior: 'smooth',
     })
   }
@@ -720,7 +720,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
             <button
               className="btn"
               onClick={(e) => {
-                scroll(e)('top')
+                scroll(e)('bottom')
                 setPageNumber(pageNumber - 1)
               }
               }

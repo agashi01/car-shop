@@ -1,38 +1,20 @@
 // optimizo fuksionin "func"
 const create = (db) => async (req, res) => {
-  const {
-    make,
-    model,
-    mileage,
-    color,
-    transmission,
-    fuelType,
-    vehicleType,
-    id
-  } = req.body.specs;
+  const { make, model, mileage, color, transmission, fuelType, vehicleType, id } = req.body.specs;
 
   try {
     // Check if the dealer is valid
-    const dealer = await db('users').select('*').where('id', id).first();
+    const dealer = await db("users").select("*").where("id", id).first();
     if (!dealer) {
-      return res.status(404).json('You are not a dealer');
+      return res.status(404).json("You are not a dealer");
     }
 
-    console.log(
-      make,
-      model,
-      mileage,
-      color,
-      transmission,
-      fuelType,
-      vehicleType,
-      id
-    );
+    console.log(make, model, mileage, color, transmission, fuelType, vehicleType, id);
 
     // Start transaction
     await db.transaction(async (trx) => {
       try {
-        const [car] = await trx('cars')
+        const [car] = await trx("cars")
           .insert({
             date_of_creation: new Date().toISOString(),
             date_of_last_update: new Date().toISOString(),
@@ -45,17 +27,17 @@ const create = (db) => async (req, res) => {
             vehicle_type: vehicleType,
             dealer_id: id,
           })
-          .returning('*');
+          .returning("*");
 
         if (car) {
-          res.json('success');
+          res.json("success");
         }
 
         // Commit the transaction
         await trx.commit();
       } catch (err) {
         console.error(err);
-        res.status(400).json('This car is missing something');
+        res.status(400).json("This car is missing something");
 
         // Rollback the transaction on error
         await trx.rollback();
@@ -63,7 +45,7 @@ const create = (db) => async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json('An error occurred');
+    res.status(500).json("An error occurred");
   }
 };
 
@@ -194,62 +176,101 @@ const model = (db) => async (req, res) => {
 };
 
 const func = async (db, vehicle, model, limit, offset, id = null, dealer = null) => {
-  let query = db("cars").join("users", "cars.dealer_id", "users.id");
-  if (vehicle) {
-    query = query.whereIn("make", vehicle);
+  try {
+    let query = db("cars").join("users", "cars.dealer_id", "users.id");
+    if (vehicle) {
+      query = query.whereIn("make", vehicle);
+    }
+
+    if (model) {
+      query = query.whereIn("model", model);
+    }
+
+    if (dealer === "Selling") {
+      query = query
+        .orderByRaw("CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END", [id])
+        .orderByRaw("CASE WHEN dealer_id = ? THEN 0 ELSE 1 END", [id])
+        .orderByRaw("CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END")
+        .orderBy("date_of_creation", "DESC")
+        .orderBy("date_of_last_update", "DESC")
+        .where("cars.owner_id", id);
+    } else if (id) {
+      console.log("hi");
+      query = query
+        .orderByRaw("CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END", [id])
+        .orderBy("date_of_creation", "DESC")
+        .orderBy("date_of_last_update", "DESC");
+    }
+
+    const cars = await query
+      .select("cars.*", "users.name", "users.surname")
+      .limit(limit)
+      .offset(offset);
+
+    let query2 = db("cars").join("users", "cars.dealer_id", "users.id");
+    if (vehicle) {
+      query2 = query2.whereIn("make", vehicle);
+    }
+
+    if (model) {
+      query2 = query2.whereIn("model", model);
+    }
+
+    if (dealer === "Selling") {
+      query2 = query2
+        .orderByRaw("CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END")
+        .orderBy("date_of_last_update", "DESC")
+        .where("cars.owner_id", id);
+    }
+
+    const cars2 = await query.select("cars.*", "users.name", "users.surname");
+
+    let ans = [];
+    let num = 0;
+    for (let i = offset; i < cars.length + cars2.length; i++) {
+      if (i - offset === limit) {
+        break;
+      }
+      if (i < cars.length) {
+        if(cars[i]){
+          ans[num++] = cars[i];
+        console.log(cars[i])
+        }else{
+          i=cars.length
+        }
+  
+      } else {
+        ans[num++] = cars[i - cars.length - 1];
+      }
+    }
+    // console.log(ans)
+
+    const ownerIds = ans.map((car) => car.owner_id).filter((id) => id !== null);
+
+    // console.log('hi',0)
+
+    const owners = await db("users").whereIn("id", ownerIds).select("id", "name", "surname");
+
+    let finalIds = {};
+    for (let x of owners) {
+      finalIds[x.id] = `${x.name} ${x.surname}`;
+    }
+
+    for (let x of ans) {
+      x.owner = finalIds[x.owner_id] || null;
+    }
+
+    return ans;
+  } catch (err) {
+    console.log(err)
   }
-
-  if (model) {
-    query = query.whereIn("model", model);
-  }
-
-  if (dealer === 'Selling') {
-    query = query
-    .orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
-    .orderByRaw('CASE WHEN dealer_id = ? THEN 0 ELSE 1 END', [id])
-    .orderByRaw('CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END')
-    .orderBy('date_of_creation', 'DESC')
-    .orderBy('date_of_last_update', 'DESC')
-  } else if (id) {
-    console.log('hi')
-    query = query.orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
-      .orderBy('date_of_creation', 'DESC')
-      .orderBy('date_of_last_update', 'DESC');
-  }
-
-  const cars = await query.select("cars.*", "users.name", "users.surname").limit(limit).offset(offset);
-
-  const ownerIds = cars.map(car => car.owner_id).filter(id => id !== null);
-
-  // console.log('hi',0)
-
-  const owners = await db('users')
-    .whereIn('id', ownerIds)
-    .select('id', 'name', 'surname')
-
-
-  let finalIds = {}
-  for (let x of owners) {
-    finalIds[x.id] = `${x.name} ${x.surname}`
-  }
-
-
-  for (let x of cars) {
-    x.owner = finalIds[x.owner_id] || null
-  }
-
-
-  return cars;
 };
 
 const func2 = async (db, list) => {
   if (list) {
-    return await db("cars")
-      .select(db.raw("DISTINCT model"))
-      .whereIn("make", list);
+    return await db("cars").select(db.raw("DISTINCT model")).whereIn("make", list);
   }
-  return await db("cars")
-    .select(db.raw("DISTINCT model"));
+  return await db("cars").select(db.raw("DISTINCT model"));
 };
 
 const readAllGuest = (db) => async (req, res) => {
@@ -261,7 +282,7 @@ const readAllGuest = (db) => async (req, res) => {
 
     res.status(200).json(cars);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(400).json("something went wrong");
   }
 };
@@ -290,83 +311,77 @@ const readAll = (db) => async (req, res) => {
 };
 
 const dealerModel = (db) => (req, res) => {
+  const { make } = req.query;
 
-  const { make } = req.query
-
-  let model = db('cars').distinct('model')
+  let model = db("cars").distinct("model");
 
   if (make) {
-    model = model.where('make', make)
+    model = model.where("make", make);
   }
-  model.then((models) => {
-    const model = sortModel(models)
-    const fModel = []
-    for (let x = 0; x < model.length; x++) {
-      fModel[x] = model[x].model
-    }
-    res.json(fModel)
-  })
-    .catch((err) => {
-      console.log(err)
-      res.status(400).json("something went wrong with the model query")
-
+  model
+    .then((models) => {
+      const model = sortModel(models);
+      const fModel = [];
+      for (let x = 0; x < model.length; x++) {
+        fModel[x] = model[x].model;
+      }
+      res.json(fModel);
     })
-}
-
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json("something went wrong with the model query");
+    });
+};
 
 const dealerMake = (db) => (req, res) => {
+  const { model } = req.query;
 
-  const { model } = req.query
-
-
-  let make = db('cars').distinct('make')
+  let make = db("cars").distinct("make");
   if (model) {
-    make = make.where('model', model)
+    make = make.where("model", model);
   }
-  make.then((makes) => {
-    return res.json(makes)
-  })
-    .catch((err) => {
-      console.log(err)
-      res.status(400).json("something went wrong with the make query")
+  make
+    .then((makes) => {
+      return res.json(makes);
     })
-
-}
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json("something went wrong with the make query");
+    });
+};
 
 const transmission = (db) => (req, res) => {
-  let transmission = db('cars').distinct('transmission')
-  transmission.then(transmission => {
-    let fTransmission = []
+  let transmission = db("cars").distinct("transmission");
+  transmission.then((transmission) => {
+    let fTransmission = [];
     for (let x = 0; x < transmission.length; x++) {
-      fTransmission[x] = transmission[x].transmission
+      fTransmission[x] = transmission[x].transmission;
     }
-    res.json(fTransmission)
-  })
-
-
-}
+    res.json(fTransmission);
+  });
+};
 
 const fuelType = (db) => (req, res) => {
-  let fuelType = db('cars').distinct('fuel_type')
-  fuelType.then(fuelType => {
-    let finalFuelType = []
+  let fuelType = db("cars").distinct("fuel_type");
+  fuelType.then((fuelType) => {
+    let finalFuelType = [];
     for (let x = 0; x < fuelType.length; x++) {
-      finalFuelType[x] = fuelType[x].fuel_type
+      finalFuelType[x] = fuelType[x].fuel_type;
     }
-    res.json(finalFuelType)
-  })
-}
+    res.json(finalFuelType);
+  });
+};
 
 const vehicleType = (db) => (req, res) => {
-  let vehicleType = db('cars').distinct('vehicle_type')
-  vehicleType.then(vehicleType => {
-    let finalVehicleType = []
+  let vehicleType = db("cars").distinct("vehicle_type");
+  vehicleType.then((vehicleType) => {
+    let finalVehicleType = [];
     for (let x = 0; x < vehicleType.length; x++) {
-      finalVehicleType[x] = vehicleType[x].vehicle_type
+      finalVehicleType[x] = vehicleType[x].vehicle_type;
     }
-    res.json(finalVehicleType)
-  })
-}
+    res.json(finalVehicleType);
+  });
+};
 
 const read = (db) => (req, res) => {
   const { id } = req.params;
@@ -412,7 +427,7 @@ const update = (db) => async (req, res) => {
 
 const delet = (db) => (req, res) => {
   const { id } = req.query;
-  console.log(id)
+  console.log(id);
 
   if (!id) {
     return res.status(403).json("id is missing");
@@ -420,15 +435,15 @@ const delet = (db) => (req, res) => {
 
   db("cars")
     .where({
-      id
+      id,
     })
     .del()
     .then((car) => {
-      console.log(car)
+      console.log(car);
       res.json("Car is now deleted");
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
       res.status(404).json("this car doesnt exist");
     });
 };
@@ -446,5 +461,5 @@ module.exports = {
   dealerMake,
   transmission,
   fuelType,
-  vehicleType
+  vehicleType,
 };
