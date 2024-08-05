@@ -205,11 +205,11 @@ const func = async (db, vehicle, model, limit, offset, id = null, dealer = null)
 
   if (dealer === 'Selling') {
     query = query
-      .orderByRaw('CASE WHEN dealer_id = ?  THEN 0 ELSE 1 END', [id])
-      .orderByRaw('CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END')
-      .orderBy('date_of_creation', 'DESC')
-      .orderBy('date_of_last_update', 'DESC')
-      .orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id]);
+    .orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
+    .orderByRaw('CASE WHEN dealer_id = ? THEN 0 ELSE 1 END', [id])
+    .orderByRaw('CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END')
+    .orderBy('date_of_creation', 'DESC')
+    .orderBy('date_of_last_update', 'DESC')
   } else if (id) {
     console.log('hi')
     query = query.orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
@@ -412,9 +412,10 @@ const update = (db) => async (req, res) => {
 
 const delet = (db) => (req, res) => {
   const { id } = req.query;
+  console.log(id)
 
-  if (clientId) {
-    res.status(403).json("id is missing");
+  if (!id) {
+    return res.status(403).json("id is missing");
   }
 
   db("cars")
@@ -422,10 +423,12 @@ const delet = (db) => (req, res) => {
       id
     })
     .del()
-    .then((user) => {
+    .then((car) => {
+      console.log(car)
       res.json("Car is now deleted");
     })
     .catch((err) => {
+      console.log(err)
       res.status(404).json("this car doesnt exist");
     });
 };

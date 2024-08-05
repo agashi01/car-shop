@@ -132,22 +132,29 @@
   border: 2px solid hsla(0, 80%, 50%, 0.5);
 }
 
-.remove:active:hover, .remove:active:focus {
+.remove:active:hover,
+.remove:active:focus {
   background-color: rgb(175, 25, 25);
   border: 2px solid hsla(0, 60%, 40%, 1);
   outline: none;
 }
 
-.remove-menu{
+.remove-menu {
   color: white;
   border-radius: 5px;
   position: absolute;
   background-color: rgb(0, 0, 0);
-  right:19px;
+  right: 19px;
   border: 1px solid rgb(35, 32, 32);
   font-size: smaller;
   margin-top: 2px;
   padding: 0px 4px 0px 4px;
+}
+
+.done {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .purchase {
@@ -463,6 +470,79 @@ front .model-clicked li:last-child {
   list-style-type: none;
 }
 
+.scroll-bottom {
+  width: 280px;
+  display: flex;
+  justify-content: space-between;
+  /* gap */
+}
+
+
+.arrows {
+  height: 52px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 20px;
+  border: 1px solid hsla(200, 100%, 50%);
+  background: hsla(200, 100%, 50%, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.arrow {
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid hsla(200, 100%, 50%);
+  margin: 2px 0;
+  /* Adjust margin to control spacing */
+}
+
+.arrows-up {
+  height: 52px;
+  outline: none;
+  border-radius: 20px;
+  border: 1px solid hsla(200, 100%, 50%);
+  background: hsla(200, 100%, 50%, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  order: 1;
+  align-items: center;
+  margin-top: 10px;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+  /* Add cursor pointer to indicate clickable area */
+}
+
+.arrow-up {
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid hsla(200, 100%, 50%);
+  margin: 2px 0;
+  /* Adjust margin to control spacing */
+}
+
+
+.arrows:hover,
+.arrows:focus-visible,
+.arrows-up:hover,
+.arrows-up:focus-visible {
+  background: hsla(200, 100%, 50%, 0.2);
+}
+
+.arrows:active,
+.arrows-up:active {
+  background: hsla(200, 100%, 50%, 0.3);
+}
+
+
+
+
+
 .complet {
   display: flex;
   justify-content: center;
@@ -535,7 +615,19 @@ front .model-clicked li:last-child {
 }
 
 .page {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 0 auto 50px auto;
+}
+
+.bottom-middle {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .page button,

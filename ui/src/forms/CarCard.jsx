@@ -6,10 +6,11 @@ import { React, useEffect, useState } from "react";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-export default function CarCard({carId, deletMarket,deletSold, id, isit, guest, car }) {
+export default function CarCard({ removeId, carId, deletMarket, deletSold, id, isit, guest, car }) {
   const [purchased, setPurchased] = useState(false);
   const [flip, setFlip] = useState(false);
   const [removeMenu, setRemoveMenu] = useState(false);
+  const [theOne, setTheOne] = useState(false)
   const carObj = Object.keys(car);
 
   const transmission = (e) => {
@@ -17,7 +18,13 @@ export default function CarCard({carId, deletMarket,deletSold, id, isit, guest, 
     return e;
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => { 
+
+    if(removeId===car.id){
+      setTheOne(true)
+    }
+
+  }, [removeId]);
 
   const purchasing = (carId) => (e) => {
     console.log(id);
@@ -59,15 +66,17 @@ export default function CarCard({carId, deletMarket,deletSold, id, isit, guest, 
       <div className="front">
         <div className="card-png"></div>
         <div className="png-div">
-          {car.dealer_id === id && car.owner_id
-            ? "Sold"
-            : car.dealer_id === id && !car.owner_id
-              ? "On Market"
-              : car.owner_id != null && id != null && car.owner_id === id
-                ? "Owned"
-                : car.owner_id
-                  ? "Out of Stock"
-                  : "In Stock"}
+          {removeId === car.id || theOne  ?
+            'Removed'
+            : car.dealer_id === id && car.owner_id
+              ? "Sold"
+              : car.dealer_id === id && !car.owner_id
+                ? "On Market"
+                : car.owner_id != null && id != null && car.owner_id === id
+                  ? "Owned"
+                  : car.owner_id
+                    ? "Out of Stock"
+                    : "In Stock"}
         </div>
         <div className="marka">{car.make}</div>
         <div className="card-features">
@@ -108,6 +117,8 @@ export default function CarCard({carId, deletMarket,deletSold, id, isit, guest, 
         <div className="carCars-buttons">
           {purchased ? (
             <button className="purchased">Owned</button>
+          ) : removeId === car.id || theOne ? (
+            <button className="purchased">removed</button>
           ) : car.dealer_id === id && !car.owner_id ? (
             <button className="purchased">On Market</button>
           ) : car.dealer_id === id && car.owner_id ? (
@@ -121,35 +132,43 @@ export default function CarCard({carId, deletMarket,deletSold, id, isit, guest, 
               Purchase
             </button>
           )}
-          {car.dealer_id === id && !car.owner_id ? (
+          {removeId === car.id || theOne ?
             <div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  carId(car.id)
-                  deletMarket(true);
-                }}
-                className="remove"
-                onMouseEnter={() => setRemoveMenu(true)}
-                onMouseLeave={() => setRemoveMenu(false)}
+                className="remove done"
               >
-                Remove
-              </button>
-              {removeMenu ? (
-                <div className="remove-menu">Remove This Car From The Market</div>
-              ) : null}
-            </div>
-          ) : car.dealer_id === id ? (
-            <div>
-              <button onClick={(e) => {
-                e.stopPropagation()
-                carId(car.id)
-                deletSold(true)
-              }} className="remove">
-                Remove
+                Removed
               </button>
             </div>
-          ) : null}
+            : car.dealer_id === id && !car.owner_id ? (
+              <div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    carId(car.id)
+                    deletMarket(true);
+                  }}
+                  className="remove"
+                  onMouseEnter={() => setRemoveMenu(true)}
+                  onMouseLeave={() => setRemoveMenu(false)}
+                >
+                  Remove
+                </button>
+                {(removeId === car.id || theOne) || removeMenu ? (
+                  <div className="remove-menu">Remove This Car From The Market</div>
+                ) : null}
+              </div>
+            ) : car.dealer_id === id ? (
+              <div>
+                <button onClick={(e) => {
+                  e.stopPropagation()
+                  carId(car.id)
+                  deletSold(true)
+                }} className="remove">
+                  Remove
+                </button>
+              </div>
+            ) : null}
         </div>
       </div>
     </div>
