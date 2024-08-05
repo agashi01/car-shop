@@ -205,11 +205,12 @@ const func = async (db, vehicle, model, limit, offset, id = null, dealer = null)
 
   if (dealer === 'Selling') {
     query = query
-    .orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
-    .orderByRaw('CASE WHEN dealer_id = ? THEN 0 ELSE 1 END', [id])
-    .orderByRaw('CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END')
+    .orderByRaw('CASE WHEN cars.dealer_id = ? THEN 0 ELSE 1 END', [id])
+    .orderByRaw('CASE WHEN cars.owner_id IS NULL THEN 0 ELSE 1 END')
     .orderBy('date_of_creation', 'DESC')
     .orderBy('date_of_last_update', 'DESC')
+    .where('cars.dealer_id',id)
+    console.log(query.toSQL().toNative())
   } else if (id) {
     console.log('hi')
     query = query.orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
@@ -219,9 +220,33 @@ const func = async (db, vehicle, model, limit, offset, id = null, dealer = null)
 
   const cars = await query.select("cars.*", "users.name", "users.surname").limit(limit).offset(offset);
 
+  let query2 = db("cars").join("users", "cars.dealer_id", "users.id");
+  if (vehicle) {
+    query2 = query2.whereIn("make", vehicle);
+  }
+
+  if (model) {
+    query2 = query2.whereIn("model", model);
+  }
+
+  if (dealer === 'Selling') {
+    query2 = query2
+    .orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END',[id])
+    .orderBy('date_of_creation', 'DESC')
+    .orderBy('date_of_last_update', 'DESC')
+    .where('cars.owner_id',[id])
+    console.log(query2.toSQL().toNative())
+  } else if (id) {
+    console.log('hi')
+    query2 = query2.orderByRaw('CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END', [id])
+      .orderBy('date_of_creation', 'DESC')
+      .orderBy('date_of_last_update', 'DESC');
+  }
+
+
   const ownerIds = cars.map(car => car.owner_id).filter(id => id !== null);
 
-  // console.log('hi',0)
+  console.log(cars)
 
   const owners = await db('users')
     .whereIn('id', ownerIds)
@@ -237,7 +262,7 @@ const func = async (db, vehicle, model, limit, offset, id = null, dealer = null)
   for (let x of cars) {
     x.owner = finalIds[x.owner_id] || null
   }
-
+  console.log(cars,'modified')
 
   return cars;
 };

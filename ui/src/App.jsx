@@ -8,6 +8,7 @@ import Register from "./forms/Register.jsx";
 import Home from "./forms/Home.jsx";
 import AfterRegister from "./forms/AfterRegister.jsx";
 import Add from "./forms/Add.jsx";
+import AfterAdd from "./forms/AfterAdd.jsx";
 
 import "./App.css";
 
@@ -37,75 +38,82 @@ export default function App() {
           <div className="onclick-logo" onClick={() => setPage("home")}>
             <Logo logo={logo} />
           </div>
+          <div className="div-box">
+            {page === "add" ? <button type='btn' onClick={()=>setPage('home')} className="btn2 go-back">Back</button> : null}
 
-          <div className="box">
-            {page === "signIn" ? (
-              <SignInForm
-                dealer={setDealer}
-                id={setId}
-                logo3={logo}
-                logo={setLogo}
-                setGuest={setGuest}
-                username={setUsername}
-                page={changePage}
-              />
-            ) : page === "register" ? (
-              <Register logo={setLogo} page={changePage} />
-            ) : page === "afterRegister" ? (
-              <AfterRegister page={changePage} />
-            ) : page === "afterAdd" ? (
-              <AfterAdd />
-            ) : page === "add" ? (
-              <Add id={id} />
-            ) : null}
-            {page === "register" ? (
-              <div className="register">
-                <p
-                  className="text"
-                  style={{
-                    marginRight: 5,
-                  }}
-                >
-                  Already have an account?{" "}
-                </p>
-                <button onClick={() => setPage("signIn")} type="button">
-                  Sign In
-                </button>
-              </div>
-            ) : page === "signIn" ? (
-              <div className="register">
-                <div className="correct-guest">
+            <div className="box">
+              {page === "signIn" ? (
+                <SignInForm
+                  dealer={setDealer}
+                  id={setId}
+                  logo3={logo}
+                  logo={setLogo}
+                  setGuest={setGuest}
+                  username={setUsername}
+                  page={changePage}
+                />
+              ) : page === "register" ? (
+                <Register logo={setLogo} page={changePage} />
+              ) : page === "afterRegister" ? (
+                <AfterRegister page={changePage} />
+              ) : page === "afterAdd" ? (
+                <AfterAdd page={setPage} />
+              ) : page === "add" ? (
+                <div>
+
+                  <Add page={setPage} id={id} />
+                </div>
+              ) : null}
+              {page === "register" ? (
+                <div className="register">
                   <p
                     className="text"
                     style={{
-                      fontSize: 13,
                       marginRight: 5,
                     }}
                   >
-                    Do not have an account?{" "}
+                    Already have an account?{" "}
                   </p>
-                  <p
-                    className="text2"
-                    style={{
-                      fontSize: 13,
-                      marginRight: 5,
-                    }}
-                  >
-                    Go as guest{" "}
-                  </p>
+                  <button onClick={() => setPage("signIn")} type="button">
+                    Sign In
+                  </button>
                 </div>
+              ) : page === "signIn" ? (
+                <div className="register">
+                  <div className="correct-guest">
+                    <p
+                      className="text"
+                      style={{
+                        fontSize: 13,
+                        marginRight: 5,
+                      }}
+                    >
+                      Do not have an account?{" "}
+                    </p>
+                    <p
+                      className="text2"
+                      style={{
+                        fontSize: 13,
+                        marginRight: 5,
+                      }}
+                    >
+                      Go as guest{" "}
+                    </p>
+                  </div>
 
-                <div className="go-as-guest">
-                  <button onClick={() => setPage("register")} type="btn">
-                    Register
-                  </button>
-                  <button onClick={() => setPage("home")} type="btn">
-                    Go as guest
-                  </button>
+                  <div className="go-as-guest">
+                    <button onClick={() => setPage("register")} type="btn">
+                      Register
+                    </button>
+                    <button onClick={() => setPage("home")} type="btn">
+                      Go as guest
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </div>
+
         </div>
       ) : (
         <Home
