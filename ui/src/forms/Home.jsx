@@ -25,6 +25,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   const [deletSold, setDeletSold] = useState(false);
   const [carId, setCarId] = useState(null)
   const [removeId, setRemoveId] = useState(null)
+  const [end,setEnd] = useState(false)
 
   const modelRef = useRef();
   const modelMenuRef = useRef();
@@ -40,6 +41,13 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
+  useEffect(()=>{
+
+    
+
+  },[])
+
   useEffect(() => {
     axios
       .get("http://localhost:3000/model", {
@@ -314,8 +322,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
       .catch((err) => console.log(err));
   };
 
-  const scroll = (direction) => (e) => {
-    // e.preventDefault()
+  const scroll = (direction) => () => {
     console.log(document.body.scrollHeight)
     let position = direction === 'bottom' ? document.body.scrollHeight : 0;
     window.scrollTo({
@@ -719,21 +726,21 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
         <div className="page">
           <div className='bottom-middle'>
             <button
-              className="btn"
+              className={`btn${pageNumber===1?" disabled":""}`}
               onClick={(e) => {
                 scroll('top')(e)
                 setPageNumber(pageNumber - 1)
               }
               }
-              disabled={pageNumber <= 1}
+
             >
               Previous
             </button>
             <span>Page {pageNumber}</span>
             <button
-              className="btn"
+              className={`btn${cars.length<limit||end?" disabled":""}`}
               onClick={(e) => {
-                scroll(e)('top');
+                scroll('top')(e);
                 setPageNumber(pageNumber + 1);
               }}
               disabled={cars.length < limit}

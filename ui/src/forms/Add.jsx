@@ -64,6 +64,7 @@ export default function Add({ page, id }) {
       console.log(err)
       setErrorMessage(err.data)
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[message])
 
   useEffect(() => {
