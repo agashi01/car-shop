@@ -46,18 +46,23 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   const mileageUpdate = (km) => {
     let string = km.toString().split("");
     let final = "";
+    let ans='';
 
     let num = 1;
-    for (let i = 0; i < string.length; i++) {
+    for (let i = string.length-1; i >= 0; i--) {
       final += string[i];
 
-      if (num % 3 === 0 && num != 0 && !(i + 1 === string.length)) {
+      if (num % 3 === 0 && num != 0 && !(i  === 0)) {
         final += ",";
       }
       num++;
     }
+    num=0
+    for(let x=final.length-1;x>=0;x--){
+      ans+=final[x]
+    }
     // console.log(final)
-    return final + " km";
+    return ans + " km";
   };
 
   return (
