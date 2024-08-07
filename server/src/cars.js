@@ -220,9 +220,9 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
       .select("cars.*", "users.name", "users.surname")
       .limit(limit)
       .offset(offset);
+      console.log(cars)
 
     let nextLimit = limit - cars.length;
-    console.log(nextLimit)
     if (fNum.pageNumber === pageNumber) {
       fNum.fNum = 0
       fNum.page = null
@@ -232,7 +232,6 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
       fNum.offset = offset
       fNum.page = pageNumber
     }
-    console.log(fNum)
 
     const sellingOffset = nextLimit ? fNum.fNum + offset - fNum.offset : 0;
     if (dealer === "Selling") {
@@ -240,9 +239,8 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
         .join("users", "cars.dealer_id", "users.id")
         .whereIn("make", vehicle || [])
         .whereIn("model", model || [])
-        .orderByRaw("CASE WHEN owner_id IS NULL THEN 0 ELSE 1 END")
+        .orderByRaw("CASE WHEN owner_id = ? THEN 0 ELSE 1 END",[id])
         .orderBy("date_of_last_update", "DESC")
-        .where("cars.owner_id", id)
         .select("cars.*", "users.name", "users.surname")
         .limit(nextLimit)
         .offset(sellingOffset);
@@ -306,10 +304,12 @@ const make = (db) => async (req, res) => {
 
 const readAll = (db) => async (req, res) => {
   const { dealer, vehicle, model, num, id, limit, pageNumber } = req.query;
-  const offset = (pageNumber - 1) * limit;
+  let pageNum=Number(pageNumber)
+  let number=Number(num)
+  const offset = (pageNum - 1) * limit;
 
   try {
-    const cars = await func(db, vehicle, model, limit, offset, num, pageNumber, id, dealer);
+    const cars = await func(db, vehicle, model, limit, offset, number, pageNum, id, dealer);
     res.status(200).json(cars);
   } catch (err) {
     res.status(400).json("something went wrong");
