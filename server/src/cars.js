@@ -1,4 +1,6 @@
 // optimizo fuksionin "func"
+
+let fNum = 0;
 const create = (db) => async (req, res) => {
   const { make, model, mileage, color, transmission, fuelType, vehicleType, id } = req.body.specs;
 
@@ -175,7 +177,7 @@ const model = (db) => async (req, res) => {
   }
 };
 
-const func = async (db, vehicle, model, limit, offset, num = null, id = null, dealer = null) => {
+const func = async (db, vehicle, model, limit, offset, num = 0, id = null, dealer = null) => {
   try {
     let query = db("cars").join("users", "cars.dealer_id", "users.id");
 
@@ -186,14 +188,15 @@ const func = async (db, vehicle, model, limit, offset, num = null, id = null, de
     if (model) {
       query = query.whereIn("model", model);
     }
-
     if (dealer === "Selling") {
-      query = query
-        .orderByRaw("CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END", [id])
-        .orderByRaw("CASE WHEN dealer_id = ? THEN 0 ELSE 1 END", [id])
-        .orderBy("date_of_creation", "DESC")
-        .orderBy("date_of_last_update", "DESC")
-        .where("cars.owner_id", id);
+      if (!(num === 0 || num === limit)) {
+        query = query
+          .orderByRaw("CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END", [id])
+          .orderByRaw("CASE WHEN dealer_id = ? THEN 0 ELSE 1 END", [id])
+          .orderBy("date_of_creation", "DESC")
+          .orderBy("date_of_last_update", "DESC")
+          .where("cars.owner_id", id);
+      }
     } else if (id) {
       query = query
         .orderByRaw("CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END", [id])
@@ -206,8 +209,8 @@ const func = async (db, vehicle, model, limit, offset, num = null, id = null, de
       .limit(limit)
       .offset(offset);
 
-    let num = cars.length - limit
-    let fOffset =
+    let nextLimit = limit - cars.length;
+    fNum = num ? num : 0;
 
     if (dealer === "Selling") {
       const sellingCars = await db("cars")
@@ -218,16 +221,15 @@ const func = async (db, vehicle, model, limit, offset, num = null, id = null, de
         .orderBy("date_of_last_update", "DESC")
         .where("cars.owner_id", id)
         .select("cars.*", "users.name", "users.surname")
-        .limit(num)
-        .offset(offset);
-
+        .limit(nextLimit)
+        .offset(fNum + offset);
 
       cars.push(...sellingCars);
     }
 
-    cars
+    cars;
 
-    const ownerIds = cars.map(car => car.owner_id).filter(id => id !== null);
+    const ownerIds = cars.map((car) => car.owner_id).filter((id) => id !== null);
     const owners = await db("users").whereIn("id", ownerIds).select("id", "name", "surname");
 
     const ownerMap = owners.reduce((acc, owner) => {
@@ -235,7 +237,7 @@ const func = async (db, vehicle, model, limit, offset, num = null, id = null, de
       return acc;
     }, {});
 
-    cars.forEach(car => {
+    cars.forEach((car) => {
       car.owner = ownerMap[car.owner_id] || null;
     });
 
@@ -279,11 +281,11 @@ const make = (db) => async (req, res) => {
 };
 
 const readAll = (db) => async (req, res) => {
-  const { dealer, vehicle, model, id, limit, pageNumber } = req.query;
+  const { dealer, vehicle, model, num, id, limit, pageNumber } = req.query;
   const offset = (pageNumber - 1) * limit;
-  
+
   try {
-    const cars = await func(db, vehicle, model, limit, offset, id, dealer);
+    const cars = await func(db, vehicle, model, limit, offset, num, id, dealer);
     res.status(200).json(cars);
   } catch (err) {
     res.status(400).json("something went wrong");
