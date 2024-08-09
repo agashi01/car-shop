@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-export default function SignInForm({ dealer,id, logo3, logo, page, setGuest, username }) {
+export default function SignInForm({ dealer, id, logo3, logo, page, setGuest, username }) {
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [error, setError] = useState({ email: "", password: "" });
   const [backendError, setBackendError] = useState(null);
@@ -22,6 +22,11 @@ export default function SignInForm({ dealer,id, logo3, logo, page, setGuest, use
 
   useEffect(() => {
     logo("logo");
+    page("home");
+    setGuest(false);
+    dealer("Selling");
+    username("okejbabo");
+    id(2924)
     console.log(logo3);
   }, []);
 
@@ -38,7 +43,6 @@ export default function SignInForm({ dealer,id, logo3, logo, page, setGuest, use
           dealer(res.data?.type)
           username(res.data?.username);
           setGuest(false);
-          page("home");
           setError({ email: "stabil", password: "stabil" });
           id(res.data?.id);
         })
@@ -280,7 +284,7 @@ export default function SignInForm({ dealer,id, logo3, logo, page, setGuest, use
         <label htmlFor="email">
           <input
             className={classnameEmail()}
-            type="text"
+            type="email"
             onChange={(e) => {
               signInEmail(e.target.value);
             }}

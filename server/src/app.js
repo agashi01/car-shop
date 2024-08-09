@@ -6,6 +6,7 @@ const cars = require("./cars");
 const dealers = require("./dealers");
 const auth = require("./auth");
 const path = require("path");
+const multer = require('multer');
 
 const db = knex({
   client: "pg",
@@ -18,6 +19,7 @@ const db = knex({
 });
 
 const app = express();
+const upload = multer({ dest: 'public' })
 app.use(cors());
 
 app.use(bodyParser.json());
@@ -30,13 +32,13 @@ app.get("/", (req, res) => {
 app.post("/sign-up", (req, res) => auth.signUp(db)(req, res));
 app.post("/log-in", (req, res) => auth.logIn(db)(req, res));
 
-app.get('/transmission',(req,res)=>cars.transmission(db)(req,res))
-app.get('/fuelType',(req,res)=>cars.fuelType(db)(req,res))
-app.get('/vehicleType',(req,res)=>cars.vehicleType(db)(req,res))
-app.get('/dealerModel', (req,res)=> cars.dealerModel(db)(req,res))
-app.get('/dealerMake', (req,res)=> cars.dealerMake(db)(req,res))
+app.get('/transmission', (req, res) => cars.transmission(db)(req, res))
+app.get('/fuelType', (req, res) => cars.fuelType(db)(req, res))
+app.get('/vehicleType', (req, res) => cars.vehicleType(db)(req, res))
+app.get('/dealerModel', (req, res) => cars.dealerModel(db)(req, res))
+app.get('/dealerMake', (req, res) => cars.dealerMake(db)(req, res))
 app.get("/model", (req, res) => cars.model(db)(req, res));
-app.post("/cars", (req, res) => cars.createCar(db)(req, res));
+app.post("/cars", upload.single('image', { path: 'cars' }), (req, res) => cars.createCar(db)(req, res));
 app.get("/make", (req, res) => cars.make(db)(req, res));
 app.get("/cars/guest", (req, res) => cars.readAllGuest(db)(req, res));
 app.get("/cars", (req, res) => cars.readAll(db)(req, res));

@@ -8,11 +8,12 @@ let fNum = {
 }
 
 const create = (db) => async (req, res) => {
-  const { make, model, mileage, color, transmission, fuelType, vehicleType, id } = req.body.specs;
+  console.log(req.file)
+  const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body.specs;
 
   try {
     // Check if the dealer is valid
-    const dealer = await db("users").select("*").where("id", id).first();
+    const dealer = await db("users").select("*").where("id", dealer_id).first();
     if (!dealer) {
       return res.status(404).json("You are not a dealer");
     }
@@ -31,7 +32,7 @@ const create = (db) => async (req, res) => {
             transmission,
             fuel_type: fuelType,
             vehicle_type: vehicleType,
-            dealer_id: id,
+            dealer_id,
           })
           .returning("*");
 
@@ -199,9 +200,10 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
 
     if (model) {
       query = query.whereIn("model", model);
-    }
+    } .0
     if (dealer === "Selling") {
-      if (!fNum.fNum || !(num === 0 || num === limit)) {
+      if (fNum.fNum === 0) {
+        console.log(';hi')
         query = query
           .orderByRaw("CASE WHEN dealer_id = ? THEN 0 ELSE 1 END", [id])
           .orderByRaw("CASE WHEN cars.owner_id IS NULL THEN 0 ELSE 1 END")
@@ -220,7 +222,6 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
       .select("cars.*", "users.name", "users.surname")
       .limit(limit)
       .offset(offset);
-      console.log(cars)
 
     let nextLimit = limit - cars.length;
     if (fNum.pageNumber === pageNumber) {
@@ -234,17 +235,24 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
     }
 
     const sellingOffset = nextLimit ? fNum.fNum + offset - fNum.offset : 0;
+    let end = false
     if (dealer === "Selling") {
       const sellingCars = await db("cars")
         .join("users", "cars.dealer_id", "users.id")
         .whereIn("make", vehicle || [])
         .whereIn("model", model || [])
-        .orderByRaw("CASE WHEN owner_id = ? THEN 0 ELSE 1 END",[id])
+        .orderByRaw("CASE WHEN owner_id = ? THEN 0 ELSE 1 END", [id])
         .orderBy("date_of_last_update", "DESC")
         .select("cars.*", "users.name", "users.surname")
-        .limit(nextLimit)
+        .whereNot('cars.dealer_id', id)
+        .limit(nextLimit + 1)
         .offset(sellingOffset);
 
+
+      if (sellingOffset.length === nextLimit + 1) {
+        end = true
+      }
+      sellingCars.pop()
 
       cars.push(...sellingCars);
     }
@@ -263,7 +271,7 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
       car.owner = ownerMap[car.owner_id] || null;
     });
 
-    return cars;
+    return [end, cars];
   } catch (err) {
     console.error(err);
     throw new Error("An error occurred while fetching the cars");
@@ -304,8 +312,8 @@ const make = (db) => async (req, res) => {
 
 const readAll = (db) => async (req, res) => {
   const { dealer, vehicle, model, num, id, limit, pageNumber } = req.query;
-  let pageNum=Number(pageNumber)
-  let number=Number(num)
+  let pageNum = Number(pageNumber)
+  let number = Number(num)
   const offset = (pageNum - 1) * limit;
 
   try {

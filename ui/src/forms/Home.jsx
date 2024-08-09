@@ -214,7 +214,8 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
       };
       try {
         const res = await axios.get(url, { params });
-        setCars(res.data);
+        setCars(res.data[1]);
+        setEnd(res.data[0])
       } catch (err) {
         console.log(err);
       }

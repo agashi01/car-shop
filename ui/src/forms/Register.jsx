@@ -517,7 +517,7 @@ export default function Register({ logo, page }) {
       <label htmlFor="email">
         <input
           className={classNameEmail()}
-          type="text"
+          type="email"
           ref={email}
           id="email"
           value={register.email}

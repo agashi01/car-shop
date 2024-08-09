@@ -39,7 +39,7 @@ export default function App() {
             <Logo logo={logo} />
           </div>
           <div className="div-box">
-            {page === "add" ? <button type='btn' onClick={()=>setPage('home')} className="btn2 go-back">Back</button> : null}
+            {page === "add" ? <button type='btn' onClick={()=>setPage('home')} className="btn2 go-back">Home</button> : null}
 
             <div className="box">
               {page === "signIn" ? (
