@@ -9,6 +9,92 @@
   font-family: "Cassandra";
   src: url("./other/Fira_Code/FiraCode-VariableFont_wght.ttf") format("truetype");
 }
+/* image */
+
+.itis{
+  height: 200px;
+  position: relative;
+  background-color: #3f3f3f;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  border: 2px solid hsla(200, 100%, 50%);
+  height: 400px;
+  width: 400px;
+  position: relative;
+  background-color: #3f3f3f;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.close-div{
+  height:30px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.close {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.image-div{
+  height:80%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0;
+
+}
+
+.modal-image {
+  top:20px;
+  width: 100%;
+  height: 100%;
+  margin: 20px 0;
+  
+}
+
+.modal-navigation {
+  position: relative;
+  align-self: flex-end;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: end;
+}
+
+.modal-navigation button {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/*stop
 
 /* car card */
 
@@ -346,6 +432,15 @@ front .model-clicked li:last-child {
   text-align: end;
 }
 
+.image-input {
+  width: 150px;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
 .input-sell {
   text-align: center;
   width: 100px;
@@ -353,6 +448,32 @@ front .model-clicked li:last-child {
   border-radius: 40px;
 }
 
+.input-sell.image {
+  background-color: #f8f8f8;
+  color: #333;
+  font-weight:500;
+  text-align: center;
+  width: 100px;
+  cursor: pointer;
+  height: 45px;
+  border-radius: 40px;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.label-input-sell {
+  cursor:pointer;
+  display:none;
+}
+
+
+.file-div {
+  text-align: end;
+}
 
 .sell-menu {
   display: flex;
@@ -511,7 +632,7 @@ front .model-clicked li:last-child {
   order: 1;
   align-items: center;
   cursor: pointer;
-  position:absolute;
+  position: absolute;
   right: 0;
   top: 0;
   /* Add cursor pointer to indicate clickable area */
@@ -1020,7 +1141,7 @@ btn .prezantimi-register {
 
 /* stop */
 
-.div-box{
+.div-box {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1039,7 +1160,7 @@ btn .prezantimi-register {
   box-shadow: 0px 10px 4px rgba(0, 0, 0, 0.5);
 }
 
-.go-back{
+.go-back {
   position: absolute;
 }
 
@@ -1110,14 +1231,12 @@ btn .prezantimi-register {
 
 
 .error-add {
-  border: 3px solid red;
-  /* Change the border color for error */
+  border: 3px solid red !important;
 }
 
 .correct-add {
-  border: 3px solid green
+  border: 3px solid rgb(1, 128, 1) !important;
 }
-
 
 input {
   border-radius: 20px;
@@ -1246,7 +1365,7 @@ body {
   outline: none;
 }
 
-.disabled{
+.disabled {
   pointer-events: none;
   opacity: 0.5;
   cursor: not-allowed;
