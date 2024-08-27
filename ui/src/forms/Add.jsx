@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/jsx-key */
 import { React, useEffect, useState } from "react";
 import axios from "axios";
@@ -23,7 +24,7 @@ export default function Add({ page, id }) {
     fuelType: "",
     transmission: "",
     vehicleType: "",
-    image: null
+    file: null
   });
   const [message, setMessage] = useState({
     make: "",
@@ -33,7 +34,7 @@ export default function Add({ page, id }) {
     fuelType: "",
     transmission: "",
     vehicleType: "",
-    image: null
+    file: null
   });
 
   useEffect(() => {
@@ -77,27 +78,41 @@ export default function Add({ page, id }) {
       if (!error[key]) {
         newMessages[key] = 'error-add';
       } else {
-        console.log(key)
         newMessages[key] = "correct-add";
       }
     }
+    console.log(message)
     setMessage(newMessages); // Update the message state once with the new values
   };
 
   useEffect(() => {
     for (let key in message) {
       if (message[key] !== "correct-add") {
+        console.log(message[key])
         return
       }
     }
 
-    const formdata=new FormData()
+    console.log('hi')
 
-    formdata.append('files',file)
-    formdata.append(...error)
+    const formdata = new FormData()
 
-    axios.post('http://localhost:3000/cars', {
-      specs: formdata
+    for (const file1 of file) {
+      formdata.append('files', file1)
+    }
+    formdata.append('dealer_id', id)
+    for (let key in error) {
+      formdata.append(key, error[key])
+    }
+    console.log('FormData contents:');
+    for (let [key, value] of formdata.entries()) {
+      console.log(key, value);
+    }
+
+    axios.post('http://localhost:3000/cars', formdata, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     })
       .then(() => {
         page('afterAdd')
@@ -157,11 +172,7 @@ export default function Add({ page, id }) {
         return { ...current, file: null }
 
       }
-
     })
-
-
-
   };
 
   const openModal = () => () => {
@@ -332,7 +343,7 @@ export default function Add({ page, id }) {
               </label>
               {selectedFileName.length > 0 && (
                 <div className='file-div'>
-                  <p style={{ cursor: 'pointer' }}  onClick={openModal()} className="file-name">
+                  <p style={{ cursor: 'pointer' }} onClick={openModal()} className="file-name">
                     Photos
                   </p>
                 </div>

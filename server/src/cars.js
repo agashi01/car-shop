@@ -8,8 +8,9 @@ let fNum = {
 }
 
 const create = (db) => async (req, res) => {
-  console.log(req.file)
-  const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body.specs;
+  console.log(req.files)
+  console.log(req.body)
+  const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id,files } = req.body;
 
   try {
     // Check if the dealer is valid
@@ -52,7 +53,7 @@ const create = (db) => async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json("An error occurred");
+    res.status(500).json(err);
   }
 };
 
@@ -203,7 +204,6 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
     } .0
     if (dealer === "Selling") {
       if (fNum.fNum === 0) {
-        console.log(';hi')
         query = query
           .orderByRaw("CASE WHEN dealer_id = ? THEN 0 ELSE 1 END", [id])
           .orderByRaw("CASE WHEN cars.owner_id IS NULL THEN 0 ELSE 1 END")

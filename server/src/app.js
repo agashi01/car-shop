@@ -21,18 +21,19 @@ const db = knex({
 const app = express();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    return cb(null,path.join( __dirname, "../public/cars"));
+    return cb(null, path.join(__dirname, "../public/cars"));
   },
   filename: function (req, file, cb) {
     return cb(null, `${Date.now()}_${file.originalname}`);
   }
 });
 
-const upload=multer({storage})
+const upload = multer({ storage })
 
 app.use(cors());
 
 app.use(bodyParser.json());
+
 // save
 
 app.get("/", (req, res) => {
@@ -48,7 +49,7 @@ app.get("/vehicleType", (req, res) => cars.vehicleType(db)(req, res));
 app.get("/dealerModel", (req, res) => cars.dealerModel(db)(req, res));
 app.get("/dealerMake", (req, res) => cars.dealerMake(db)(req, res));
 app.get("/model", (req, res) => cars.model(db)(req, res));
-app.post("/cars", upload.array("file",10), (req, res) =>
+app.post("/cars", upload.array("files", 10), (req, res) =>
   cars.createCar(db)(req, res)
 );
 app.get("/make", (req, res) => cars.make(db)(req, res));
@@ -63,7 +64,7 @@ app.get("/dealers/:id", (req, res) => dealers.readDealer(db)(req, res));
 app.put("/dealers/:id", (req, res) => dealers.updateDealer(db)(req, res));
 app.delete("/dealers/:id", (req, res) => dealers.deleteDealer(db)(req, res));
 
-app.use("/static", express.static(path.join(__dirname, "../public")));
+app.use("/static", express.static(path.join(__dirname, "..", "public")));
 
 app.use((err, req, res, next) => {
   const errStatus = err.statusCode || 500;
