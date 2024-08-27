@@ -11,6 +11,7 @@
 }
 /* image */
 
+
 .itis{
   height: 200px;
   position: relative;
@@ -472,6 +473,7 @@ front .model-clicked li:last-child {
 
 
 .file-div {
+  margin-right: 20px;
   text-align: end;
 }
 

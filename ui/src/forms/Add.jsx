@@ -36,6 +36,29 @@ export default function Add({ page, id }) {
     image: null
   });
 
+  useEffect(() => {
+
+    console.log('hi')
+
+    const toggle = (e) => {
+
+      if (e.key === 'ArrowLeft') {
+        prevImage()
+      } else if (e.key === 'ArrowRight') {
+        nextImage()
+      }
+    }
+
+    console.log('hi')
+    if (currentImageIndex !== null) {
+      document.addEventListener('keydown', toggle)
+    } else {
+      document.removeEventListener('keydown', toggle)
+    }
+
+    return () => document.removeEventListener('keydown', toggle)
+  }, [currentImageIndex])
+
 
   const mileage = (e) => {
     setError((current) => {
@@ -135,19 +158,19 @@ export default function Add({ page, id }) {
 
   };
 
-  const openModal = (index) => (e) => {
-    setCurrentImageIndex(index)
+  const openModal = () => () => {
+    setCurrentImageIndex(0)
   }
 
-  const closeModal = (e) => {
+  const closeModal = () => {
     setCurrentImageIndex(null)
   }
 
-  const nextImage = (e) => {
+  const nextImage = () => {
     setCurrentImageIndex((currentImageIndex + 1) % file.length)
   }
 
-  const prevImage = (e) => {
+  const prevImage = () => {
     setCurrentImageIndex((currentImageIndex - 1 + file.length) % file.length)
   }
 
@@ -303,13 +326,9 @@ export default function Add({ page, id }) {
               </label>
               {selectedFileName.length > 0 && (
                 <div className='file-div'>
-                  {selectedFileName.map((e, index) => {
-                    return (
-                      <p style={{ cursor: 'pointer' }} key={index} onClick={openModal(index)} className="file-name">
-                        {e}
-                      </p>
-                    );
-                  })}
+                  <p style={{ cursor: 'pointer' }}  onClick={openModal()} className="file-name">
+                    Photos
+                  </p>
                 </div>
               )}
             </div>
@@ -328,7 +347,7 @@ export default function Add({ page, id }) {
               <span className="close" onClick={closeModal}>&times;</span>
             </div>
             <div className='image-div'>
-              <img  src={URL.createObjectURL(file[currentImageIndex])} alt="Preview" className="modal-image" />
+              <img src={URL.createObjectURL(file[currentImageIndex])} alt="Preview" className="modal-image" />
             </div>
             <div className="modal-navigation">
               <button onClick={prevImage}>&lt;</button>
