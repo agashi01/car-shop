@@ -91,8 +91,13 @@ export default function Add({ page, id }) {
       }
     }
 
+    const formdata=new FormData()
+
+    formdata.append('files',file)
+    formdata.append(...error)
+
     axios.post('http://localhost:3000/cars', {
-      specs: { ...error, dealer_id: id }
+      specs: formdata
     })
       .then(() => {
         page('afterAdd')
@@ -142,6 +147,7 @@ export default function Add({ page, id }) {
 
   const handleFile = (e) => {
     const files = Array.from(e.target.files);
+    console.log(files)
     setFile(files);
     setSelectedFileName(files.map((file) => file.name));
     setError(current => {
