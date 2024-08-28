@@ -9,6 +9,54 @@
   font-family: "Cassandra";
   src: url("./other/Fira_Code/FiraCode-VariableFont_wght.ttf") format("truetype");
 }
+
+.image-button{
+  position:absolute;
+  /* left: 0; */
+  z-index: 1000;
+  background-color: rgb(189, 195, 199);
+  opacity: 0.66;
+    color: #333;
+    height: 50px;
+    width: 50px;
+    padding: 0.25em 0.5em;
+    border-radius: 50px;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+}
+
+.left{
+  left:0
+}
+
+.right{
+  right:0
+}
+
+.image-button:hover,
+.image-button:focus-visible {
+  opacity: 1;
+  outline: none;
+  border: none;
+}
+
+.image-button:focus{
+  opacity:1;
+  outline: none;
+}
+
+.image-button:focus::after{
+  opacity:.66;
+}
+
+.carcard-image{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  overflow: hidden;
+}
 /* image */
 
 
@@ -100,6 +148,10 @@
 /* car card */
 
 .card-png {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:1px;
   height: 240px;
   width: auto;
 }
@@ -168,6 +220,7 @@
 }
 
 .png-div {
+  z-index: 1000;
   position: absolute;
   top: 20px;
   background-color: #007bff;

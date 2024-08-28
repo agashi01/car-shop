@@ -8,9 +8,16 @@ let fNum = {
 }
 
 const create = (db) => async (req, res) => {
-  console.log(req.files)
-  console.log(req.body)
-  const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id,files } = req.body;
+  const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body;
+  // console.log(req.files, 'files')
+  
+  let paths=[]
+
+  for(let x=0;x<req.files.length;x++){
+    let index=req.files[x].path.indexOf("\cars")
+    paths[x]=req.files[x]?.path?.slice(index)
+  }
+
 
   try {
     // Check if the dealer is valid
@@ -34,6 +41,7 @@ const create = (db) => async (req, res) => {
             fuel_type: fuelType,
             vehicle_type: vehicleType,
             dealer_id,
+            paths:JSON.stringify([paths])
           })
           .returning("*");
 
@@ -44,6 +52,7 @@ const create = (db) => async (req, res) => {
         // Commit the transaction
         await trx.commit();
       } catch (err) {
+        await trx.rollback()
         console.error(err);
         res.status(400).json("This car is missing something");
 
@@ -52,6 +61,7 @@ const create = (db) => async (req, res) => {
       }
     });
   } catch (err) {
+    await trx.rollback()
     console.error(err);
     res.status(500).json(err);
   }
@@ -193,7 +203,7 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
         pageNumber: null
       }
     }
-    let query = db("cars").join("users", "cars.dealer_id", "users.id");
+    let query = db("cars").whereNotNull('paths').join("users", "cars.dealer_id", "users.id");
 
     if (vehicle) {
       query = query.whereIn("make", vehicle);
@@ -327,7 +337,7 @@ const readAll = (db) => async (req, res) => {
 const dealerModel = (db) => (req, res) => {
   const { make } = req.query;
 
-  let model = db("cars").distinct("model");
+  let model = db("cars_info").distinct("model");
 
   if (make) {
     model = model.where("make", make);
@@ -348,14 +358,21 @@ const dealerModel = (db) => (req, res) => {
 };
 
 const dealerMake = (db) => (req, res) => {
-  const { model } = req.query;
+  const { model, reqMake } = req.query;
+  console.log(model,'model')
 
-  let make = db("cars").distinct("make");
+  let make = db("cars_info").distinct("make");
   if (model) {
     make = make.where("model", model);
   }
   make
     .then((makes) => {
+      console.log(makes)
+      if (makes[0].make === reqMake&&model) {
+        console.log('i got here')
+        return res.json(makes[0])
+      }
+      console.log('no i got here')
       return res.json(makes);
     })
     .catch((err) => {
@@ -365,7 +382,7 @@ const dealerMake = (db) => (req, res) => {
 };
 
 const transmission = (db) => (req, res) => {
-  let transmission = db("cars").distinct("transmission");
+  let transmission = db("cars_info").distinct("transmission");
   transmission.then((transmission) => {
     let fTransmission = [];
     for (let x = 0; x < transmission.length; x++) {
@@ -376,7 +393,7 @@ const transmission = (db) => (req, res) => {
 };
 
 const fuelType = (db) => (req, res) => {
-  let fuelType = db("cars").distinct("fuel_type");
+  let fuelType = db("cars_info").distinct("fuel_type");
   fuelType.then((fuelType) => {
     let finalFuelType = [];
     for (let x = 0; x < fuelType.length; x++) {
@@ -387,7 +404,7 @@ const fuelType = (db) => (req, res) => {
 };
 
 const vehicleType = (db) => (req, res) => {
-  let vehicleType = db("cars").distinct("vehicle_type");
+  let vehicleType = db("cars_info").distinct("vehicle_type");
   vehicleType.then((vehicleType) => {
     let finalVehicleType = [];
     for (let x = 0; x < vehicleType.length; x++) {

@@ -7,6 +7,7 @@ const dealers = require("./dealers");
 const auth = require("./auth");
 const path = require("path");
 const multer = require("multer");
+const runOnce= require('./RunOnce')
 
 const db = knex({
   client: "pg",
@@ -43,6 +44,8 @@ app.get("/", (req, res) => {
 app.post("/sign-up", (req, res) => auth.signUp(db)(req, res));
 app.post("/log-in", (req, res) => auth.logIn(db)(req, res));
 
+app.post("/runOnce", runOnce.runOnce(db))
+
 app.get("/transmission", (req, res) => cars.transmission(db)(req, res));
 app.get("/fuelType", (req, res) => cars.fuelType(db)(req, res));
 app.get("/vehicleType", (req, res) => cars.vehicleType(db)(req, res));
@@ -64,7 +67,7 @@ app.get("/dealers/:id", (req, res) => dealers.readDealer(db)(req, res));
 app.put("/dealers/:id", (req, res) => dealers.updateDealer(db)(req, res));
 app.delete("/dealers/:id", (req, res) => dealers.deleteDealer(db)(req, res));
 
-app.use("/static", express.static(path.join(__dirname, "..", "public")));
+app.use("/static", express.static(path.join(__dirname, "../", "public")));
 
 app.use((err, req, res, next) => {
   const errStatus = err.statusCode || 500;

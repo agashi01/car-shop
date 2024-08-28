@@ -16,6 +16,8 @@ export default function Add({ page, id }) {
   const [file, setFile] = useState(null); // S
   const [selectedFileName, setSelectedFileName] = useState([])
   const [currentImageIndex, setCurrentImageIndex] = useState(null);
+  const [value, setValue] = useState('')
+  const [modelValue, setModelValue] = useState('')
   const [error, setError] = useState({
     make: "",
     model: "",
@@ -88,7 +90,6 @@ export default function Add({ page, id }) {
   useEffect(() => {
     for (let key in message) {
       if (message[key] !== "correct-add") {
-        console.log(message[key])
         return
       }
     }
@@ -126,9 +127,18 @@ export default function Add({ page, id }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/dealerMake", { params: { model } })
+      .get("http://localhost:3000/dealerMake", { params: { model, reqMake: value } })
       .then((res) => {
-        setAllMake(res.data);
+        if (Array.isArray(res.data)) {
+          console.log(res.data, 'hiaf')
+          setAllMake(res.data);
+          return
+        }
+        setAllMake([res.data]);
+        setValue(res.data.make)
+        console.log(res.data.make)
+
+
       })
       .catch((err) => console.log(err));
   }, [model]);
@@ -200,7 +210,9 @@ export default function Add({ page, id }) {
             <div className="options">
               <p className="text">Make</p>
               <select
+                value={value}
                 onChange={(e) => {
+                  setValue(e.target.value)
                   setError((current) => {
                     return { ...current, make: e.target.value };
                   });
@@ -230,7 +242,7 @@ export default function Add({ page, id }) {
 
                 className={`select sell gap ${message.model}`}
               >
-                <option value="">Select</option>
+                <option onChange={(e) => setModelValue(e.target.value)} value={modelValue}>Select</option>
                 {allModel.map((use, index) => {
                   return (
                     <option key={index} value={use}>

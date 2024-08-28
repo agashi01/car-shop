@@ -11,6 +11,11 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   const [flip, setFlip] = useState(false);
   const [removeMenu, setRemoveMenu] = useState(false);
   const [theOne, setTheOne] = useState(false)
+  const [path] = useState(car.paths[0])
+  const [current, setCurrent] = useState(0)
+  const [isLeftHovered, setIsLeftHovered] = useState(false)
+  const [isRightHovered, setIsRightHovered] = useState(false)
+
   const carObj = Object.keys(car);
 
   const transmission = (e) => {
@@ -18,9 +23,8 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
     return e;
   };
 
-  useEffect(() => { 
-
-    if(removeId===car.id){
+  useEffect(() => {
+    if (removeId === car.id) {
       setTheOne(true)
     }
 
@@ -39,6 +43,7 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
       .put("http://localhost:3000/cars", { id, carId })
       .then(() => {
         setPurchased(true);
+
       })
       .catch((err) => console.log(err));
   };
@@ -46,32 +51,53 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   const mileageUpdate = (km) => {
     let string = km.toString().split("");
     let final = "";
-    let ans='';
+    let ans = '';
 
     let num = 1;
-    for (let i = string.length-1; i >= 0; i--) {
+    for (let i = string.length - 1; i >= 0; i--) {
       final += string[i];
 
-      if (num % 3 === 0 && num != 0 && !(i  === 0)) {
+      if (num % 3 === 0 && num != 0 && !(i === 0)) {
         final += ",";
       }
       num++;
     }
-    num=0
-    for(let x=final.length-1;x>=0;x--){
-      ans+=final[x]
+    num = 0
+    for (let x = final.length - 1; x >= 0; x--) {
+      ans += final[x]
     }
     // console.log(final)
     return ans + " km";
   };
 
+  const prevImage = (e) => {
+    console.log(path[0])
+    e.preventDefault()
+    e.stopPropagation()
+    setCurrent(() => {
+      return (current - 1 + path.length) % path.length
+    })
+  }
+
+  const nextImage = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setCurrent(() => {
+      return (current + 1) % path.length
+    })
+  }
+
   return (
     // eslint-disable-next-line react/prop-types
     <div onClick={() => setFlip(!flip)} className={flip ? "car-card flip" : "car-card"}>
       <div className="front">
-        <div className="card-png"></div>
+        <div className="card-png">
+          <button onMouseEnter={() => setIsLeftHovered(true)} onMouseLeave={() => setIsLeftHovered(false)} style={{ opacity: isLeftHovered ? "1" : ".66" }} className="image-button left" onClick={prevImage}>&lt;</button>
+          <img className="carcard-image" src={`http://localhost:3000/static/${path[current]}`}></img>
+          <button onMouseEnter={() => setIsRightHovered(true)} onMouseLeave={() => setIsRightHovered(false)} style={{ opacity: isRightHovered ? "1" : ".66" }} className="image-button right" onClick={nextImage}>&gt;</button>
+        </div>
         <div className="png-div">
-          {removeId === car.id || theOne  ?
+          {removeId === car.id || theOne ?
             'Removed'
             : car.dealer_id === id && car.owner_id
               ? "Sold"
