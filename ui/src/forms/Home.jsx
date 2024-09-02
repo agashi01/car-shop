@@ -332,7 +332,6 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   };
 
   const scroll = (direction) => () => {
-    console.log(document.body.scrollHeight);
     let position = direction === "bottom" ? document.body.scrollHeight : 0;
     window.scrollTo({
       top: position,

@@ -7,17 +7,49 @@ let fNum = {
   pageNumber: null
 }
 
-const create = (db) => async (req, res) => {
+const create = (db, axios, cloudinary, fs) => async (req, res) => {
   const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body;
-  // console.log(req.files, 'files')
-  
-  let paths=[]
-
-  for(let x=0;x<req.files.length;x++){
-    let index=req.files[x].path.indexOf("\cars")
-    paths[x]=req.files[x]?.path?.slice(index)
+  let urls = []
+  try {
+    for (let x = 0; x < req.files.length; x++) {
+      let images = await cloudinary.uploader.upload(req.files[x].path)
+      urls[x] = images.secure_url
+      console.log(images.secure_url)
+    }
+  } catch (err) {
+    console.log(err, 'cloudinary')
   }
 
+  const response = await fetch(
+    'https://api-inference.huggingface.co/models/facebook/detr-resnet-50',
+    {
+      headers: { Authorization: `Bearer ${process.env.IMAGEAPI}` },
+      method: "POST",
+      'content-type': 'application/json',
+      body: urls
+    }
+  );
+  const result = await response.json();
+  if (!response.ok) {
+    console.log(response.error)
+    return res.status(response.status).json(response.error)
+  }
+console.log('gui2')
+  const car = result.some(detection => {
+    if (detection.label === 'car') {
+      console.log('gui3')
+      return detection.score > 0.9
+    }
+
+  })
+  console.log('gui')
+
+
+  if (!car) {
+    return res.status(400).json('images are not related to cars')
+  }
+
+  console.log(result, 'hugging')
 
   try {
     // Check if the dealer is valid
@@ -25,6 +57,8 @@ const create = (db) => async (req, res) => {
     if (!dealer) {
       return res.status(404).json("You are not a dealer");
     }
+
+
 
     // Start transaction
     await db.transaction(async (trx) => {
@@ -41,7 +75,7 @@ const create = (db) => async (req, res) => {
             fuel_type: fuelType,
             vehicle_type: vehicleType,
             dealer_id,
-            paths:JSON.stringify([paths])
+            paths: JSON.stringify([urls])
           })
           .returning("*");
 
@@ -333,9 +367,8 @@ const readAll = (db) => async (req, res) => {
     res.status(400).json("something went wrong");
   }
 };
-
 const dealerModel = (db) => (req, res) => {
-  const { make } = req.query;
+  const { make, reqModel } = req.query;
 
   let model = db("cars_info").distinct("model");
 
@@ -344,6 +377,18 @@ const dealerModel = (db) => (req, res) => {
   }
   model
     .then((models) => {
+      if (models.some((el) => el.model === reqModel)) {
+        let obj = {}
+        obj.modelValue = reqModel
+        const model = sortModel(models);
+        const fModel = [];
+        for (let x = 0; x < model.length; x++) {
+          fModel[x] = model[x].model;
+        }
+        obj.models = fModel
+        return res.json(obj)
+      }
+
       const model = sortModel(models);
       const fModel = [];
       for (let x = 0; x < model.length; x++) {
@@ -359,20 +404,15 @@ const dealerModel = (db) => (req, res) => {
 
 const dealerMake = (db) => (req, res) => {
   const { model, reqMake } = req.query;
-  console.log(model,'model')
-
   let make = db("cars_info").distinct("make");
   if (model) {
     make = make.where("model", model);
   }
   make
     .then((makes) => {
-      console.log(makes)
-      if (makes[0].make === reqMake&&model) {
-        console.log('i got here')
+      if (makes[0].make === reqMake && model) {
         return res.json(makes[0])
       }
-      console.log('no i got here')
       return res.json(makes);
     })
     .catch((err) => {

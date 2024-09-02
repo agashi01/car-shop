@@ -18,6 +18,7 @@ export default function Add({ page, id }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(null);
   const [value, setValue] = useState('')
   const [modelValue, setModelValue] = useState('')
+  const [Unavailable, setUnavailable] = useState(false)
   const [error, setError] = useState({
     make: "",
     model: "",
@@ -109,6 +110,8 @@ export default function Add({ page, id }) {
     for (let [key, value] of formdata.entries()) {
       console.log(key, value);
     }
+
+    setUnavailable(true)
 
     axios.post('http://localhost:3000/cars', formdata, {
       headers: {
@@ -362,7 +365,14 @@ export default function Add({ page, id }) {
               )}
             </div>
           </div>
-          <button type="submit" style={{ padding: "10px" }} className="create">
+          <button type="submit" style=
+            {{
+              padding: "10px",
+              pointerEvents: Unavailable ? 'none' : 'auto',
+              opacity: Unavailable ? '0.5' : '1',
+              cursor: Unavailable? 'not-allowed':'pointer'
+            }}
+            className="create">
             Create
           </button>
           {errorMessage ? <p className="text">{errorMessage}</p> : null}

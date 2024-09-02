@@ -24,6 +24,7 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   };
 
   useEffect(() => {
+      console.log(path)
     if (removeId === car.id) {
       setTheOne(true)
     }
@@ -71,7 +72,6 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   };
 
   const prevImage = (e) => {
-    console.log(path[0])
     e.preventDefault()
     e.stopPropagation()
     setCurrent(() => {
@@ -93,7 +93,7 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
       <div className="front">
         <div className="card-png">
           <button onMouseEnter={() => setIsLeftHovered(true)} onMouseLeave={() => setIsLeftHovered(false)} style={{ opacity: isLeftHovered ? "1" : ".66" }} className="image-button left" onClick={prevImage}>&lt;</button>
-          <img className="carcard-image" src={`http://localhost:3000/static/${path[current]}`}></img>
+          <img className="carcard-image" src={path[current]}></img>
           <button onMouseEnter={() => setIsRightHovered(true)} onMouseLeave={() => setIsRightHovered(false)} style={{ opacity: isRightHovered ? "1" : ".66" }} className="image-button right" onClick={nextImage}>&gt;</button>
         </div>
         <div className="png-div">

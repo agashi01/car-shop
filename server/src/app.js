@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
 const knex = require("knex");
@@ -8,16 +9,27 @@ const auth = require("./auth");
 const path = require("path");
 const multer = require("multer");
 const runOnce= require('./RunOnce')
+const axios= require('axios')
+const cloudinary=require('cloudinary').v2
+const fs=require('fs')
+
+cloudinary.config({
+  cloud_name:process.env.CLOUDNAME,
+  api_key:process.env.APIKEY,
+  api_secret:process.env.APISECRET
+})
 
 const db = knex({
   client: "pg",
   connection: {
     host: "localhost",
     user: "postgres",
-    password: "Alienilahet2005",
-    database: "car_shop",
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
   },
 });
+
+
 
 const app = express();
 const storage = multer.diskStorage({
@@ -53,7 +65,7 @@ app.get("/dealerModel", (req, res) => cars.dealerModel(db)(req, res));
 app.get("/dealerMake", (req, res) => cars.dealerMake(db)(req, res));
 app.get("/model", (req, res) => cars.model(db)(req, res));
 app.post("/cars", upload.array("files", 10), (req, res) =>
-  cars.createCar(db)(req, res)
+  cars.createCar(db,axios,cloudinary,fs)(req, res)
 );
 app.get("/make", (req, res) => cars.make(db)(req, res));
 app.get("/cars/guest", (req, res) => cars.readAllGuest(db)(req, res));
