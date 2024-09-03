@@ -9,7 +9,6 @@ import Home from "./forms/Home.jsx";
 import AfterRegister from "./forms/AfterRegister.jsx";
 import Add from "./forms/Add.jsx";
 import AfterAdd from "./forms/AfterAdd.jsx";
-
 import "./App.css";
 
 export default function App() {
@@ -39,7 +38,7 @@ export default function App() {
             <Logo logo={logo} />
           </div>
           <div className="div-box">
-            {page === "add" ? <button type='btn' onClick={()=>setPage('home')} className="btn2 go-back">Home</button> : null}
+            {page === "add" ? <button type='btn' onClick={() => setPage('home')} className="btn2 go-back">Home</button> : null}
 
             <div className="box">
               {page === "signIn" ? (

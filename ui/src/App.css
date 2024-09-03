@@ -1162,6 +1162,11 @@ In {
   margin-bottom: 30px;
 }
 
+.add-error{
+  color:red;
+  font-size: 0.9em;
+}
+
 .error {
   display: flex;
   justify-content: center;

@@ -10,14 +10,26 @@ let fNum = {
 const create = (db, axios, cloudinary, fs) => async (req, res) => {
   const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body;
   let urls = []
+  const resources = await cloudinary.api.resources();
+  console.log(resources)
+  for (const resource of resources.resources) {
+    let result = await cloudinary.uploader.destroy(resource.public_id)
+    console.log(result, 'result')
+  }
+  console.log('done')
+  let images = []
   try {
     for (let x = 0; x < req.files.length; x++) {
-      let images = await cloudinary.uploader.upload(req.files[x].path)
-      urls[x] = images.secure_url
-      console.log(images.secure_url)
+      images[x] = await cloudinary.uploader.upload(req.files[x].path
+      )
+      urls[x] = images[x].secure_url
     }
   } catch (err) {
+    for (let x = 0; x < images.length; x++) {
+      cloudinary.uploader.destroy(images[x].public_id)
+    }
     console.log(err, 'cloudinary')
+    return res.json(err)
   }
 
   const response = await fetch(
@@ -26,30 +38,36 @@ const create = (db, axios, cloudinary, fs) => async (req, res) => {
       headers: { Authorization: `Bearer ${process.env.IMAGEAPI}` },
       method: "POST",
       'content-type': 'application/json',
-      body: urls
+      body: urls 
     }
   );
-  const result = await response.json();
-  if (!response.ok) {
-    console.log(response.error)
-    return res.status(response.status).json(response.error)
-  }
-console.log('gui2')
-  const car = result.some(detection => {
-    if (detection.label === 'car') {
-      console.log('gui3')
-      return detection.score > 0.9
+  console.log(response, 'response')
+  if (response.ok) {
+
+    const result = await response.json();
+    const car = result.some(detection => detection.label === 'car' && detection.score > 0.9);
+
+    if (!car) {
+      for (let x = 0; x < images.length; x++) {
+        cloudinary.uploader.destroy(images[x].public_id)
+      }
+      return res.status(400).json('images are not related to cars')
+    } else {
+      console.log('images are related to cars')
+      console.log(result, 'hugging')
+
     }
 
-  })
-  console.log('gui')
+  } else {
+    for (let x = 0; x < images.length; x++) {
+      let ans = await cloudinary.uploader.destroy(images[x].public_id)
 
-
-  if (!car) {
-    return res.status(400).json('images are not related to cars')
+      console.log(ans, 'ans')
+    }
+    const errorText=await response.text()
+    console.log(response.status,response.statusText,errorText)
+    return res.status(response.status).json('problems in the server')
   }
-
-  console.log(result, 'hugging')
 
   try {
     // Check if the dealer is valid

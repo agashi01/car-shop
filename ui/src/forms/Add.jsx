@@ -119,11 +119,13 @@ export default function Add({ page, id }) {
       }
     })
       .then(() => {
+        setUnavailable(false)
         page('afterAdd')
       })
       .catch(err => {
+        setUnavailable(false)
         console.log(err)
-        setErrorMessage(err.data)
+        setErrorMessage(err.response.data)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message])
@@ -206,177 +208,180 @@ export default function Add({ page, id }) {
 
   return (
     <>
-      <form encType="multipart/form-data" onSubmit={submit}>
-        <div className="sell-menu">
+      <form className="sell-menu" encType="multipart/form-data" onSubmit={submit}>
 
-          <div style={{ display: "flex" }}>
-            <div className="options">
-              <p className="text">Make</p>
-              <select
-                value={value}
-                onChange={(e) => {
-                  setValue(e.target.value)
-                  setError((current) => {
-                    return { ...current, make: e.target.value };
-                  });
-                  setMake(e.target.value);
-                }}
-                className={`select sell ${message.make}`}
-              >
-                <option value="">Select</option>
-                {allMake.map((use, index) => {
-                  return (
-                    <option key={index} value={use.make}>
-                      {use.make}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div style={{ marginLeft: '15px' }} className="options2">
-              <p className="text3">Model</p>
-              <select
-                onChange={(e) => {
-                  setError((current) => {
-                    return { ...current, model: e.target.value };
-                  });
-                  setModel(e.target.value);
-                }}
+        <div style={{ display: "flex" }}>
+          <div className="options">
+            <p className="text">Make</p>
+            <select
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value)
+                setError((current) => {
+                  return { ...current, make: e.target.value };
+                });
+                setMake(e.target.value);
+              }}
+              className={`select sell ${message.make}`}
+            >
+              <option value="">Select</option>
+              {allMake.map((use, index) => {
+                return (
+                  <option key={index} value={use.make}>
+                    {use.make}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <div style={{ marginLeft: '15px' }} className="options2">
+            <p className="text3">Model</p>
+            <select
+              onChange={(e) => {
+                setError((current) => {
+                  return { ...current, model: e.target.value };
+                });
+                setModel(e.target.value);
+              }}
 
-                className={`select sell gap ${message.model}`}
-              >
-                <option onChange={(e) => setModelValue(e.target.value)} value={modelValue}>Select</option>
-                {allModel.map((use, index) => {
-                  return (
-                    <option key={index} value={use}>
-                      {use}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
+              className={`select sell gap ${message.model}`}
+            >
+              <option onChange={(e) => setModelValue(e.target.value)} value={modelValue}>Select</option>
+              {allModel.map((use, index) => {
+                return (
+                  <option key={index} value={use}>
+                    {use}
+                  </option>
+                );
+              })}
+            </select>
           </div>
-
-          <div style={{ display: "flex" }}>
-            <div className="options">
-              <p className="text">Mileage</p>
-              <input
-                placeholder="Km"
-                onChange={mileage}
-                className={`input-sell ${message.mileage}`}
-              ></input>
-            </div>
-            <div style={{ marginLeft: '15px' }} className="options2">
-              <p className="text3">Color</p>
-              <input
-                onChange={(e) => {
-                  setError((current) => {
-                    return { ...current, color: e.target.value };
-                  });
-                }}
-                className={`input-sell ${message.color}`}
-              ></input>
-            </div>
-          </div>
-          <div style={{ display: "flex" }}>
-            <div className="options" style={{ display: "flex", flexDirection: "column" }}>
-              <p className="text">Transmission</p>
-              <select
-                onChange={(e) => {
-                  setError((current) => {
-                    return { ...current, transmission: e.target.value };
-                  });
-                }}
-                className={`select sell ${message.transmission}`}
-              >
-                <option value="">Select</option>
-                {transmission.map((use, index) => {
-                  return (
-                    <option key={index} value={use}>
-                      {capitalize(use.replaceAll('_', ' '))}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div className="options2">
-              <p style={{ marginRight: '8px' }} className="text3">Fuel Type</p>
-              <select
-                onChange={(e) => {
-                  setError((current) => {
-                    return { ...current, fuelType: e.target.value };
-                  });
-                }}
-                className={`select sell gap ${message.fuelType}`}
-              >
-                <option value="">Select</option>
-                {fuelType.map((use, index) => {
-                  return (
-                    <option key={index} value={use}>
-                      {use}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: "flex" }}>
-            <div className="options">
-              <p className="text">Vehicle Type</p>
-              <select
-                onChange={(e) => {
-                  setError((current) => {
-                    return { ...current, vehicleType: e.target.value };
-                  });
-                }}
-                className={`select-vehicle ${message.vehicleType}`}
-              >
-                <option value="">Select</option>
-                {vehicleType.map((use, index) => {
-                  return (
-                    <option key={index} value={use}>
-                      {use}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div className="image-input">
-              <p className="text3">Image</p>
-              <label htmlFor="files" className={`input-sell image ${message.file}`}>
-                Choose Files
-                <input
-                  id='files'
-                  type="file"
-                  accept="image/*"
-                  capture="environment" // This opens the camera on mobile devices
-                  className=' label-input-sell'
-                  onChange={handleFile}
-                  multiple
-                />
-              </label>
-              {selectedFileName.length > 0 && (
-                <div className='file-div'>
-                  <p style={{ cursor: 'pointer' }} onClick={openModal()} className="file-name">
-                    Photos
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-          <button type="submit" style=
-            {{
-              padding: "10px",
-              pointerEvents: Unavailable ? 'none' : 'auto',
-              opacity: Unavailable ? '0.5' : '1',
-              cursor: Unavailable? 'not-allowed':'pointer'
-            }}
-            className="create">
-            Create
-          </button>
-          {errorMessage ? <p className="text">{errorMessage}</p> : null}
         </div>
+
+        <div style={{ display: "flex" }}>
+          <div className="options">
+            <p className="text">Mileage</p>
+            <input
+              placeholder="Km"
+              onChange={mileage}
+              className={`input-sell ${message.mileage}`}
+            ></input>
+          </div>
+          <div style={{ marginLeft: '15px' }} className="options2">
+            <p className="text3">Color</p>
+            <input
+              onChange={(e) => {
+                setError((current) => {
+                  return { ...current, color: e.target.value };
+                });
+              }}
+              className={`input-sell ${message.color}`}
+            ></input>
+          </div>
+        </div>
+        <div style={{ display: "flex" }}>
+          <div className="options" style={{ display: "flex", flexDirection: "column" }}>
+            <p className="text">Transmission</p>
+            <select
+              onChange={(e) => {
+                setError((current) => {
+                  return { ...current, transmission: e.target.value };
+                });
+              }}
+              className={`select sell ${message.transmission}`}
+            >
+              <option value="">Select</option>
+              {transmission.map((use, index) => {
+                return (
+                  <option key={index} value={use}>
+                    {capitalize(use.replaceAll('_', ' '))}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <div className="options2">
+            <p style={{ marginRight: '8px' }} className="text3">Fuel Type</p>
+            <select
+              onChange={(e) => {
+                setError((current) => {
+                  return { ...current, fuelType: e.target.value };
+                });
+              }}
+              className={`select sell gap ${message.fuelType}`}
+            >
+              <option value="">Select</option>
+              {fuelType.map((use, index) => {
+                return (
+                  <option key={index} value={use}>
+                    {use}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ display: "flex" }}>
+          <div className="options">
+            <p className="text">Vehicle Type</p>
+            <select
+              onChange={(e) => {
+                setError((current) => {
+                  return { ...current, vehicleType: e.target.value };
+                });
+              }}
+              className={`select-vehicle ${message.vehicleType}`}
+            >
+              <option value="">Select</option>
+              {vehicleType.map((use, index) => {
+                return (
+                  <option key={index} value={use}>
+                    {use}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <div className="image-input">
+            <p className="text3">Image</p>
+            <label htmlFor="files" className={`input-sell image ${message.file}`}>
+              Choose Files
+              <input
+                id='files'
+                type="file"
+                accept="image/*"
+                capture="environment" // This opens the camera on mobile devices
+                className=' label-input-sell'
+                onChange={handleFile}
+                multiple
+              />
+            </label>
+            {selectedFileName.length > 0 && (
+              <div className='file-div'>
+                <p style={{ cursor: 'pointer' }} onClick={openModal()} className="file-name">
+                  Photos
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+        {errorMessage &&
+          <div>
+            <p className="add-error">
+              {errorMessage}
+            </p>
+          </div>}
+        <button type="submit" style=
+          {{
+            padding: "10px",
+            pointerEvents: Unavailable ? 'none' : 'auto',
+            opacity: Unavailable ? '0.5' : '1',
+            cursor: Unavailable ? 'not-allowed' : 'pointer'
+          }}
+          className="create">
+          Create
+        </button>
       </form>
 
       {currentImageIndex !== null && (

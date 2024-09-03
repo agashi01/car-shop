@@ -17,7 +17,7 @@ export default function AfterAdd({ page }) {
             page("home");
           }}
         >
-          Home
+          Home 
         </button>
       </div>
     </div>
