@@ -7,7 +7,7 @@ let fNum = {
   pageNumber: null
 }
 
-const create = (db, axios, cloudinary, fs) => async (req, res) => {
+const create = (db, axios, cloudinary) => async (req, res) => {
   const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body;
   let urls = []
   const resources = await cloudinary.api.resources();
@@ -54,8 +54,6 @@ const create = (db, axios, cloudinary, fs) => async (req, res) => {
       return res.status(400).json('images are not related to cars')
     } else {
       console.log('images are related to cars')
-      console.log(result, 'hugging')
-
     }
 
   } else {

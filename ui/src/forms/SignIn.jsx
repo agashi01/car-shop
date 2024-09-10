@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import axios from "axios";
+import {axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
 
 // eslint-disable-next-line react/prop-types
 export default function SignInForm({ dealer, id, logo, page, setGuest, username }) {
@@ -8,6 +8,7 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
   const [error, setError] = useState({ email: "", password: "" });
   const [backendError, setBackendError] = useState(null);
   const [backendMessage, setBackendMessage] = useState(null);
+  const axiosInstance=useAxiosInstance()
 
   const email = useRef(null);
   const password = useRef(null);
@@ -21,13 +22,16 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
   };
 
   useEffect(() => {
+
     if (backendError) {
-      axios
-        .post("http://localhost:3000/log-in", {
+      axiosInstance
+        .post("/log-in", {
           email: signIn.email,
           password: signIn.password,
         })
         .then((res) => {
+          console.log('Request headers:here', res.config.headers);
+
           console.log(res.data.type)
           setBackendError(false);
           dealer(res.data?.type)

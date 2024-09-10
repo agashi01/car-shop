@@ -3,7 +3,8 @@ import React, { useCallback } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
-import axios from "axios";
+import {axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
+
 
 // eslint-disable-next-line react/prop-types
 export default function Register({ logo, page }) {
@@ -12,6 +13,7 @@ export default function Register({ logo, page }) {
   const mbiemri = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+  const axiosInstance=useAxiosInstance()
 
   const [backendError, setBackendError] = useState();
   const [backendMessage, setBackendMessage] = useState();
@@ -47,8 +49,8 @@ export default function Register({ logo, page }) {
 
   useEffect(() => {
     if (backendError) {
-      axios
-        .post("http://localhost:3000/sign-up", {
+      axiosInstance
+        .post("/sign-up", {
           name: register.emri,
           surname: register.mbiemri,
           email: register.email,

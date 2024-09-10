@@ -5,18 +5,16 @@ const knex = require("knex");
 const cors = require("cors");
 const cars = require("./cars");
 const dealers = require("./dealers");
-const auth = require("./auth");
 const path = require("path");
 const multer = require("multer");
-const runOnce= require('./RunOnce')
-const axios= require('axios')
-const cloudinary=require('cloudinary').v2
-const fs=require('fs')
-
+const runOnce = require('./RunOnce')
+const axios = require('axios')
+const cloudinary = require('cloudinary').v2
+const jwt = require('jsonwebtoken')
 cloudinary.config({
-  cloud_name:process.env.CLOUDNAME,
-  api_key:process.env.APIKEY,
-  api_secret:process.env.APISECRET
+  cloud_name: process.env.CLOUDNAME,
+  api_key: process.env.APIKEY,
+  api_secret: process.env.APISECRET
 })
 
 const db = knex({
@@ -43,20 +41,48 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:5173', // Update with the origin of your frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'guest'], // Allow the guest header
+};
+
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
-// save
+const authenticate = (req, res, next) => {
+  app.disable('x-powered-by')
+  console.log('blood')
+  next()
+
+//   if (req.headers.guest) {
+//     next()
+//   } else if (req.headers.guest === false) {
+//     // jwt.verify(req.cookie.token, process.env.APISECRET, (err, user) => {
+//     //   if (err)
+//     //     return res.status(400).json(`this is the error ${err}`)
+//     //   req.user = user
+      
+//     // })
+//     next()
+//   } else {
+//     console.log(req.headers)
+//     res.status(404).json('guest parameter is missing')
+//   }
+}
+
+// app.use(authenticate)
 
 app.get("/", (req, res) => {
   return res.status(200).json("Server is up and running!");
 });
 
-app.post("/sign-up", (req, res) => auth.signUp(db)(req, res));
-app.post("/log-in", (req, res) => auth.logIn(db)(req, res));
-
 app.post("/runOnce", runOnce.runOnce(db))
+
+app.post('/test',(req,res)=>{
+  console.log(req.headers,'hi')
+})
 
 app.get("/transmission", (req, res) => cars.transmission(db)(req, res));
 app.get("/fuelType", (req, res) => cars.fuelType(db)(req, res));
@@ -65,8 +91,9 @@ app.get("/dealerModel", (req, res) => cars.dealerModel(db)(req, res));
 app.get("/dealerMake", (req, res) => cars.dealerMake(db)(req, res));
 app.get("/model", (req, res) => cars.model(db)(req, res));
 app.post("/cars", upload.array("files", 10), (req, res) =>
-  cars.createCar(db,axios,cloudinary,fs)(req, res)
+  cars.createCar(db, axios, cloudinary, fs)(req, res)
 );
+
 app.get("/make", (req, res) => cars.make(db)(req, res));
 app.get("/cars/guest", (req, res) => cars.readAllGuest(db)(req, res));
 app.get("/cars", (req, res) => cars.readAll(db)(req, res));

@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/jsx-key */
 import { React, useEffect, useState } from "react";
-import axios from "axios";
 import { capitalize } from "lodash"
+import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
 
 export default function Add({ page, id }) {
   const [allMake, setAllMake] = useState([]);
@@ -19,6 +19,10 @@ export default function Add({ page, id }) {
   const [value, setValue] = useState('')
   const [modelValue, setModelValue] = useState('')
   const [Unavailable, setUnavailable] = useState(false)
+   const [loading,setLoading]=useState(false)
+
+   const axiosInstance=useAxiosInstance()
+
   const [error, setError] = useState({
     make: "",
     model: "",
@@ -42,8 +46,6 @@ export default function Add({ page, id }) {
 
   useEffect(() => {
 
-    console.log('hi')
-
     const toggle = (e) => {
 
       if (e.key === 'ArrowLeft') {
@@ -53,7 +55,6 @@ export default function Add({ page, id }) {
       }
     }
 
-    console.log('hi')
     if (currentImageIndex !== null) {
       document.addEventListener('keydown', toggle)
     } else {
@@ -112,17 +113,21 @@ export default function Add({ page, id }) {
     }
 
     setUnavailable(true)
+    setLoading(true)
 
-    axios.post('http://localhost:3000/cars', formdata, {
+    axiosInstance.post('/cars', formdata, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
       .then(() => {
+        setLoading(false)
+
         setUnavailable(false)
         page('afterAdd')
       })
       .catch(err => {
+        setLoading(false)
         setUnavailable(false)
         console.log(err)
         setErrorMessage(err.response.data)
@@ -131,8 +136,8 @@ export default function Add({ page, id }) {
   }, [message])
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/dealerMake", { params: { model, reqMake: value } })
+    axiosInstance
+      .get("/dealerMake", { params: { model, reqMake: value } })
       .then((res) => {
         if (Array.isArray(res.data)) {
           console.log(res.data, 'hiaf')
@@ -149,8 +154,8 @@ export default function Add({ page, id }) {
   }, [model]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/dealerModel", { params: { make } })
+    axiosInstance
+      .get("/dealerModel", { params: { make } })
       .then((res) => {
         setAllModel(res.data);
       })
@@ -158,19 +163,19 @@ export default function Add({ page, id }) {
   }, [make]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/transmission").then((res) => {
+    axiosInstance.get("/transmission").then((res) => {
       setTransmission(res.data);
     });
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/fuelType").then((res) => {
+    axiosInstance.get("/fuelType").then((res) => {
       setFuelType(res.data);
     });
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/vehicleType").then((res) => {
+    axiosInstance.get("/vehicleType").then((res) => {
       setVehicleType(res.data);
     });
   }, []);
@@ -383,6 +388,15 @@ export default function Add({ page, id }) {
           Create
         </button>
       </form>
+
+      {loading && (
+        <div className='modal'>
+          <div className='loading-div'>
+            <div>Please wait...</div>
+            <div className='loading'></div>
+          </div>
+        </div>
+      )}
 
       {currentImageIndex !== null && (
         <div className="modal" onClick={closeModal}>

@@ -29,7 +29,8 @@ const objToList = (list) => {
 // }
 
 const signUp = (db) => async (req, res) => {
-  const { name, surname, email, password, username,type } = req.body;
+  const { name, surname, email, password, username, type } = req.body;
+
   const hash = await bcrypt.hash(password, 10);
 
   db.transaction((trx) => {
@@ -68,11 +69,11 @@ const signUp = (db) => async (req, res) => {
         console.log(err)
         res.status(500).json("email is already in use");
       })
-      
+
   });
 };
 
-const logIn = (db) => async (req, res) => {
+const logIn = (db, jwt) => async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -84,21 +85,28 @@ const logIn = (db) => async (req, res) => {
       email,
     })
     .select("*")
-    .returning("*")
+    .first()
     .then((logInEmail) => {
       db("users_info")
         .where({
-          email: logInEmail[0].email,
+          email: logInEmail.email,
         })
         .select("*")
-        .returning("*")
+        .first()
         .then(async (userInfo) => {
-          const isValidPassword = await bcrypt.compare(password, userInfo[0].hash);
+          console.log(userInfo)
+          const isValidPassword = await bcrypt.compare(password, userInfo.hash);
 
           if (isValidPassword) {
-           
-                    return res.json({...logInEmail[0], username: userInfo[0].username });
-              
+            const header = {
+              name: userInfo.username
+            }
+            const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '15s' })
+            const refresh=jwt.sign(header, process.env.JWT_REFRESH)
+            res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' })
+            res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, sameSite: 'Strict' })
+            return res.json({ ...logInEmail, username: userInfo.username});
+
           } else {
             return res.status(400).json("wrong password");
           }

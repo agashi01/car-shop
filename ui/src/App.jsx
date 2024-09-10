@@ -9,6 +9,7 @@ import Home from "./forms/Home.jsx";
 import AfterRegister from "./forms/AfterRegister.jsx";
 import Add from "./forms/Add.jsx";
 import AfterAdd from "./forms/AfterAdd.jsx";
+import {useGuest} from './Context.jsx'
 import "./App.css";
 
 export default function App() {
@@ -16,7 +17,7 @@ export default function App() {
   const [id, setId] = useState(null);
   const [logo, setLogo] = useState("logo");
   const [page, setPage] = useState("signIn");
-  const [guest, setGuest] = useState(true);
+  const {guest, setGuest} = useGuest()
   const [username, setUsername] = useState("");
 
   const changePage = (text) => {

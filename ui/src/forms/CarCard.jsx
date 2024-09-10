@@ -2,8 +2,7 @@
 /* eslint-disable react/prop-types */
 
 import { React, useEffect, useState } from "react";
-
-import axios from "axios";
+import {axiosInstance as useAxiosInstance} from "./AxiosConfig.jsx";
 
 // eslint-disable-next-line react/prop-types
 export default function CarCard({ removeId, carId, deletMarket, deletSold, id, isit, guest, car }) {
@@ -16,6 +15,8 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   const [isLeftHovered, setIsLeftHovered] = useState(false)
   const [isRightHovered, setIsRightHovered] = useState(false)
 
+  const axiosInstance=useAxiosInstance()
+
   const carObj = Object.keys(car);
 
   const transmission = (e) => {
@@ -24,7 +25,6 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   };
 
   useEffect(() => {
-      console.log(path)
     if (removeId === car.id) {
       setTheOne(true)
     }
@@ -40,8 +40,8 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
       return;
     }
 
-    axios
-      .put("http://localhost:3000/cars", { id, carId })
+    axiosInstance
+      .put("/cars", { id, carId })
       .then(() => {
         setPurchased(true);
 

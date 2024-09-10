@@ -10,28 +10,28 @@
   src: url("./other/Fira_Code/FiraCode-VariableFont_wght.ttf") format("truetype");
 }
 
-.image-button{
-  position:absolute;
+.image-button {
+  position: absolute;
   /* left: 0; */
   z-index: 1000;
   background-color: rgb(189, 195, 199);
   opacity: 0.66;
-    color: #333;
-    height: 50px;
-    width: 50px;
-    padding: 0.25em 0.5em;
-    border-radius: 50px;
-    cursor: pointer;
-    outline: none;
-    transition: 0.3s;
+  color: #333;
+  height: 50px;
+  width: 50px;
+  padding: 0.25em 0.5em;
+  border-radius: 50px;
+  cursor: pointer;
+  outline: none;
+  transition: 0.3s;
 }
 
-.left{
-  left:0
+.left {
+  left: 0
 }
 
-.right{
-  right:0
+.right {
+  right: 0
 }
 
 .image-button:hover,
@@ -41,32 +41,59 @@
   border: none;
 }
 
-.image-button:focus{
-  opacity:1;
+.image-button:focus {
+  opacity: 1;
   outline: none;
 }
 
-.image-button:focus::after{
-  opacity:.66;
+.image-button:focus::after {
+  opacity: .66;
 }
 
-.carcard-image{
+.carcard-image {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   overflow: hidden;
 }
+
 /* image */
 
 
-.itis{
+.itis {
   height: 200px;
   position: relative;
   background-color: #3f3f3f;
   padding: 20px;
   border-radius: 8px;
   text-align: center;
+}
+
+.loading-div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading {
+  border-radius: 50%;
+  border: 8px solid rgba(0, 0, 0, 0.1);
+  border-top: 8px solid hsla(200, 100%, 50%);
+  height: 60px;
+  width: 60px;
+  animation: spin 1s linear infinite
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .modal {
@@ -94,8 +121,8 @@
   text-align: center;
 }
 
-.close-div{
-  height:30px;
+.close-div {
+  height: 30px;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -107,8 +134,8 @@
   cursor: pointer;
 }
 
-.image-div{
-  height:80%;
+.image-div {
+  height: 80%;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -119,11 +146,11 @@
 }
 
 .modal-image {
-  top:20px;
+  top: 20px;
   width: 100%;
   height: 100%;
   margin: 20px 0;
-  
+
 }
 
 .modal-navigation {
@@ -151,7 +178,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap:1px;
+  gap: 1px;
   height: 240px;
   width: auto;
 }
@@ -505,7 +532,7 @@ front .model-clicked li:last-child {
 .input-sell.image {
   background-color: #f8f8f8;
   color: #333;
-  font-weight:500;
+  font-weight: 500;
   text-align: center;
   width: 100px;
   cursor: pointer;
@@ -520,8 +547,8 @@ front .model-clicked li:last-child {
 }
 
 .label-input-sell {
-  cursor:pointer;
-  display:none;
+  cursor: pointer;
+  display: none;
 }
 
 
@@ -1162,8 +1189,8 @@ In {
   margin-bottom: 30px;
 }
 
-.add-error{
-  color:red;
+.add-error {
+  color: red;
   font-size: 0.9em;
 }
 

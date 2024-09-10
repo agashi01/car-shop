@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import CarCard from "./CarCard";
-import axios from "axios";
 import carLogo from "../car_logo.png";
 import debounce from "lodash/debounce";
+import { axiosInstance as useAxiosInstance } from "./AxiosConfig";
 
 // eslint-disable-next-line react/prop-types
 function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
@@ -27,6 +27,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   const [removeId, setRemoveId] = useState(null);
   const [end, setEnd] = useState(false);
   const [num, setNum] = useState(0);
+  const axiosInstance = useAxiosInstance()
 
   const modelRef = useRef();
   const modelMenuRef = useRef();
@@ -56,18 +57,22 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   }, [cars]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/model", {
+    axiosInstance.post('/test')
+      .then(res => console.log(res))
+    axiosInstance
+      .get("/model", {
         params: {
           vehicleList,
         },
       })
       .then((res) => {
+        console.log('Request headers:', res.config.headers);
         setModelInput(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
+
     return;
   }, [vehicleList]);
 
@@ -178,8 +183,8 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   }, []);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/make")
+    axiosInstance
+      .get("/make")
       .then((response) => {
         const res = response.data;
         const list = sorted(res.map((item, index) => ({ id: index, ...item, checked: false })));
@@ -202,7 +207,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
 
   useEffect(() => {
     const fetchCars = async () => {
-      const url = guest ? "http://localhost:3000/cars/guest" : "http://localhost:3000/cars";
+      const url = guest ? "/cars/guest" : "/cars";
       const params = {
         dealer,
         num,
@@ -213,7 +218,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
         ...(guest ? {} : { id }),
       };
       try {
-        const res = await axios.get(url, { params });
+        const res = await axiosInstance.get(url, { params });
         setCars(res.data[1]);
         setEnd(res.data[0])
       } catch (err) {
@@ -308,8 +313,8 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
     console.log(deletSold, carId);
     e.preventDefault();
     setRemoveId(carId);
-    axios
-      .delete("http://localhost:3000/cars", { params: { id: carId } })
+    axiosInstance
+      .delete("/cars", { params: { id: carId } })
       .then((res) => {
         setRemoveId(carId);
         console.log(res);
@@ -321,8 +326,8 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   const marketDelete = (e) => {
     console.log(deletMarket, carId);
     e.preventDefault();
-    axios
-      .delete("http://localhost:3000/cars", { params: { id: carId } })
+    axiosInstance
+      .delete("/cars", { params: { id: carId } })
       .then((res) => {
         console.log(res);
         setRemoveId(carId);

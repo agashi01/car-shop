@@ -1,0 +1,15 @@
+import React, { createContext, useContext, useState } from 'react'
+
+const Context = createContext()
+
+export const ContextProvider = ({ children }) => {
+    const [guest, setGuest] = useState(true)
+
+    return (
+        <Context value={{ guest, setGuest }}>
+            {children}
+        </Context>
+    )
+}
+
+export const useGuest = () => useContext(Context)
