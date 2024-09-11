@@ -7,7 +7,7 @@ let fNum = {
   pageNumber: null
 }
 
-const create = (db, axios, cloudinary) => async (req, res) => {
+const create = (db, cloudinary) => async (req, res) => {
   const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body;
   let urls = []
   const resources = await cloudinary.api.resources();
@@ -38,7 +38,7 @@ const create = (db, axios, cloudinary) => async (req, res) => {
       headers: { Authorization: `Bearer ${process.env.IMAGEAPI}` },
       method: "POST",
       'content-type': 'application/json',
-      body: urls 
+      body: urls
     }
   );
   console.log(response, 'response')
@@ -62,8 +62,8 @@ const create = (db, axios, cloudinary) => async (req, res) => {
 
       console.log(ans, 'ans')
     }
-    const errorText=await response.text()
-    console.log(response.status,response.statusText,errorText)
+    const errorText = await response.text()
+    console.log(response.status, response.statusText, errorText)
     return res.status(response.status).json('problems in the server')
   }
 

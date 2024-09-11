@@ -28,6 +28,9 @@ app.use((req,res,next)=>{
     next()
 })
 
+app.get('/test',(req,res)=>{
+    res.json('success')
+})
 app.post("/sign-up", (req, res) => auth.signUp(db)(req, res));
 app.post("/log-in", (req, res) => auth.logIn(db, jwt)(req, res));
 

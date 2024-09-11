@@ -57,7 +57,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   }, [cars]);
 
   useEffect(() => {
-    axiosInstance.post('/test')
+    axiosInstance.get('/test')
       .then(res => console.log(res))
     axiosInstance
       .get("/model", {

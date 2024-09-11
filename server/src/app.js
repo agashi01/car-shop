@@ -54,6 +54,8 @@ app.use(bodyParser.json());
 
 app.use("/static", express.static(path.join(__dirname, "../", "public")));
 
+app.options("*",cors(corsOptions))
+
 const authenticate = (req, res, next) => {
   app.disable('x-powered-by')
   console.log('blood')
@@ -83,8 +85,9 @@ app.get("/", (req, res) => {
 
 app.post("/runOnce", runOnce.runOnce(db))
 
-app.post('/test',(req,res)=>{
+app.get('/test',(req,res)=>{
   // console.log(req.headers,'hi')
+  res.json('success')
 })
 
 app.get("/transmission", (req, res) => cars.transmission(db)(req, res));
@@ -94,7 +97,7 @@ app.get("/dealerModel", (req, res) => cars.dealerModel(db)(req, res));
 app.get("/dealerMake", (req, res) => cars.dealerMake(db)(req, res));
 app.get("/model", (req, res) => cars.model(db)(req, res));
 app.post("/cars", upload.array("files", 10), (req, res) =>
-  cars.createCar(db, axios, cloudinary, fs)(req, res)
+  cars.createCar(db,cloudinary)(req, res)
 );
 
 app.get("/make", (req, res) => cars.make(db)(req, res));
