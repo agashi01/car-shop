@@ -205,6 +205,7 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
     setModelList(listM.length ? listM : modelInput.map((item) => item.model));
   }, [modelInput]);
 
+// fetching cars 
   useEffect(() => {
     const fetchCars = async () => {
       const url = guest ? "/cars/guest" : "/cars";
