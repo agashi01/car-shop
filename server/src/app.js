@@ -43,41 +43,40 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // Update with the origin of your frontend
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'guest'], // Allow the guest header
+  allowedHeaders: ['Content-Type', 'Authorization', 'guest']
 };
 
-app.use(cors(corsOptions));
-
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/static", express.static(path.join(__dirname, "../", "public")));
 
-app.options("*",cors(corsOptions))
+// app.options("*",cors(corsOptions))
 
 const authenticate = (req, res, next) => {
   app.disable('x-powered-by')
   console.log('blood')
   next()
 
-//   if (req.headers.guest) {
-//     next()
-//   } else if (req.headers.guest === false) {
-//     // jwt.verify(req.cookie.token, process.env.APISECRET, (err, user) => {
-//     //   if (err)
-//     //     return res.status(400).json(`this is the error ${err}`)
-//     //   req.user = user
-      
-//     // })
-//     next()
-//   } else {
-//     console.log(req.headers)
-//     res.status(404).json('guest parameter is missing')
-//   }
+  if (req.headers.guest === true) {
+    next()
+  } else if (req.headers.guest === 'false') {
+    jwt.verify(req.cookie.token, process.env.APISECRET, (err, user) => {
+      if (err)
+        return res.status(400).json(`this is the error ${err}`)
+      req.user = user
+
+    })
+    next()
+  } else {
+    console.log(req.headers)
+    res.status(404).json('guest parameter is missing')
+  }
 }
 
-// app.use(authenticate)
+app.use(authenticate)
 
 app.get("/", (req, res) => {
   return res.status(200).json("Server is up and running!");
@@ -85,8 +84,8 @@ app.get("/", (req, res) => {
 
 app.post("/runOnce", runOnce.runOnce(db))
 
-app.get('/test',(req,res)=>{
-  // console.log(req.headers,'hi')
+app.get('/test', (req, res) => {
+  console.log(req.headers, 'hi')
   res.json('success')
 })
 
@@ -97,7 +96,7 @@ app.get("/dealerModel", (req, res) => cars.dealerModel(db)(req, res));
 app.get("/dealerMake", (req, res) => cars.dealerMake(db)(req, res));
 app.get("/model", (req, res) => cars.model(db)(req, res));
 app.post("/cars", upload.array("files", 10), (req, res) =>
-  cars.createCar(db,cloudinary)(req, res)
+  cars.createCar(db, cloudinary)(req, res)
 );
 
 app.get("/make", (req, res) => cars.make(db)(req, res));

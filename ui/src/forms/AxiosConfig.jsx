@@ -18,8 +18,8 @@ export const axiosInstance = () => {
 
         const requestInterceptor = axiosInstance2.interceptors.request.use(
             (config) => {
-
-                config.headers['guest'] = guest !== undefined ? guest : delete config.headers['guest']
+                console.log(guest)
+                config.headers['guest'] = typeof guest !== "undefined" ? String(guest) : delete config.headers['guest']
 
                 return config;
             },

@@ -1,8 +1,11 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-key */
 import { React, useEffect, useState } from "react";
-import { capitalize } from "lodash"
+import { capitalize } from "lodash";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
+
+const validColorNames = [
+  'black', 'white', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'gray', 'grey', 'orange', 'purple', 'brown',
+  // Add more named colors as needed
+];
 
 export default function Add({ page, id }) {
   const [allMake, setAllMake] = useState([]);
@@ -13,15 +16,15 @@ export default function Add({ page, id }) {
   const [transmission, setTransmission] = useState([]);
   const [vehicleType, setVehicleType] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [file, setFile] = useState(null); // S
-  const [selectedFileName, setSelectedFileName] = useState([])
+  const [file, setFile] = useState(null);
+  const [selectedFileName, setSelectedFileName] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(null);
-  const [value, setValue] = useState('')
-  const [modelValue, setModelValue] = useState('')
-  const [Unavailable, setUnavailable] = useState(false)
-   const [loading,setLoading]=useState(false)
+  const [value, setValue] = useState('');
+  const [modelValue, setModelValue] = useState('');
+  const [unavailable, setUnavailable] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-   const axiosInstance=useAxiosInstance()
+  const axiosInstance = useAxiosInstance();
 
   const [error, setError] = useState({
     make: "",
@@ -45,36 +48,55 @@ export default function Add({ page, id }) {
   });
 
   useEffect(() => {
-
     const toggle = (e) => {
-
       if (e.key === 'ArrowLeft') {
-        prevImage()
+        prevImage();
       } else if (e.key === 'ArrowRight') {
-        nextImage()
+        nextImage();
       }
-    }
+    };
 
     if (currentImageIndex !== null) {
-      document.addEventListener('keydown', toggle)
+      document.addEventListener('keydown', toggle);
     } else {
-      document.removeEventListener('keydown', toggle)
+      document.removeEventListener('keydown', toggle);
     }
 
-    return () => document.removeEventListener('keydown', toggle)
-  }, [currentImageIndex])
-
+    return () => document.removeEventListener('keydown', toggle);
+  }, [currentImageIndex]);
 
   const mileage = (e) => {
     setError((current) => {
       if (!isNaN(Number(e.target.value))) {
-        return { ...current, mileage: e.target.value }
+        return { ...current, mileage: e.target.value };
       }
-      return { ...current, mileage: '' }
-    })
-  }
+      return { ...current, mileage: '' };
+    });
+  };
 
-  // when dealer submits
+  const validateColor = (color) => {
+    return validColorNames.includes(color.toLowerCase());
+  };
+
+  const handleColorChange = (e) => {
+    const colorValue = e.target.value;
+    if (validateColor(colorValue)) {
+      setError((current) => {
+        return { ...current, color: colorValue };
+      });
+      setMessage((current) => {
+        return { ...current, color: 'correct-add' };
+      });
+    } else {
+      setError((current) => {
+        return { ...current, color: '' };
+      });
+      setMessage((current) => {
+        return { ...current, color: 'error-add' };
+      });
+    }
+  };
+
   const submit = (e) => {
     e.preventDefault();
     const newMessages = { ...message };
@@ -85,35 +107,28 @@ export default function Add({ page, id }) {
         newMessages[key] = "correct-add";
       }
     }
-    console.log(message)
     setMessage(newMessages); // Update the message state once with the new values
   };
 
   useEffect(() => {
     for (let key in message) {
       if (message[key] !== "correct-add") {
-        return
+        return;
       }
     }
 
-    console.log('hi')
-
-    const formdata = new FormData()
+    const formdata = new FormData();
 
     for (const file1 of file) {
-      formdata.append('files', file1)
+      formdata.append('files', file1);
     }
-    formdata.append('dealer_id', id)
+    formdata.append('dealer_id', id);
     for (let key in error) {
-      formdata.append(key, error[key])
-    }
-    console.log('FormData contents:');
-    for (let [key, value] of formdata.entries()) {
-      console.log(key, value);
+      formdata.append(key, error[key]);
     }
 
-    setUnavailable(true)
-    setLoading(true)
+    setUnavailable(true);
+    setLoading(true);
 
     axiosInstance.post('/cars', formdata, {
       headers: {
@@ -121,34 +136,28 @@ export default function Add({ page, id }) {
       }
     })
       .then(() => {
-        setLoading(false)
-
-        setUnavailable(false)
-        page('afterAdd')
+        setLoading(false);
+        setUnavailable(false);
+        page('afterAdd');
       })
       .catch(err => {
-        setLoading(false)
-        setUnavailable(false)
-        console.log(err)
-        setErrorMessage(err.response.data)
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message])
+        setLoading(false);
+        setUnavailable(false);
+        console.log(err);
+        setErrorMessage(err.response.data);
+      });
+  }, [message]);
 
   useEffect(() => {
     axiosInstance
       .get("/dealerMake", { params: { model, reqMake: value } })
       .then((res) => {
         if (Array.isArray(res.data)) {
-          console.log(res.data, 'hiaf')
           setAllMake(res.data);
-          return
+          return;
         }
         setAllMake([res.data]);
-        setValue(res.data.make)
-        console.log(res.data.make)
-
-
+        setValue(res.data.make);
       })
       .catch((err) => console.log(err));
   }, [model]);
@@ -182,46 +191,43 @@ export default function Add({ page, id }) {
 
   const handleFile = (e) => {
     const files = Array.from(e.target.files);
-    console.log(files)
     setFile(files);
     setSelectedFileName(files.map((file) => file.name));
     setError(current => {
       if (files.length) {
-        return { ...current, file: 'good' }
+        return { ...current, file: 'good' };
       } else {
-        return { ...current, file: null }
-
+        return { ...current, file: null };
       }
-    })
+    });
   };
 
   const openModal = () => () => {
-    setCurrentImageIndex(0)
-  }
+    setCurrentImageIndex(0);
+  };
 
   const closeModal = () => {
-    setCurrentImageIndex(null)
-  }
+    setCurrentImageIndex(null);
+  };
 
   const nextImage = () => {
-    setCurrentImageIndex((currentImageIndex + 1) % file.length)
-  }
+    setCurrentImageIndex((currentImageIndex + 1) % file.length);
+  };
 
   const prevImage = () => {
-    setCurrentImageIndex((currentImageIndex - 1 + file.length) % file.length)
-  }
+    setCurrentImageIndex((currentImageIndex - 1 + file.length) % file.length);
+  };
 
   return (
     <>
       <form className="sell-menu" encType="multipart/form-data" onSubmit={submit}>
-
         <div style={{ display: "flex" }}>
           <div className="options">
             <p className="text">Make</p>
             <select
               value={value}
               onChange={(e) => {
-                setValue(e.target.value)
+                setValue(e.target.value);
                 setError((current) => {
                   return { ...current, make: e.target.value };
                 });
@@ -230,13 +236,11 @@ export default function Add({ page, id }) {
               className={`select sell ${message.make}`}
             >
               <option value="">Select</option>
-              {allMake.map((use, index) => {
-                return (
-                  <option key={index} value={use.make}>
-                    {use.make}
-                  </option>
-                );
-              })}
+              {allMake.map((use, index) => (
+                <option key={index} value={use.make}>
+                  {use.make}
+                </option>
+              ))}
             </select>
           </div>
           <div style={{ marginLeft: '15px' }} className="options2">
@@ -248,17 +252,14 @@ export default function Add({ page, id }) {
                 });
                 setModel(e.target.value);
               }}
-
               className={`select sell gap ${message.model}`}
             >
               <option onChange={(e) => setModelValue(e.target.value)} value={modelValue}>Select</option>
-              {allModel.map((use, index) => {
-                return (
-                  <option key={index} value={use}>
-                    {use}
-                  </option>
-                );
-              })}
+              {allModel.map((use, index) => (
+                <option key={index} value={use}>
+                  {use}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -270,18 +271,16 @@ export default function Add({ page, id }) {
               placeholder="Km"
               onChange={mileage}
               className={`input-sell ${message.mileage}`}
-            ></input>
+            />
           </div>
           <div style={{ marginLeft: '15px' }} className="options2">
             <p className="text3">Color</p>
             <input
-              onChange={(e) => {
-                setError((current) => {
-                  return { ...current, color: e.target.value };
-                });
-              }}
+              type="text"
+              onChange={handleColorChange}
               className={`input-sell ${message.color}`}
-            ></input>
+              placeholder="e.g., red, blue"
+            />
           </div>
         </div>
         <div style={{ display: "flex" }}>
@@ -296,13 +295,11 @@ export default function Add({ page, id }) {
               className={`select sell ${message.transmission}`}
             >
               <option value="">Select</option>
-              {transmission.map((use, index) => {
-                return (
-                  <option key={index} value={use}>
-                    {capitalize(use.replaceAll('_', ' '))}
-                  </option>
-                );
-              })}
+              {transmission.map((use, index) => (
+                <option key={index} value={use}>
+                  {capitalize(use.replaceAll('_', ' '))}
+                </option>
+              ))}
             </select>
           </div>
           <div className="options2">
@@ -316,13 +313,11 @@ export default function Add({ page, id }) {
               className={`select sell gap ${message.fuelType}`}
             >
               <option value="">Select</option>
-              {fuelType.map((use, index) => {
-                return (
-                  <option key={index} value={use}>
-                    {use}
-                  </option>
-                );
-              })}
+              {fuelType.map((use, index) => (
+                <option key={index} value={use}>
+                  {use}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -339,13 +334,11 @@ export default function Add({ page, id }) {
               className={`select-vehicle ${message.vehicleType}`}
             >
               <option value="">Select</option>
-              {vehicleType.map((use, index) => {
-                return (
-                  <option key={index} value={use}>
-                    {use}
-                  </option>
-                );
-              })}
+              {vehicleType.map((use, index) => (
+                <option key={index} value={use}>
+                  {use}
+                </option>
+              ))}
             </select>
           </div>
           <div className="image-input">
@@ -356,7 +349,7 @@ export default function Add({ page, id }) {
                 id='files'
                 type="file"
                 accept="image/*"
-                capture="environment" // This opens the camera on mobile devices
+                capture="environment"
                 className=' label-input-sell'
                 onChange={handleFile}
                 multiple
@@ -371,20 +364,19 @@ export default function Add({ page, id }) {
             )}
           </div>
         </div>
-        {errorMessage &&
+        {errorMessage && (
           <div>
             <p className="add-error">
               {errorMessage}
             </p>
-          </div>}
-        <button type="submit" style=
-          {{
-            padding: "10px",
-            pointerEvents: Unavailable ? 'none' : 'auto',
-            opacity: Unavailable ? '0.5' : '1',
-            cursor: Unavailable ? 'not-allowed' : 'pointer'
-          }}
-          className="create">
+          </div>
+        )}
+        <button type="submit" style={{
+          padding: "10px",
+          pointerEvents: unavailable ? 'none' : 'auto',
+          opacity: unavailable ? '0.5' : '1',
+          cursor: unavailable ? 'not-allowed' : 'pointer'
+        }} className="create">
           Create
         </button>
       </form>
@@ -415,6 +407,5 @@ export default function Add({ page, id }) {
         </div>
       )}
     </>
-
   );
 }

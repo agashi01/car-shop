@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 
 import { React, useEffect, useState } from "react";
-import {axiosInstance as useAxiosInstance} from "./AxiosConfig.jsx";
+import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
 
 // eslint-disable-next-line react/prop-types
 export default function CarCard({ removeId, carId, deletMarket, deletSold, id, isit, guest, car }) {
@@ -15,7 +15,7 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   const [isLeftHovered, setIsLeftHovered] = useState(false)
   const [isRightHovered, setIsRightHovered] = useState(false)
 
-  const axiosInstance=useAxiosInstance()
+  const axiosInstance = useAxiosInstance()
 
   const carObj = Object.keys(car);
 
@@ -92,9 +92,9 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
     <div onClick={() => setFlip(!flip)} className={flip ? "car-card flip" : "car-card"}>
       <div className="front">
         <div className="card-png">
-          <button onMouseEnter={() => setIsLeftHovered(true)} onMouseLeave={() => setIsLeftHovered(false)} style={{ opacity: isLeftHovered ? "1" : ".66" }} className="image-button left" onClick={prevImage}>&lt;</button>
+          <button onMouseEnter={() => setIsLeftHovered(true)} onMouseLeave={() => setIsLeftHovered(false)} style={{ opacity: isLeftHovered ? "1" : ".76" }} className="image-button left" onClick={prevImage}>&lt;</button>
           <img className="carcard-image" src={path[current]}></img>
-          <button onMouseEnter={() => setIsRightHovered(true)} onMouseLeave={() => setIsRightHovered(false)} style={{ opacity: isRightHovered ? "1" : ".66" }} className="image-button right" onClick={nextImage}>&gt;</button>
+          <button onMouseEnter={() => setIsRightHovered(true)} onMouseLeave={() => setIsRightHovered(false)} style={{ opacity: isRightHovered ? "1" : ".76" }} className="image-button right" onClick={nextImage}>&gt;</button>
         </div>
         <div className="png-div">
           {removeId === car.id || theOne ?

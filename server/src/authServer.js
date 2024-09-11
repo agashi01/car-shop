@@ -17,18 +17,27 @@ const db = knex({
     },
 })
 
-app.use(cors())
+const corsOptions = {
+    origin: 'http://localhost:5173', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'guest'],
+};
+
+app.use(cors());
+
+// app.options('*',cors(corsOptions))
+
 app.use(express.json())
 app.use(cookieParser())
 
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     app.disable('x-powered-by')
 
-    console.log(req.headers,req.originalUrl)
+    console.log(req.headers, req.originalUrl)
     next()
 })
 
-app.get('/test',(req,res)=>{
+app.get('/test', (req, res) => {
     res.json('success')
 })
 app.post("/sign-up", (req, res) => auth.signUp(db)(req, res));
