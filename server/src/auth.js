@@ -102,10 +102,11 @@ const logIn = (db, jwt) => async (req, res) => {
               name: userInfo.username
             }
             const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '15s' })
-            const refresh=jwt.sign(header, process.env.JWT_REFRESH)
-            res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' })
-            res.cookie('refreshToken', refresh, { httpOnly: true, secure: true, sameSite: 'Strict' })
-            return res.json({ ...logInEmail, username: userInfo.username});
+            const refresh=jwt.sign(header, process.env.JWT_REFRESH_SERCRET)
+            return res.json({
+              token,
+              refresh,
+              user:{ ...logInEmail, username: userInfo.username}});
 
           } else {
             return res.status(400).json("wrong password");

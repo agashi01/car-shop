@@ -30,12 +30,12 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
           password: signIn.password,
         })
         .then((res) => {
-          console.log('Request headers:here', res.config.headers);
-
-          console.log(res.data.type)
+          localStorage.setItem('token',res.data.token)
+          localStorage.setItem('refreshToken',res.data.refresh)
+          console.log(localStorage)
           setBackendError(false);
           dealer(res.data?.type)
-          username(res.data?.username);
+          username(res.data?.user?.username);
           setGuest(false);
           setError({ email: "stabil", password: "stabil" });
           id(res.data?.id);

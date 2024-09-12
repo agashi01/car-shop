@@ -18,8 +18,13 @@ export const axiosInstance = () => {
 
         const requestInterceptor = axiosInstance2.interceptors.request.use(
             (config) => {
-                console.log(guest)
-                config.headers['guest'] = typeof guest !== "undefined" ? String(guest) : delete config.headers['guest']
+
+                const token = localStorage.getItem('token')
+
+                config.headers['Authorization'] = token && `Bearer ${token}`
+
+                config.headers['guest'] = typeof guest !== "undefined" ? String(guest) :
+                 delete config.headers['guest']
 
                 return config;
             },

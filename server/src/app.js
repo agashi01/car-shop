@@ -28,8 +28,6 @@ const db = knex({
   },
 });
 
-
-
 const app = express();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -48,46 +46,41 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'guest']
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.use("/static", express.static(path.join(__dirname, "../", "public")));
 
-// app.options("*",cors(corsOptions))
+app.options("*", cors(corsOptions))
 
 const authenticate = (req, res, next) => {
   app.disable('x-powered-by')
-  console.log('blood')
-  next()
 
   if (req.headers.guest === true) {
     next()
   } else if (req.headers.guest === 'false') {
-    jwt.verify(req.cookie.token, process.env.APISECRET, (err, user) => {
+    const authorization = req.headers.authorization
+    const token = authorization && authorization.split(' ')[1]
+    jwt.verify(token, process.env.SECRET, (err, user) => {
       if (err)
-        return res.status(400).json(`this is the error ${err}`)
+        return res.sendStatus(403)
       req.user = user
+      next()
 
     })
-    next()
   } else {
     console.log(req.headers)
     res.status(404).json('guest parameter is missing')
   }
 }
 
-app.use(authenticate)
+// app.use(authenticate)
 
 app.get("/", (req, res) => {
   return res.status(200).json("Server is up and running!");
 });
 
 app.post("/runOnce", runOnce.runOnce(db))
-
-app.get('/test', (req, res) => {
-  console.log(req.headers, 'hi')
-  res.json('success')
-})
 
 app.get("/transmission", (req, res) => cars.transmission(db)(req, res));
 app.get("/fuelType", (req, res) => cars.fuelType(db)(req, res));
@@ -115,7 +108,7 @@ app.delete("/dealers/:id", (req, res) => dealers.deleteDealer(db)(req, res));
 app.use((err, req, res, next) => {
   const errStatus = err.statusCode || 500;
   const errMsg = err.message || "Something went wrong";
-  res.status(errStatus).json({
+  return res.status(errStatus).json({
     success: false,
     status: errStatus,
     message: errMsg,

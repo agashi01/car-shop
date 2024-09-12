@@ -25,6 +25,7 @@ const create = (db, cloudinary) => async (req, res) => {
       urls[x] = images[x].secure_url
     }
   } catch (err) {
+    console.log(err)
     for (let x = 0; x < images.length; x++) {
       cloudinary.uploader.destroy(images[x].public_id)
     }
@@ -102,6 +103,7 @@ const create = (db, cloudinary) => async (req, res) => {
         // Commit the transaction
         await trx.commit();
       } catch (err) {
+        console.log(err)
         await trx.rollback()
         console.error(err);
         res.status(400).json("This car is missing something");
@@ -111,6 +113,7 @@ const create = (db, cloudinary) => async (req, res) => {
       }
     });
   } catch (err) {
+    console.log(err)
     await trx.rollback()
     console.error(err);
     res.status(500).json(err);
@@ -233,13 +236,14 @@ const model = (db) => async (req, res) => {
     const models = await func2(db, vehicleList);
     if (models) {
       const finalModels = sortModel(models);
-      res.json(finalModels);
+      return res.json(finalModels);
     } else {
-      res.status(400).json("failed");
+      return res.status(400).json("failed");
     }
   } catch (err) {
+    console.log(err)
     console.log(err);
-    res.status(400).json(err);
+    return res.status(400).json(err);
   }
 };
 
@@ -330,9 +334,10 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
     cars.forEach((car) => {
       car.owner = ownerMap[car.owner_id] || null;
     });
-
+    
     return [end, cars];
   } catch (err) {
+    console.log(err)
     console.error(err);
     throw new Error("An error occurred while fetching the cars");
   }
@@ -351,8 +356,9 @@ const readAllGuest = (db) => async (req, res) => {
   try {
     const cars = await func(db, vehicle, model, limit, offset);
 
-    res.status(200).json(cars);
+    return res.status(200).json(cars);
   } catch (err) {
+    console.log(err)
     console.log(err);
     res.status(400).json("something went wrong");
   }
@@ -364,8 +370,10 @@ const make = (db) => async (req, res) => {
     if (!rows) {
       console.log("err");
     }
-    res.json(rows);
+    return res.json(rows);
   } catch (err) {
+    console.log(err)
+    
     res.status(400).json(err);
   }
 };
@@ -378,8 +386,9 @@ const readAll = (db) => async (req, res) => {
 
   try {
     const cars = await func(db, vehicle, model, limit, offset, number, pageNum, id, dealer);
-    res.status(200).json(cars);
+    return res.status(200).json(cars);
   } catch (err) {
+    console.log(err)
     res.status(400).json("something went wrong");
   }
 };
@@ -410,7 +419,7 @@ const dealerModel = (db) => (req, res) => {
       for (let x = 0; x < model.length; x++) {
         fModel[x] = model[x].model;
       }
-      res.json(fModel);
+      return res.json(fModel);
     })
     .catch((err) => {
       console.log(err);
@@ -433,7 +442,7 @@ const dealerMake = (db) => (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(400).json("something went wrong with the make query");
+      return res.status(400).json("something went wrong with the make query");
     });
 };
 
@@ -444,7 +453,7 @@ const transmission = (db) => (req, res) => {
     for (let x = 0; x < transmission.length; x++) {
       fTransmission[x] = transmission[x].transmission;
     }
-    res.json(fTransmission);
+    return res.json(fTransmission);
   });
 };
 
@@ -455,7 +464,7 @@ const fuelType = (db) => (req, res) => {
     for (let x = 0; x < fuelType.length; x++) {
       finalFuelType[x] = fuelType[x].fuel_type;
     }
-    res.json(finalFuelType);
+    return res.json(finalFuelType);
   });
 };
 
@@ -466,7 +475,7 @@ const vehicleType = (db) => (req, res) => {
     for (let x = 0; x < vehicleType.length; x++) {
       finalVehicleType[x] = vehicleType[x].vehicle_type;
     }
-    res.json(finalVehicleType);
+    return res.json(finalVehicleType);
   });
 };
 
@@ -483,6 +492,7 @@ const read = (db) => (req, res) => {
       res.json(car[0]);
     })
     .catch((err) => {
+      console.log(err)
       res.status(404).json("car doesn't exist");
     });
 };
@@ -502,11 +512,12 @@ const update = (db) => async (req, res) => {
     const result = await db("cars").where("id", carId).update("owner_id", id);
 
     if (result) {
-      res.status(200).json("success");
+      return res.status(200).json("success");
     } else {
-      res.status(400).json({ error: "Update failed" });
+      return res.status(400).json({ error: "Update failed" });
     }
   } catch (err) {
+    console.log(err)
     console.error(err);
     res.status(500).json({ error: "An error occurred while updating the owner_id" });
   }
@@ -524,7 +535,7 @@ const delet = (db) => (req, res) => {
     })
     .del()
     .then((car) => {
-      res.json("Car is now deleted");
+      return res.json("Car is now deleted");
     })
     .catch((err) => {
       console.log(err);
