@@ -142,7 +142,7 @@ const token=(db,jwt)=>(req,res)=>{
           name:user.name
         }
       const token=jwt.sign(header,process.env.JWT_REFRESH_SECRET,{expiresIn:'15s'})
-      res.json(token)
+      return res.json(token)
     })
   }
 })

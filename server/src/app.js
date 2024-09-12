@@ -64,7 +64,14 @@ const authenticate = (req, res, next) => {
     if(!token) return res.status(400).json('you dont have a token in authorization')
     jwt.verify(token, process.env.SECRET, (err, user) => {
       if (err)
-        return res.sendStatus(403)
+        if (err.name === 'TokenExpiredError') {
+          return res.status(401).json('Token has expired');
+        } else if (err.name === 'JsonWebTokenError') {
+          return res.status(403).json('Invalid token');
+        } else {
+          return res.status(403).json('Token verification failed');
+        }
+      
       req.user = user
       next()
 
