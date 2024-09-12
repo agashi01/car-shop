@@ -103,6 +103,13 @@ const logIn = (db, jwt) => async (req, res) => {
             }
             const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '15s' })
             const refresh=jwt.sign(header, process.env.JWT_REFRESH_SERCRET)
+            db('refresh_tokens').insert({
+              "refresh_token":refresh
+            }).then(res=>{
+              console.log("token succesfully inserted")
+            }).catch(err=>{
+              return res.statush(400).json(`the refresh token couldn't be insrted because of this error ${err}`)
+            })
             return res.json({
               token,
               refresh,
@@ -122,7 +129,28 @@ const logIn = (db, jwt) => async (req, res) => {
     });
 };
 
+const token=(db,jwt)=>(req,res)=>{
+ 
+  const refreshToken=req.body.token
+  if(!token) return res.status(401).json('refresh token is missing')
+  db('refresh_tokens').select("*"),where("refresh_token",refreshToken)
+.first().then(refresh=>{
+  if(refresh){
+    jwt.verify(refreshToken,process.env.JWT_REFRESH_SERCRET,(err,user)=>{
+      if(err) return res.status(401).json("not the right refresh token")
+        const header={
+          name:user.name
+        }
+      const token=jwt.sign(header,process.env.JWT_REFRESH_SECRET,{expiresIn:'15s'})
+      res.json(token)
+    })
+  }
+})
+
+}
+
 module.exports = {
   signUp,
   logIn,
+  token,
 };

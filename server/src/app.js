@@ -61,6 +61,7 @@ const authenticate = (req, res, next) => {
   } else if (req.headers.guest === 'false') {
     const authorization = req.headers.authorization
     const token = authorization && authorization.split(' ')[1]
+    if(!token) return res.status(400).json('you dont have a token in authorization')
     jwt.verify(token, process.env.SECRET, (err, user) => {
       if (err)
         return res.sendStatus(403)
@@ -70,11 +71,11 @@ const authenticate = (req, res, next) => {
     })
   } else {
     console.log(req.headers)
-    res.status(404).json('guest parameter is missing')
+    return res.status(404).json('guest parameter is missing')
   }
 }
 
-// app.use(authenticate)
+app.use(authenticate)
 
 app.get("/", (req, res) => {
   return res.status(200).json("Server is up and running!");
