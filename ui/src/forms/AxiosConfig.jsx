@@ -2,10 +2,12 @@
 import axios from "axios";
 import { useEffect, useMemo } from "react";
 import { useGuest } from "../Context";
-import {axiosInstance} from "AxiosConfig4000"
+import { axiosInstance as useAxiosInstance } from "AxiosConfig4000";
+const axiosInstance4000 = useAxiosInstance();
 
 export const axiosInstance = () => {
   const { guest } = useGuest();
+  const { }
 
   const axiosInstance2 = useMemo(() => {
     const instance = axios.create({
@@ -39,7 +41,7 @@ export const axiosInstance = () => {
     (config) => {
       return config;
     },
-    (error) => {
+    async (error) => {
       const original = error.config;
       const errMessage = err.response?.data;
 
@@ -47,10 +49,17 @@ export const axiosInstance = () => {
         original._retry = 0;
       }
       if (original._retry < 1 && errMessage === "Token has expired") {
-        const token=localStorage.getItem("refreshToken")    
-        axios.post()
+        try {
+          const refreshToken = localStorage.getItem("refreshToken");
+          const retry=await axiosInstance4000.post("/token", { refreshToken })
+          
+            const token=retry.data
+            localStorage.setItem('token',token)
+            original.headers['Authorization']=`Bearer ${token}`
+          return axiosInstance2(original)
+        } catch (err) {
 
-
+        }
       }
     }
   );
