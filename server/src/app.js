@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const knex = require("knex");
@@ -7,16 +7,16 @@ const cars = require("./cars");
 const dealers = require("./dealers");
 const path = require("path");
 const multer = require("multer");
-const runOnce = require('./RunOnce')
-const axios = require('axios')
-const cloudinary = require('cloudinary').v2
-const jwt = require('jsonwebtoken')
-const fs = require('fs');
+const runOnce = require("./RunOnce");
+const axios = require("axios");
+const cloudinary = require("cloudinary").v2;
+const jwt = require("jsonwebtoken");
+const fs = require("fs");
 cloudinary.config({
   cloud_name: process.env.CLOUDNAME,
   api_key: process.env.APIKEY,
-  api_secret: process.env.APISECRET
-})
+  api_secret: process.env.APISECRET,
+});
 
 const db = knex({
   client: "pg",
@@ -41,9 +41,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 const corsOptions = {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'guest']
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization", "guest"],
 };
 
 app.use(cors(corsOptions));
@@ -51,44 +51,43 @@ app.use(bodyParser.json());
 
 app.use("/static", express.static(path.join(__dirname, "../", "public")));
 
-app.options("*", cors(corsOptions))
+app.options("*", cors(corsOptions));
 
 const authenticate = (req, res, next) => {
-  app.disable('x-powered-by')
-
-  if (req.headers.guest === true) {
-    next()
-  } else if (req.headers.guest === 'false') {
-    const authorization = req.headers.authorization
-    const token = authorization && authorization.split(' ')[1]
-    if(!token) return res.status(400).json('you dont have a token in authorization')
-    jwt.verify(token, process.env.SECRET, (err, user) => {
-      if (err)
-        if (err.name === 'TokenExpiredError') {
-          return res.status(401).json('Token has expired');
-        } else if (err.name === 'JsonWebTokenError') {
-          return res.status(403).json('Invalid token');
+  app.disable("x-powered-by");
+  if (req.headers.guest && req.headers.guest !== "false") {
+    next();
+  } else if (req.headers.guest === "false") {
+    const authorization = req.headers.authorization;
+    const token = authorization && authorization.split(" ")[1];
+    if (!token) return res.status(400).json("you dont have a token in authorization");
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          return res.status(401).json("Token has expired");
+        } else if (err.name === "JsonWebTokenError") {
+          return res.status(403).json("Invalid token");
         } else {
-          return res.status(403).json('Token verification failed');
+          return res.status(403).json("Token verification failed");
         }
-      
+      }
+
       req.user = user
       next()
 
     })
   } else {
-    console.log(req.headers)
-    return res.status(404).json('guest parameter is missing')
+    return res.status(404).json("guest parameter is missing");
   }
-}
+};
 
-app.use(authenticate)
+app.use(authenticate);
 
 app.get("/", (req, res) => {
   return res.status(200).json("Server is up and running!");
 });
 
-app.post("/runOnce", runOnce.runOnce(db))
+app.post("/runOnce", runOnce.runOnce(db));
 
 app.get("/transmission", (req, res) => cars.transmission(db)(req, res));
 app.get("/fuelType", (req, res) => cars.fuelType(db)(req, res));
@@ -111,7 +110,6 @@ app.get("/dealers", (req, res) => dealers.readAll(db)(req, res));
 app.get("/dealers/:id", (req, res) => dealers.readDealer(db)(req, res));
 app.put("/dealers/:id", (req, res) => dealers.updateDealer(db)(req, res));
 app.delete("/dealers/:id", (req, res) => dealers.deleteDealer(db)(req, res));
-
 
 app.use((err, req, res, next) => {
   const errStatus = err.statusCode || 500;

@@ -34,11 +34,12 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
           localStorage.setItem('refreshToken',res.data.refresh)
           console.log(localStorage)
           setBackendError(false);
-          dealer(res.data?.type)
+          console.log(res.data?.user?.type)
+          dealer(res.data?.user?.type)
           username(res.data?.user?.username);
           setGuest(false);
           setError({ email: "stabil", password: "stabil" });
-          id(res.data?.id);
+          id(res.data?.user?.id);
           logo("logo");
           page("home");
         })

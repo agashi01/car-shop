@@ -5,7 +5,7 @@ import debounce from "lodash/debounce";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig";
 
 // eslint-disable-next-line react/prop-types
-function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
+function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
   const [vehicleInput, setVehicleInput] = useState([]);
   const [modelInput, setModelInput] = useState([]);
   const [vehicleList, setVehicleList] = useState([]);
@@ -57,8 +57,6 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
   }, [cars]);
 
   useEffect(() => {
-    axiosInstance.get('/test')
-      .then(res => console.log(res))
     axiosInstance
       .get("/model", {
         params: {
@@ -66,7 +64,6 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
         },
       })
       .then((res) => {
-        console.log('Request headers:', res.config.headers);
         setModelInput(res.data);
       })
       .catch((err) => {
@@ -276,7 +273,6 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
       });
     });
   };
-
   const changePage = (str) => () => {
     page(str);
   };
@@ -485,8 +481,14 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
           <div ref={burgerMenuRef} className={menu}>
             <div className="help">
               <ul className="ul">
-                <li onClick={() => page("signIn")}>Sign In</li>
-                <li onClick={() => page("register")}>Register</li>
+                <li onClick={() =>{
+                  auth()
+                  page("signIn")
+                } }>Sign In</li>
+                <li onClick={() =>{
+                  auth()
+                  page("register")
+                }}>Register</li>
                 <li>Home</li>
               </ul>
             </div>
@@ -588,8 +590,14 @@ function Home({ dealer, id, page, logo, guest, username, guestFunc }) {
               <div ref={burgerMenuRef} className={menu}>
                 <div className="help">
                   <ul className="ul">
-                    <li onClick={() => page("register")}>New account</li>
-                    <li onClick={() => page("signIn")}>Sign Out</li>
+                    <li onClick={() =>{
+                      auth()
+                      page("register")
+                    } }>New account</li>
+                    <li onClick={() =>{
+                      auth()
+                      page("signIn")
+                    } }>Sign Out</li>
                     <li onClick={guestFunc}>Guest</li>
                   </ul>
                 </div>

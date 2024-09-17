@@ -7,7 +7,7 @@ const validColorNames = [
   // Add more named colors as needed
 ];
 
-export default function Add({ page, id }) {
+export default function Add({ page, setPage, id }) {
   const [allMake, setAllMake] = useState([]);
   const [allModel, setAllModel] = useState([]);
   const [make, setMake] = useState("");
@@ -138,7 +138,7 @@ export default function Add({ page, id }) {
       .then(() => {
         setLoading(false);
         setUnavailable(false);
-        page('afterAdd');
+        setPage('afterAdd');
       })
       .catch(err => {
         setLoading(false);

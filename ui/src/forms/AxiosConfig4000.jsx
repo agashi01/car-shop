@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
 import { useGuest } from '../Context';
 
 export const axiosInstance = () => {
-    const { guest } = useGuest();
+    const { guest} = useGuest();
 
     const axiosInstance2 = useMemo(() => {
         const instance = axios.create({
@@ -30,6 +30,7 @@ export const axiosInstance = () => {
             axiosInstance2.interceptors.request.eject(requestInterceptor);
         };
     }, [guest]);
+
 
     return axiosInstance2;
 };

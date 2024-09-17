@@ -60,6 +60,19 @@
 
 /* image */
 
+.logIn-again{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  position: relative;
+  background-color: #3f3f3f;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+
+}
 
 .itis {
   height: 200px;

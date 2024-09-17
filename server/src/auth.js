@@ -1,32 +1,5 @@
 const bcrypt = require("bcrypt");
 
-const spread = (list) => {
-  console.log(list);
-  const object = {};
-  for (let i = 0; i < list.length; i++) {
-    object[i + 1] = list[i];
-  }
-  return object;
-};
-
-const objToList = (list) => {
-  const answer = [];
-  for (let i = 0; i < list.length; i++) {
-    answer.push(Object.values(list[i]));
-  }
-
-  return answer.flat();
-};
-// const spread=(...list)=>{
-//     console.log(list[0])
-//     const object={}
-//     for(let i=0;i<list.length;i++){
-//        for(let x=0;x<list[i].length;x++){
-//         object[x+1]=list[i][x]
-//        }
-//     }
-//     return object
-// }
 
 const signUp = (db) => async (req, res) => {
   const { name, surname, email, password, username, type } = req.body;
@@ -75,7 +48,6 @@ const signUp = (db) => async (req, res) => {
 
 const logIn = (db, jwt) => async (req, res) => {
   const { email, password } = req.body;
-
   if (!email || !password) {
     return res.status(400).json("missing credentials");
   }
@@ -94,26 +66,27 @@ const logIn = (db, jwt) => async (req, res) => {
         .select("*")
         .first()
         .then(async (userInfo) => {
-          console.log(userInfo)
           const isValidPassword = await bcrypt.compare(password, userInfo.hash);
 
           if (isValidPassword) {
             const header = {
               name: userInfo.username
             }
-            const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '15s' })
-            const refresh=jwt.sign(header, process.env.JWT_REFRESH_SERCRET)
+            const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '5s' })
+            const refresh = jwt.sign(header, process.env.JWT_REFRESH_SECRET)
             db('refresh_tokens').insert({
-              "refresh_token":refresh
-            }).then(res=>{
+              "refresh_token": refresh
+            }).then(res => {
               console.log("token succesfully inserted")
-            }).catch(err=>{
-              return res.statush(400).json(`the refresh token couldn't be insrted because of this error ${err}`)
+            }).catch(err => {
+              console.log(err)
+              return res.status(400).json(`the refresh token couldn't be insrted because of this error ${err}`)
             })
             return res.json({
               token,
               refresh,
-              user:{ ...logInEmail, username: userInfo.username}});
+              user: { ...logInEmail, username: userInfo.username }
+            });
 
           } else {
             return res.status(400).json("wrong password");
@@ -129,23 +102,73 @@ const logIn = (db, jwt) => async (req, res) => {
     });
 };
 
-const token=(db,jwt)=>(req,res)=>{
- 
-  const refreshToken=req.body.token
-  if(!token) return res.status(401).json('refresh token is missing')
-  db('refresh_tokens').select("*"),where("refresh_token",refreshToken)
-.first().then(refresh=>{
-  if(refresh){
-    jwt.verify(refreshToken,process.env.JWT_REFRESH_SERCRET,(err,user)=>{
-      if(err) return res.status(401).json("not the right refresh token")
-        const header={
-          name:user.name
-        }
-      const token=jwt.sign(header,process.env.JWT_REFRESH_SECRET,{expiresIn:'15s'})
-      return res.json(token)
+const token = (db, jwt) => (req, res) => {
+  const refreshToken = req.body.refreshToken
+  console.log(refreshToken)
+  if (!token) return res.status(401).json('refresh token is missing')
+  db('refresh_tokens').select("*").where("refresh_token", refreshToken)
+    .first().then(refresh => {
+      if (refresh) {
+        console.log(refresh)
+
+        jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
+          if (err) {
+
+            console.log('hell yes')
+            if (err.name === "TokenExpiredError") {
+              console.log('expired')
+              return res.status(401).json("Token has expired");
+            
+            } else if (err.name === "JsonWebTokenError") {
+              console.log('invaid')
+              console.log('hgere')
+              return res.status(403).json("Invalid token");
+            } else {
+              console.log('dunno')
+              return res.status(403).json("Token verification failed");
+            }
+          }
+          const header = {
+            name: user.name
+          }
+          const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '5s' })
+          console.log(token)
+          return res.json(token)
+        })
+      }else{
+        return res.status(400).json(`Invalid token`)
+
+      }
     })
+    .catch(err=>{
+      console.log(err)
+      return res.status(400).json(`Invalid token`)
+    })
+
+}
+
+const signOut = (db) => (req, res) => {
+
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: "Token missing in body" })
   }
-})
+  console.log(token, 'token')
+  db('refresh_tokens')
+    .where('refresh_token', token)
+    .delete()
+    .then((rowsDeleted) => {
+      if (rowsDeleted > 0) {
+        return res.json({ message: 'Success', deletedCount: rowsDeleted });
+      } else {
+        return res.status(404).json({ message: 'Token not found' });
+      }
+    })
+    .catch((error) => {
+      console.error('Error deleting token:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    });
 
 }
 
@@ -153,4 +176,5 @@ module.exports = {
   signUp,
   logIn,
   token,
+  signOut,
 };

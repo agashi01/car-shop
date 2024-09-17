@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 // import { useEffect } from 'react'
 import Logo from "./Logo.jsx";
 // import GetStarted from "./GetStarted.jsx";
@@ -9,17 +9,26 @@ import Home from "./forms/Home.jsx";
 import AfterRegister from "./forms/AfterRegister.jsx";
 import Add from "./forms/Add.jsx";
 import AfterAdd from "./forms/AfterAdd.jsx";
-import {useGuest} from './Context.jsx'
+import { useGuest } from './Context.jsx'
+import { axiosInstance as useAxiosInstance } from "./forms/AxiosConfig4000.jsx"
 import "./App.css";
+import { Router,Route } from "react-router-dom";
 
 export default function App() {
   const [dealer, setDealer] = useState(false);
   const [id, setId] = useState(null);
   const [logo, setLogo] = useState("logo");
   const [page, setPage] = useState("signIn");
-  const {guest, setGuest} = useGuest()
+  const { guest, setGuest, authMessage, setAuthMessage } = useGuest()
   const [username, setUsername] = useState("");
+  const axiosInstance = useAxiosInstance()
 
+  useEffect(()=>{
+    localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
+  },[])
+
+  console.log(authMessage)
   const changePage = (text) => {
     setPage(text);
   };
@@ -30,6 +39,23 @@ export default function App() {
     setId(null);
     setUsername("");
   };
+
+  const auth = () => {
+    localStorage.removeItem('token')
+    setAuthMessage('')
+    axiosInstance.post('/sign-out', {
+      token: localStorage.getItem('refreshToken')
+    })
+      .then(() => {
+        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('token')
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    setPage('signIn')
+  }
+  console.log(authMessage,'app.jsx')
 
   return (
     <>
@@ -105,7 +131,10 @@ export default function App() {
                     <button onClick={() => setPage("register")} type="btn">
                       Register
                     </button>
-                    <button onClick={() => setPage("home")} type="btn">
+                    <button onClick={() => {
+                      setGuest(true)
+                      setPage("home")
+                    }} type="btn">
                       Go as guest
                     </button>
                   </div>
@@ -117,6 +146,7 @@ export default function App() {
         </div>
       ) : (
         <Home
+          auth={auth}
           dealer={dealer}
           id={id}
           guestFunc={guestFunc}
@@ -127,7 +157,35 @@ export default function App() {
           username={username}
         />
       )}
-      {/* {page === 'home' && <Logo />} */}
+
+      {authMessage && (
+        <div className="modal">
+          <div className="logIn-again">
+            {authMessage === 'Unable to refresh token, please log in again!' ?
+              <>
+                <p className="">{authMessage}</p>
+                <button onClick={auth} className="btn2">Log In</button>
+              </>
+              :
+              authMessage === 'Who are you? Please log in again!' ?
+                <>
+                  <p className="">{authMessage}</p>
+                  <button onClick={auth} className="btn2">Log In</button>
+                </>
+                :
+                authMessage === 'Something went wrong, can you please refresh the page and log in again!' ?
+                  <>
+                    <p className="">{authMessage}</p>
+                    <button onClick={auth} className="btn2">Log In</button>
+                  </> : (authMessage ) ? (
+                    <>
+                      <p className="">Something went wrong, please log in again!</p>
+                      <button onClick={auth} className="btn2">Log In</button>
+                    </>
+                  ) : null}
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -26,13 +26,14 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.options('*',cors(corsOptions))
+app.options('*', cors(corsOptions))
 
 app.use(express.json())
 app.use(cookieParser())
 
-app.post('token',auth.token(db))
+app.post('/token', auth.token(db, jwt))
 app.post("/sign-up", auth.signUp(db));
 app.post("/log-in", auth.logIn(db, jwt));
+app.post('/sign-out', auth.signOut(db))
 
 app.listen(4000, () => console.log('server is listening in port 4000'))
