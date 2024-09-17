@@ -1,9 +1,22 @@
 import { React, useEffect, useState } from "react";
 import { capitalize } from "lodash";
+import { Link } from "react-router-dom";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
 
 const validColorNames = [
-  'black', 'white', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'gray', 'grey', 'orange', 'purple', 'brown',
+  "black",
+  "white",
+  "red",
+  "green",
+  "blue",
+  "yellow",
+  "cyan",
+  "magenta",
+  "gray",
+  "grey",
+  "orange",
+  "purple",
+  "brown",
   // Add more named colors as needed
 ];
 
@@ -15,12 +28,12 @@ export default function Add({ page, setPage, id }) {
   const [fuelType, setFuelType] = useState([]);
   const [transmission, setTransmission] = useState([]);
   const [vehicleType, setVehicleType] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [file, setFile] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(null);
-  const [value, setValue] = useState('');
-  const [modelValue, setModelValue] = useState('');
+  const [value, setValue] = useState("");
+  const [modelValue, setModelValue] = useState("");
   const [unavailable, setUnavailable] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +47,7 @@ export default function Add({ page, setPage, id }) {
     fuelType: "",
     transmission: "",
     vehicleType: "",
-    file: null
+    file: null,
   });
   const [message, setMessage] = useState({
     make: "",
@@ -44,25 +57,25 @@ export default function Add({ page, setPage, id }) {
     fuelType: "",
     transmission: "",
     vehicleType: "",
-    file: null
+    file: null,
   });
 
   useEffect(() => {
     const toggle = (e) => {
-      if (e.key === 'ArrowLeft') {
+      if (e.key === "ArrowLeft") {
         prevImage();
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === "ArrowRight") {
         nextImage();
       }
     };
 
     if (currentImageIndex !== null) {
-      document.addEventListener('keydown', toggle);
+      document.addEventListener("keydown", toggle);
     } else {
-      document.removeEventListener('keydown', toggle);
+      document.removeEventListener("keydown", toggle);
     }
 
-    return () => document.removeEventListener('keydown', toggle);
+    return () => document.removeEventListener("keydown", toggle);
   }, [currentImageIndex]);
 
   const mileage = (e) => {
@@ -70,7 +83,7 @@ export default function Add({ page, setPage, id }) {
       if (!isNaN(Number(e.target.value))) {
         return { ...current, mileage: e.target.value };
       }
-      return { ...current, mileage: '' };
+      return { ...current, mileage: "" };
     });
   };
 
@@ -85,14 +98,14 @@ export default function Add({ page, setPage, id }) {
         return { ...current, color: colorValue };
       });
       setMessage((current) => {
-        return { ...current, color: 'correct-add' };
+        return { ...current, color: "correct-add" };
       });
     } else {
       setError((current) => {
-        return { ...current, color: '' };
+        return { ...current, color: "" };
       });
       setMessage((current) => {
-        return { ...current, color: 'error-add' };
+        return { ...current, color: "error-add" };
       });
     }
   };
@@ -102,7 +115,7 @@ export default function Add({ page, setPage, id }) {
     const newMessages = { ...message };
     for (let key in error) {
       if (!error[key]) {
-        newMessages[key] = 'error-add';
+        newMessages[key] = "error-add";
       } else {
         newMessages[key] = "correct-add";
       }
@@ -120,9 +133,9 @@ export default function Add({ page, setPage, id }) {
     const formdata = new FormData();
 
     for (const file1 of file) {
-      formdata.append('files', file1);
+      formdata.append("files", file1);
     }
-    formdata.append('dealer_id', id);
+    formdata.append("dealer_id", id);
     for (let key in error) {
       formdata.append(key, error[key]);
     }
@@ -130,17 +143,18 @@ export default function Add({ page, setPage, id }) {
     setUnavailable(true);
     setLoading(true);
 
-    axiosInstance.post('/cars', formdata, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
+    axiosInstance
+      .post("/cars", formdata, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then(() => {
         setLoading(false);
         setUnavailable(false);
-        setPage('afterAdd');
+        setPage("afterAdd");
       })
-      .catch(err => {
+      .catch((err) => {
         setLoading(false);
         setUnavailable(false);
         console.log(err);
@@ -193,9 +207,9 @@ export default function Add({ page, setPage, id }) {
     const files = Array.from(e.target.files);
     setFile(files);
     setSelectedFileName(files.map((file) => file.name));
-    setError(current => {
+    setError((current) => {
       if (files.length) {
-        return { ...current, file: 'good' };
+        return { ...current, file: "good" };
       } else {
         return { ...current, file: null };
       }
@@ -219,7 +233,7 @@ export default function Add({ page, setPage, id }) {
   };
 
   return (
-    <>
+    <div className="div-box">
       <form className="sell-menu" encType="multipart/form-data" onSubmit={submit}>
         <div style={{ display: "flex" }}>
           <div className="options">
@@ -243,7 +257,7 @@ export default function Add({ page, setPage, id }) {
               ))}
             </select>
           </div>
-          <div style={{ marginLeft: '15px' }} className="options2">
+          <div style={{ marginLeft: "15px" }} className="options2">
             <p className="text3">Model</p>
             <select
               onChange={(e) => {
@@ -254,7 +268,9 @@ export default function Add({ page, setPage, id }) {
               }}
               className={`select sell gap ${message.model}`}
             >
-              <option onChange={(e) => setModelValue(e.target.value)} value={modelValue}>Select</option>
+              <option onChange={(e) => setModelValue(e.target.value)} value={modelValue}>
+                Select
+              </option>
               {allModel.map((use, index) => (
                 <option key={index} value={use}>
                   {use}
@@ -273,7 +289,7 @@ export default function Add({ page, setPage, id }) {
               className={`input-sell ${message.mileage}`}
             />
           </div>
-          <div style={{ marginLeft: '15px' }} className="options2">
+          <div style={{ marginLeft: "15px" }} className="options2">
             <p className="text3">Color</p>
             <input
               type="text"
@@ -297,13 +313,15 @@ export default function Add({ page, setPage, id }) {
               <option value="">Select</option>
               {transmission.map((use, index) => (
                 <option key={index} value={use}>
-                  {capitalize(use.replaceAll('_', ' '))}
+                  {capitalize(use.replaceAll("_", " "))}
                 </option>
               ))}
             </select>
           </div>
           <div className="options2">
-            <p style={{ marginRight: '8px' }} className="text3">Fuel Type</p>
+            <p style={{ marginRight: "8px" }} className="text3">
+              Fuel Type
+            </p>
             <select
               onChange={(e) => {
                 setError((current) => {
@@ -346,18 +364,18 @@ export default function Add({ page, setPage, id }) {
             <label htmlFor="files" className={`input-sell image ${message.file}`}>
               Choose Files
               <input
-                id='files'
+                id="files"
                 type="file"
                 accept="image/*"
                 capture="environment"
-                className=' label-input-sell'
+                className=" label-input-sell"
                 onChange={handleFile}
                 multiple
               />
             </label>
             {selectedFileName.length > 0 && (
-              <div className='file-div'>
-                <p style={{ cursor: 'pointer' }} onClick={openModal()} className="file-name">
+              <div className="file-div">
+                <p style={{ cursor: "pointer" }} onClick={openModal()} className="file-name">
                   Photos
                 </p>
               </div>
@@ -366,26 +384,28 @@ export default function Add({ page, setPage, id }) {
         </div>
         {errorMessage && (
           <div>
-            <p className="add-error">
-              {errorMessage}
-            </p>
+            <p className="add-error">{errorMessage}</p>
           </div>
         )}
-        <button type="submit" style={{
-          padding: "10px",
-          pointerEvents: unavailable ? 'none' : 'auto',
-          opacity: unavailable ? '0.5' : '1',
-          cursor: unavailable ? 'not-allowed' : 'pointer'
-        }} className="create">
+        <button
+          type="submit"
+          style={{
+            padding: "10px",
+            pointerEvents: unavailable ? "none" : "auto",
+            opacity: unavailable ? "0.5" : "1",
+            cursor: unavailable ? "not-allowed" : "pointer",
+          }}
+          className="create"
+        >
           Create
         </button>
       </form>
 
       {loading && (
-        <div className='modal'>
-          <div className='loading-div'>
+        <div className="modal">
+          <div className="loading-div">
             <div>Please wait...</div>
-            <div className='loading'></div>
+            <div className="loading"></div>
           </div>
         </div>
       )}
@@ -393,11 +413,17 @@ export default function Add({ page, setPage, id }) {
       {currentImageIndex !== null && (
         <div className="modal" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className='close-div'>
-              <span className="close" onClick={closeModal}>&times;</span>
+            <div className="close-div">
+              <span className="close" onClick={closeModal}>
+                &times;
+              </span>
             </div>
-            <div className='image-div'>
-              <img src={URL.createObjectURL(file[currentImageIndex])} alt="Preview" className="modal-image" />
+            <div className="image-div">
+              <img
+                src={URL.createObjectURL(file[currentImageIndex])}
+                alt="Preview"
+                className="modal-image"
+              />
             </div>
             <div className="modal-navigation">
               <button onClick={prevImage}>&lt;</button>
@@ -406,6 +432,6 @@ export default function Add({ page, setPage, id }) {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

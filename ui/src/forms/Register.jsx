@@ -3,7 +3,9 @@ import React, { useCallback } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
-import {axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
+import { Link } from "react-router-dom";
+
+import { axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
 
 
 // eslint-disable-next-line react/prop-types
@@ -13,7 +15,7 @@ export default function Register({ logo, page }) {
   const mbiemri = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
-  const axiosInstance=useAxiosInstance()
+  const axiosInstance = useAxiosInstance();
 
   const [backendError, setBackendError] = useState();
   const [backendMessage, setBackendMessage] = useState();
@@ -33,7 +35,7 @@ export default function Register({ logo, page }) {
     username: "",
   });
 
-  const [type, setType] = useState("Buying")
+  const [type, setType] = useState("Buying");
 
   const arrowUp = (ref) => {
     ref.focus();
@@ -56,14 +58,13 @@ export default function Register({ logo, page }) {
           email: register.email,
           password: register.password,
           username: register.username,
-          type
+          type,
         })
         .then(() => {
           setBackendError(false);
           page("afterRegister");
         })
         .catch((err) => {
-
           setBackendError(true);
           if (err?.response?.data === "email is already in use") {
             setError((current) => {
@@ -93,12 +94,10 @@ export default function Register({ logo, page }) {
 
   // function for op[tions
 
-
   // function when user submits
   const registerConfirm = async (e) => {
     e.preventDefault();
     setError({ emri: "", mbiemri: "", email: "", password: "", username: "" });
-
 
     setError((current) => {
       if (!register.emri) {
@@ -476,86 +475,104 @@ export default function Register({ logo, page }) {
   };
 
   return (
-    <form id="register">
-      <h2>Register</h2>
-      <label htmlFor="emri">
-        <input
-          className={classNameEmri()}
-          type="text"
-          ref={emri}
-          id="emri"
-          value={register.emri}
-          onChange={setEmri}
-          placeholder="Enter your name"
-          autoComplete="off"
-        ></input>
-      </label>
-      <div className="error">{errorEmri()}</div>
-      <label htmlFor="mbiemri">
-        <input
-          className={classNameMbiemri()}
-          ref={mbiemri}
-          type="text"
-          value={register.mbiemri}
-          onChange={setMbiemri}
-          placeholder="Enter your surname"
-          autoComplete="off"
-        ></input>
-      </label>
-      <div className="error">{errorMbiemri()}</div>
-      <label htmlFor="username">
-        <input
-          className={classNameUsername()}
-          type="text"
-          ref={username}
-          id="username"
-          value={register.username}
-          onChange={setUsername}
-          placeholder="Enter your username"
-          autoComplete="off"
-        ></input>
-      </label>
-      <div className="error">{errorUsername()}</div>
-      <label htmlFor="email">
-        <input
-          className={classNameEmail()}
-          type="email"
-          ref={email}
-          id="email"
-          value={register.email}
-          onChange={setEmail}
-          placeholder="Enter your email"
-        ></input>
-      </label>
-      <div className="error">{errorEmail()}</div>
-      <label htmlFor="password">
-        <input
-          className={classNamePassword()}
-          type="password"
-          ref={password}
-          id="password"
-          value={register.password}
-          onChange={setPassword}
-          placeholder="Enter your password"
-          autoComplete="off"
-        ></input>
-      </label>
-      <div className="error">{errorPassword()}</div>
-      <div className="type">
-        <div className="next-to-select">
-          <label htmlFor="user-type"></label>
-          <select onChange={e=>setType(e.target.value)}
-            className='select' name="user-type" id="user-type">
-            <option value="Buying">Buying</option>
-            <option value="Selling">Selling</option>
-          </select>
-        </div>
+    <div className="div-box">
+      <form id="register">
+        <h2>Register</h2>
+        <label htmlFor="emri">
+          <input
+            className={classNameEmri()}
+            type="text"
+            ref={emri}
+            id="emri"
+            value={register.emri}
+            onChange={setEmri}
+            placeholder="Enter your name"
+            autoComplete="off"
+          ></input>
+        </label>
+        <div className="error">{errorEmri()}</div>
+        <label htmlFor="mbiemri">
+          <input
+            className={classNameMbiemri()}
+            ref={mbiemri}
+            type="text"
+            value={register.mbiemri}
+            onChange={setMbiemri}
+            placeholder="Enter your surname"
+            autoComplete="off"
+          ></input>
+        </label>
+        <div className="error">{errorMbiemri()}</div>
+        <label htmlFor="username">
+          <input
+            className={classNameUsername()}
+            type="text"
+            ref={username}
+            id="username"
+            value={register.username}
+            onChange={setUsername}
+            placeholder="Enter your username"
+            autoComplete="off"
+          ></input>
+        </label>
+        <div className="error">{errorUsername()}</div>
+        <label htmlFor="email">
+          <input
+            className={classNameEmail()}
+            type="email"
+            ref={email}
+            id="email"
+            value={register.email}
+            onChange={setEmail}
+            placeholder="Enter your email"
+          ></input>
+        </label>
+        <div className="error">{errorEmail()}</div>
+        <label htmlFor="password">
+          <input
+            className={classNamePassword()}
+            type="password"
+            ref={password}
+            id="password"
+            value={register.password}
+            onChange={setPassword}
+            placeholder="Enter your password"
+            autoComplete="off"
+          ></input>
+        </label>
+        <div className="error">{errorPassword()}</div>
+        <div className="type">
+          <div className="next-to-select">
+            <label htmlFor="user-type"></label>
+            <select
+              onChange={(e) => setType(e.target.value)}
+              className="select"
+              name="user-type"
+              id="user-type"
+            >
+              <option value="Buying">Buying</option>
+              <option value="Selling">Selling</option>
+            </select>
+          </div>
 
-        <button className="register-button" type="btn" onClick={registerConfirm}>
-          Register
+          <button className="register-button" type="btn" onClick={registerConfirm}>
+            Register
+          </button>
+        </div>
+      </form>
+      <div className="register">
+        <p
+          className="text"
+          style={{
+            marginRight: 5,
+          }}
+        >
+          Already have an account?{" "}
+        </p>
+        <button onClick={() => setPage("signIn")} type="button">
+          Sign In
         </button>
       </div>
-
-    </form >
+    </div>
   );
 }

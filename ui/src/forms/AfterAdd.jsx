@@ -1,9 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 
 // eslint-disable-next-line react/prop-types
 export default function AfterAdd({ page }) {
   return (
-    <div>
+    <div className="div-box">
       <div>
         <p>Your car has been created and published!</p>
       </div>
@@ -17,7 +19,7 @@ export default function AfterAdd({ page }) {
             page("home");
           }}
         >
-          Home 
+          Home
         </button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
 
 // eslint-disable-next-line react/prop-types
@@ -8,7 +9,7 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
   const [error, setError] = useState({ email: "", password: "" });
   const [backendError, setBackendError] = useState(null);
   const [backendMessage, setBackendMessage] = useState(null);
-  const axiosInstance = useAxiosInstance()
+  const axiosInstance = useAxiosInstance();
 
   const email = useRef(null);
   const password = useRef(null);
@@ -22,7 +23,6 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
   };
 
   useEffect(() => {
-
     if (backendError) {
       axiosInstance
         .post("/log-in", {
@@ -30,12 +30,12 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
           password: signIn.password,
         })
         .then((res) => {
-          localStorage.setItem('token',res.data.token)
-          localStorage.setItem('refreshToken',res.data.refresh)
-          console.log(localStorage)
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("refreshToken", res.data.refresh);
+          console.log(localStorage);
           setBackendError(false);
-          console.log(res.data?.user?.type)
-          dealer(res.data?.user?.type)
+          console.log(res.data?.user?.type);
+          dealer(res.data?.user?.type);
           username(res.data?.user?.username);
           setGuest(false);
           setError({ email: "stabil", password: "stabil" });
@@ -44,7 +44,7 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
           page("home");
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
           if (err.response?.data === "wrong password") {
             setError((current) => {
               return { ...current, password: "Wrong password !" };
@@ -275,7 +275,7 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
   };
 
   return (
-    <>
+    <div className="div-box">
       <form id="sign-in">
         <h2>Sign In</h2>
         <label htmlFor="email">
@@ -310,6 +310,43 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
           Sign in
         </button>
       </form>
-    </>
+      <div className="register">
+        <div className="correct-guest">
+          <p
+            className="text"
+            style={{
+              fontSize: 13,
+              marginRight: 5,
+            }}
+          >
+            Do not have an account?{" "}
+          </p>
+          <p
+            className="text2"
+            style={{
+              fontSize: 13,
+              marginRight: 5,
+            }}
+          >
+            Go as guest{" "}
+          </p>
+        </div>
+
+        <div className="go-as-guest">
+          <button onClick={() => setPage("register")} type="btn">
+            Register
+          </button>
+          <button
+            onClick={() => {
+              setGuest(true);
+              setPage("home");
+            }}
+            type="btn"
+          >
+            Go as guest
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

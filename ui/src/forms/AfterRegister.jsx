@@ -1,9 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 export default function AfterRegister({ page }) {
   return (
-    <div>
+    
+    <div className="div-box">
       <div>
         <p>You have been registered successfully!</p>
       </div>
