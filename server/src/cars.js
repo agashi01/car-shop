@@ -47,11 +47,14 @@ const create = (db, cloudinary) => async (req, res) => {
 
     const result = await response.json();
     const car = result.some(detection => detection.label === 'car' && detection.score > 0.9);
+    const clear= result.some(detection => detection.label === 'car' && detection.score > 0.5);
 
     if (!car) {
       for (let x = 0; x < images.length; x++) {
         cloudinary.uploader.destroy(images[x].public_id)
       }
+      if(clear) return res.status(400).json('images are not clear. Please retake them!')
+
       return res.status(400).json('images are not related to cars')
     } else {
       console.log('images are related to cars')

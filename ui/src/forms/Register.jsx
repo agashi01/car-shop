@@ -3,19 +3,20 @@ import React, { useCallback } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
 
 
 // eslint-disable-next-line react/prop-types
-export default function Register({ logo, page }) {
+export default function Register() {
   const username = useRef(null);
   const emri = useRef(null);
   const mbiemri = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
   const axiosInstance = useAxiosInstance();
+  const navigate=useNavigate()
 
   const [backendError, setBackendError] = useState();
   const [backendMessage, setBackendMessage] = useState();
@@ -45,9 +46,6 @@ export default function Register({ logo, page }) {
     ref.focus();
   };
 
-  useEffect(() => {
-    logo("logo");
-  }, []);
 
   useEffect(() => {
     if (backendError) {
@@ -62,7 +60,7 @@ export default function Register({ logo, page }) {
         })
         .then(() => {
           setBackendError(false);
-          page("afterRegister");
+          navigate("/After-register");
         })
         .catch((err) => {
           setBackendError(true);
@@ -569,7 +567,7 @@ export default function Register({ logo, page }) {
         >
           Already have an account?{" "}
         </p>
-        <button onClick={() => setPage("signIn")} type="button">
+        <button onClick={() => navigate("/Sign-in")} type="button">
           Sign In
         </button>
       </div>

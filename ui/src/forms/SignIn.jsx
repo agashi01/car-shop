@@ -1,15 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
 
 // eslint-disable-next-line react/prop-types
-export default function SignInForm({ dealer, id, logo, page, setGuest, username }) {
+export default function SignInForm({ dealer, id, username }) {
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [error, setError] = useState({ email: "", password: "" });
   const [backendError, setBackendError] = useState(null);
   const [backendMessage, setBackendMessage] = useState(null);
   const axiosInstance = useAxiosInstance();
+  const navigate=useNavigate()
 
   const email = useRef(null);
   const password = useRef(null);
@@ -37,11 +38,11 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
           console.log(res.data?.user?.type);
           dealer(res.data?.user?.type);
           username(res.data?.user?.username);
-          setGuest(false);
           setError({ email: "stabil", password: "stabil" });
           id(res.data?.user?.id);
-          logo("logo");
-          page("home");
+          localStorage.setItem('guest',false)
+          localStorage.setItem('id',res.data?.user?.id)
+          navigate("/");
         })
         .catch((err) => {
           console.log(err);
@@ -333,13 +334,14 @@ export default function SignInForm({ dealer, id, logo, page, setGuest, username 
         </div>
 
         <div className="go-as-guest">
-          <button onClick={() => setPage("register")} type="btn">
+          <button onClick={() => navigate("/Register")} type="btn">
             Register
           </button>
           <button
             onClick={() => {
-              setGuest(true);
-              setPage("home");
+          localStorage.setItem('guest',true) 
+          localStorage.removeItem('id')             
+              navigate("/");
             }}
             type="btn"
           >

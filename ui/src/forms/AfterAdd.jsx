@@ -1,9 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 // eslint-disable-next-line react/prop-types
-export default function AfterAdd({ page }) {
+export default function AfterAdd() {
+
+  const navigate = useNavigate()
+
   return (
     <div className="div-box">
       <div>
@@ -16,7 +19,7 @@ export default function AfterAdd({ page }) {
           className="btn2"
           onClick={(e) => {
             e.preventDefault();
-            page("home");
+            navigate("/");
           }}
         >
           Home

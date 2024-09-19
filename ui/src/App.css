@@ -1250,9 +1250,6 @@ btn .prezantimi-register {
   position: relative;
   display: flex;
   flex-direction: column;
-}
-
-.box {
   border: 1px solid #333;
   padding: 25px;
   display: flex;
@@ -1263,10 +1260,6 @@ btn .prezantimi-register {
   justify-content: center;
   height: auto;
   box-shadow: 0px 10px 4px rgba(0, 0, 0, 0.5);
-}
-
-.go-back {
-  position: absolute;
 }
 
 .text {
@@ -1306,12 +1299,12 @@ btn .prezantimi-register {
   flex-direction: column;
 }
 
-.box input {
+.div-box input {
   margin-bottom: 10px;
   padding: 8px;
 }
 
-.box button {
+.div-box button {
   background-color: hsla(200, 100%, 50%, 0.1);
   border: 1px solid hsla(200, 100%, 50%);
   color: hsla(200, 100%, 50%);
@@ -1322,14 +1315,14 @@ btn .prezantimi-register {
 }
 
 
-.box button:hover,
-.box button:focus-visible {
+.div-box button:hover,
+.div-box button:focus-visible {
   transform: translateY(-2px);
   background: hsla(200, 100%, 50%, 0.2);
 }
 
 
-.box button:active {
+.div-box button:active {
   background: hsla(200, 100%, 50%, 0.3);
 }
 

@@ -1,10 +1,29 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGuest } from "../Context";
 
 export const axiosInstance = () => {
-  const { guest, setAuthMessage } = useGuest();
+  const { setAuthMessage } = useGuest();
+  const [guest, setGuest] = useState(localStorage.getItem('guest'))
+
+
+  useEffect(() => {
+    const updateStorage = () => {
+      setGuest(localStorage.getItem('guest'))
+    }
+
+    updateStorage()
+
+    window.addEventListener('storage', updateStorage)
+
+    return () => {
+
+      window.removeEventListener('storage', updateStorage)
+
+    }
+
+  }, [])
 
   const axiosInstance2 = useMemo(() => {
     const instance = axios.create({
@@ -46,34 +65,31 @@ export const axiosInstance = () => {
         const original = error.config;
         const errMessage = error.response?.data;
         console.log(errMessage, 'err');
-  
-        // Initialize _retry if it doesn't exist
+
         if (!original._retry) {
           original._retry = 0;
         }
-  
-        // Check if token has expired and retry is less than 1
+
         if (original._retry < 1 && errMessage === "Token has expired") {
           original._retry += 1;
-  
+
           try {
             const refreshToken = localStorage.getItem("refreshToken");
-  
-            // Wait for the refresh token request to complete
+
             console.log(refreshToken)
             const response = await axios.post("http://localhost:4000/token", { refreshToken });
-  
+
             console.log(response.data);
             const newToken = response.data;
             localStorage.setItem('token', newToken);
-  
-            // Update the original request with the new token
+
+
             original.headers['Authorization'] = `Bearer ${newToken}`;
-  
-            // Retry the original request with the new token
+
+
             return axiosInstance2(original);
           } catch (err) {
-            // Handle token refresh errors
+
             console.log(err);
             if (err.response?.data === 'Invalid token') {
               setAuthMessage('Who are you? Please refresh the page and log in again!');
@@ -85,21 +101,24 @@ export const axiosInstance = () => {
             return Promise.reject(err);
           }
         } else if (original._retry < 1 && errMessage === 'Invalid token') {
+          original._retry += 1;
           setAuthMessage('Who are you? Please log in again!');
           return Promise.reject(error);
+        } else if (errMessage - 'Token verification failed') {
+          original._retry += 1;
+          setAuthMessage('Something went wrong, can you please refresh the page and log in again!');
+          return Promise.reject(error);
         }
-  
-        // Handle any other errors
-        setAuthMessage('Something went wrong, can you please refresh the page and log in again!');
+
         return Promise.reject(error);
       }
     );
-  
+
     return () => {
       axiosInstance2.interceptors.response.eject(responseInterceptor);
     }
   }, []);
-  
+
 
 
 

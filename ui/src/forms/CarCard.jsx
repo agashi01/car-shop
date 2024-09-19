@@ -6,6 +6,8 @@ import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
 
 // eslint-disable-next-line react/prop-types
 export default function CarCard({ removeId, carId, deletMarket, deletSold, id, isit, guest, car }) {
+id=parseInt(id)
+  
   const [purchased, setPurchased] = useState(false);
   const [flip, setFlip] = useState(false);
   const [removeMenu, setRemoveMenu] = useState(false);
@@ -35,7 +37,7 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
     console.log(id);
 
     e.stopPropagation();
-    if (guest) {
+    if (guest==='true') {
       isit(true);
       return;
     }

@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import CarCard from "./CarCard";
 import carLogo from "../car_logo.png";
 import debounce from "lodash/debounce";
+import { useNavigate } from 'react-router-dom'
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig";
 
 // eslint-disable-next-line react/prop-types
-function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
+function Home({ auth, dealer, username }) {
+  const [guest, setGuest] = useState(localStorage.getItem('guest'))
+  const [id, setId] = useState(localStorage.getItem('id'))
   const [vehicleInput, setVehicleInput] = useState([]);
   const [modelInput, setModelInput] = useState([]);
   const [vehicleList, setVehicleList] = useState([]);
@@ -28,6 +31,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
   const [end, setEnd] = useState(false);
   const [num, setNum] = useState(0);
   const axiosInstance = useAxiosInstance()
+  const navigate = useNavigate()
 
   const modelRef = useRef();
   const modelMenuRef = useRef();
@@ -35,6 +39,24 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
   const vehicleMenuRef = useRef();
   const burgerMenuRef = useRef();
   const burgerRef = useRef();
+
+  useEffect(() => {
+    const updateStorage = () => {
+      setGuest(localStorage.getItem('guest'))
+      setId(localStorage.getItem('id'))
+    }
+
+    updateStorage()
+
+    window.addEventListener('storage', updateStorage)
+
+    return () => {
+
+      window.removeEventListener('storage', updateStorage)
+
+    }
+
+  }, [])
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -202,7 +224,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
     setModelList(listM.length ? listM : modelInput.map((item) => item.model));
   }, [modelInput]);
 
-// fetching cars 
+  // fetching cars 
   useEffect(() => {
     const fetchCars = async () => {
       const url = guest ? "/cars/guest" : "/cars";
@@ -274,7 +296,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
     });
   };
   const changePage = (str) => () => {
-    page(str);
+    navigate(str);
   };
 
   const check = (str) => {
@@ -341,6 +363,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
     });
   };
 
+  console.log(guest,'home')
   return (
     <div className="complet">
       {deletMarket && (
@@ -374,7 +397,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
               className="btn2"
               onClick={(e) => {
                 e.preventDefault();
-                page("signIn");
+                navigate("Sign-in");
               }}
             >
               Ok
@@ -382,7 +405,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
           </div>
         </div>
       )}
-      {guest ? (
+      {guest !=='false' ? (
         <nav className="home">
           <div className="vehicles-menu">
             <button ref={vehicleRef} onClick={vehicleMenu} className="vehicle here">
@@ -394,7 +417,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
           </div>
           <div className="home-logo">
             <img
-              className={`logo ${logo}`}
+              className={`logo `}
               src={carLogo}
               alt="logo"
               style={{
@@ -464,10 +487,10 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
           </div>
 
           <div className="account">
-            <button onClick={changePage("signIn")} className="btn2 margin">
+            <button onClick={changePage("/Sign-in")} className="btn2 margin">
               Sign in{" "}
             </button>
-            <button onClick={changePage("register")} className="btn2 margin">
+            <button onClick={changePage("/Register")} className="btn2 margin">
               {" "}
               Register{" "}
             </button>
@@ -481,13 +504,13 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
           <div ref={burgerMenuRef} className={menu}>
             <div className="help">
               <ul className="ul">
-                <li onClick={() =>{
+                <li onClick={() => {
                   auth()
-                  page("signIn")
-                } }>Sign In</li>
-                <li onClick={() =>{
+                  navigate("/Sign-in")
+                }}>Sign In</li>
+                <li onClick={() => {
                   auth()
-                  page("register")
+                  navigate("/Register")
                 }}>Register</li>
                 <li>Home</li>
               </ul>
@@ -509,7 +532,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
               </div>
               <div className="home-logo">
                 <img
-                  className={`logo ${logo}`}
+                  className={`logo `}
                   src={carLogo}
                   alt="logo"
                   style={{
@@ -590,15 +613,14 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
               <div ref={burgerMenuRef} className={menu}>
                 <div className="help">
                   <ul className="ul">
-                    <li onClick={() =>{
+                    <li onClick={() => {
                       auth()
-                      page("register")
-                    } }>New account</li>
-                    <li onClick={() =>{
+                      navigate("/Register")
+                    }}>New account</li>
+                    <li onClick={() => {
                       auth()
-                      page("signIn")
-                    } }>Sign Out</li>
-                    <li onClick={guestFunc}>Guest</li>
+                      navigate("/Sign-in")
+                    }}>Sign Out</li>
                   </ul>
                 </div>
               </div>
@@ -616,7 +638,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
             </div>
             <div className="home-logo">
               <img
-                className={`logo ${logo}`}
+                className={`logo `}
                 src={carLogo}
                 alt="logo"
                 style={{
@@ -697,9 +719,8 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
             <div ref={burgerMenuRef} className={menu}>
               <div className="help">
                 <ul className="ul">
-                  <li onClick={() => page("register")}>New account</li>
-                  <li onClick={() => page("signIn")}>Sign Out</li>
-                  <li onClick={guestFunc}>Guest</li>
+                  <li onClick={() => navigate("/Register")}>New account</li>
+                  <li onClick={() => navigate("/Sign-in")}>Sign Out</li>
                 </ul>
               </div>
             </div>
@@ -709,7 +730,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
         {dealer === "Selling" ? (
           <div className="scroll-bottom">
             <button
-              onClick={() => page("add")}
+              onClick={() => navigate("/Add")}
               className="btn sell ul"
               style={{ position: "relative" }}
             >
@@ -756,7 +777,7 @@ function Home({auth, dealer, id, page, logo, guest, username, guestFunc }) {
             >
               Previous
             </button>
-            <span>Page {pageNumber}</span>
+            <span> Page {pageNumber}</span>
             <button
               className={`btn${cars.length < limit || end ? " disabled" : ""}`}
               onClick={(e) => {
