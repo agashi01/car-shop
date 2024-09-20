@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig";
 
 // eslint-disable-next-line react/prop-types
-function Home({ auth, dealer, username }) {
-  const [guest, setGuest] = useState(localStorage.getItem('guest'))
+function Home({ auth,guest, dealer, username }) {
   const [id, setId] = useState(localStorage.getItem('id'))
   const [vehicleInput, setVehicleInput] = useState([]);
   const [modelInput, setModelInput] = useState([]);
