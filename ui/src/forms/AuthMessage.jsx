@@ -1,11 +1,25 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 
 export default function AuthMessage({authMessage,auth}){
+
+  useEffect(() => {
+    if (authMessage ) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    // Clean up the overflow style when component unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [authMessage]);
+
 
 console.log(auth)
     return(
         <div className="modal">
-          <div className="logIn-again">
+          <div className="logIn-again" onClick={e=>e.stopPropagation()}>
             {authMessage === "Unable to refresh token, please log in again!" ? (
               <>
                 <p className="">{authMessage}</p>

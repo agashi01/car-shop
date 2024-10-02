@@ -1,27 +1,30 @@
 // optimizo fuksionin "func"
 
-let fNum = {
-  fNum: 0,
-  offset: 0,
-  newOffset: 0,
-  pageNumber: null
-}
-
 const create = (db, cloudinary) => async (req, res) => {
   const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body;
+  //   cloudinary.api.resources({ type: 'upload', resource_type: 'image', max_results: 500 }, 
+  //   (error, result) => {
+  //     if (!error) {
+  //       const publicIds = result.resources.map((resource) => resource.public_id);
+  //       if (publicIds.length > 0) {
+  //         cloudinary.api.delete_resources(publicIds, (delErr, delResult) => {
+  //           if (delErr) return console.error('Error deleting images:', delErr);
+  //           console.log('Deleted images:', delResult);
+  //         });
+  //       } else {
+  //         console.log('No images to delete.');
+  //       }
+  //     } else {
+  //       console.error('Error fetching images:', error);
+  //     }
+  // });
+
   let urls = []
-  const resources = await cloudinary.api.resources();
-  console.log(resources)
-  for (const resource of resources.resources) {
-    let result = await cloudinary.uploader.destroy(resource.public_id)
-    console.log(result, 'result')
-  }
-  console.log('done')
   let images = []
+  if (req.files.length > 15) return res.status(400).json('To many images, the limit is 15')
   try {
     for (let x = 0; x < req.files.length; x++) {
-      images[x] = await cloudinary.uploader.upload(req.files[x].path
-      )
+      images[x] = await cloudinary.uploader.upload(req.files[x].path)
       urls[x] = images[x].secure_url
     }
   } catch (err) {
@@ -32,43 +35,62 @@ const create = (db, cloudinary) => async (req, res) => {
     console.log(err, 'cloudinary')
     return res.json(err)
   }
-
-  const response = await fetch(
-    'https://api-inference.huggingface.co/models/facebook/detr-resnet-50',
-    {
-      headers: { Authorization: `Bearer ${process.env.IMAGEAPI}` },
-      method: "POST",
-      'content-type': 'application/json',
-      body: urls
-    }
-  );
-  console.log(response, 'response')
-  if (response.ok) {
-
-    const result = await response.json();
-    const car = result.some(detection => detection.label === 'car' && detection.score > 0.9);
-    const clear= result.some(detection => detection.label === 'car' && detection.score > 0.5);
-
-    if (!car) {
-      for (let x = 0; x < images.length; x++) {
-        cloudinary.uploader.destroy(images[x].public_id)
+  let errMessage = ''
+  let status = null
+  for (let x = 0; x < urls.length; x++) {
+    console.log(x)
+    const response = await fetch(
+      'https://api-inference.huggingface.co/models/facebook/detr-resnet-50',
+      {
+        headers: { Authorization: `Bearer ${process.env.IMAGEAPI}` },
+        method: "POST",
+        'content-type': 'application/json',
+        body: urls[x]
       }
-      if(clear) return res.status(400).json('images are not clear. Please retake them!')
+    );
+    if (response.ok) {
 
-      return res.status(400).json('images are not related to cars')
+      const result = await response.json();
+      console.log(result)
+      const car = result.some(detection => detection.label === 'car' && detection.score > 0.9);
+      const clear = result.some(detection => detection.label === 'car' && detection.score > 0.5);
+
+      if (!car) {
+
+        for (let y = 0; y <= x; y++) {
+          cloudinary.uploader.destroy(images[y].public_id)
+        }
+
+        if (clear) {
+
+          errMessage = `image number ${x + 1} is not clear. Please retake it!`
+          status = 400
+        } else {
+
+          errMessage = `image number ${x + 1} is not related to a car!`
+          status = 400
+        }
+
+      } else {
+        console.log('images are related to cars')
+      }
+
     } else {
-      console.log('images are related to cars')
+      for (let y = 0; y <= x; y++) {
+        let ans = await cloudinary.uploader.destroy(images[y].public_id)
+
+      }
+
+      const errorText = await response.text()
+      console.log(response.status, response.statusText, errorText, 'here')
+      return res.status(response.status).json('Problems in the server')
+
+    }
+    if (errMessage) {
+      return res.status(status).json(errMessage)
     }
 
-  } else {
-    for (let x = 0; x < images.length; x++) {
-      let ans = await cloudinary.uploader.destroy(images[x].public_id)
 
-      console.log(ans, 'ans')
-    }
-    const errorText = await response.text()
-    console.log(response.status, response.statusText, errorText)
-    return res.status(response.status).json('problems in the server')
   }
 
   try {
@@ -252,32 +274,26 @@ const model = (db) => async (req, res) => {
 
 const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = null, id = null, dealer = null) => {
   try {
-    if (pageNumber === 1) {
-      fNum = {
-        fNum: 0,
-        offset: 0,
-        newOffset: 0,
-        pageNumber: null
-      }
-    }
-    let query = db("cars").whereNotNull('paths').join("users", "cars.dealer_id", "users.id");
 
-    if (vehicle) {
-      query = query.whereIn("make", vehicle);
-    }
+    let query = db("cars")
+      .whereNotNull('paths')
+      .join("users", "cars.dealer_id", "users.id")
+      .whereIn("make", vehicle || [])
+      .whereIn("model", model || []);
 
-    if (model) {
-      query = query.whereIn("model", model);
-    } .0
+
     if (dealer === "Selling") {
-      if (fNum.fNum === 0) {
-        query = query
-          .orderByRaw("CASE WHEN dealer_id = ? THEN 0 ELSE 1 END", [id])
-          .orderByRaw("CASE WHEN cars.owner_id IS NULL THEN 0 ELSE 1 END")
-          .orderBy("date_of_creation", "DESC")
-          .orderBy("date_of_last_update", "DESC")
-          .where("cars.dealer_id", id);
-      }
+
+      query = query
+        .orderByRaw(`
+          CASE WHEN cars.dealer_id = ? and cars.owner_id IS NULL THEN 0 
+           WHEN cars.dealer_id = ? THEN 1
+           WHEN cars.owner_id = ? THEN 2
+          ELSE 3 
+          END,
+          date_of_creation DESC,
+          date_of_last_update DESC
+        `, [id, id, id]);
     } else if (id) {
       query = query
         .orderByRaw("CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END", [id])
@@ -287,44 +303,14 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
 
     const cars = await query
       .select("cars.*", "users.name", "users.surname")
-      .limit(limit)
+      .limit(limit + 1)
       .offset(offset);
 
-    let nextLimit = limit - cars.length;
-    if (fNum.pageNumber === pageNumber) {
-      fNum.fNum = 0
-      fNum.page = null
+    let end = !(cars.length > limit)
+
+    if (!end) {
+      cars.pop();
     }
-    if (num !== limit && limit !== 0) {
-      fNum.fNum = num
-      fNum.offset = offset
-      fNum.page = pageNumber
-    }
-
-    const sellingOffset = nextLimit ? fNum.fNum + offset - fNum.offset : 0;
-    let end = false
-    if (dealer === "Selling") {
-      const sellingCars = await db("cars")
-        .join("users", "cars.dealer_id", "users.id")
-        .whereIn("make", vehicle || [])
-        .whereIn("model", model || [])
-        .orderByRaw("CASE WHEN owner_id = ? THEN 0 ELSE 1 END", [id])
-        .orderBy("date_of_last_update", "DESC")
-        .select("cars.*", "users.name", "users.surname")
-        .whereNot('cars.dealer_id', id)
-        .limit(nextLimit + 1)
-        .offset(sellingOffset);
-
-
-      if (sellingOffset.length === nextLimit + 1) {
-        end = true
-      }
-      sellingCars.pop()
-
-      cars.push(...sellingCars);
-    }
-
-    cars;
 
     const ownerIds = cars.map((car) => car.owner_id).filter((id) => id !== null);
     const owners = await db("users").whereIn("id", ownerIds).select("id", "name", "surname");
@@ -337,7 +323,7 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
     cars.forEach((car) => {
       car.owner = ownerMap[car.owner_id] || null;
     });
-    
+
     return [end, cars];
   } catch (err) {
     console.log(err)
@@ -368,6 +354,7 @@ const readAllGuest = (db) => async (req, res) => {
 };
 
 const make = (db) => async (req, res) => {
+  console.log(model)
   try {
     const rows = await db("cars").select(db.raw("DISTINCT make"));
     if (!rows) {
@@ -376,7 +363,7 @@ const make = (db) => async (req, res) => {
     return res.json(rows);
   } catch (err) {
     console.log(err)
-    
+
     res.status(400).json(err);
   }
 };
@@ -432,10 +419,9 @@ const dealerModel = (db) => (req, res) => {
 
 const dealerMake = (db) => (req, res) => {
   const { model, reqMake } = req.query;
+  console.log(req.query)
   let make = db("cars_info").distinct("make");
-  if (model) {
-    make = make.where("model", model);
-  }
+  if (model) make = make.where("model", model);
   make
     .then((makes) => {
       if (makes[0].make === reqMake && model) {

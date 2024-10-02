@@ -72,7 +72,7 @@ const logIn = (db, jwt) => async (req, res) => {
             const header = {
               name: userInfo.username
             }
-            const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '5s' })
+            const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '1h' })
             const refresh = jwt.sign(header, process.env.JWT_REFRESH_SECRET)
             db('refresh_tokens').insert({
               "refresh_token": refresh
@@ -104,7 +104,6 @@ const logIn = (db, jwt) => async (req, res) => {
 
 const token = (db, jwt) => (req, res) => {
   const refreshToken = req.body.refreshToken
-  console.log(refreshToken)
   if (!token) return res.status(401).json('refresh token is missing')
   db('refresh_tokens').select("*").where("refresh_token", refreshToken)
     .first().then(refresh => {
@@ -114,24 +113,19 @@ const token = (db, jwt) => (req, res) => {
         jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
           if (err) {
 
-            console.log('hell yes')
             if (err.name === "TokenExpiredError") {
-              console.log('expired')
               return res.status(401).json("Token has expired");
             
             } else if (err.name === "JsonWebTokenError") {
-              console.log('invaid')
-              console.log('hgere')
               return res.status(403).json("Invalid token");
             } else {
-              console.log('dunno')
               return res.status(403).json("Token verification failed");
             }
           }
           const header = {
             name: user.name
           }
-          const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '5s' })
+          const token = jwt.sign(header, process.env.JWT_SECRET, { expiresIn: '1h' })
           console.log(token)
           return res.json(token)
         })
@@ -154,7 +148,6 @@ const signOut = (db) => (req, res) => {
   if (!token) {
     return res.status(400).json({ message: "Token missing in body" })
   }
-  console.log(token, 'token')
   db('refresh_tokens')
     .where('refresh_token', token)
     .delete()
@@ -172,9 +165,39 @@ const signOut = (db) => (req, res) => {
 
 }
 
+const logInToken=(db,jwt)=>(req,res)=>{
+  const {token}=req.body
+
+  if(!token) return res.status(400).json('token is missing')
+
+  jwt.verify(token,process.env.JWT_SECRET,async (err,user)=>{
+    if(err){
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json("Token has expired");
+      } else if (err.name === "JsonWebTokenError") {
+        return res.status(403).json("Invalid token");
+      } else {
+        return res.status(403).json("Token verification failed");
+      }
+    }
+    console.log(user.name)
+    const dbUser= await db('users_info').where('username',user.name).select('*').first()
+    
+    if(!dbUser) return res.status(500).json('something went wrong with getting username from token')
+
+    const finalUser=await db('users').where('email',dbUser.email).select('*').first()
+
+    if(!finalUser) return res.status(500).json('something went wrong with getting username from token')
+    
+    res.json({...finalUser,username:dbUser.username})
+
+  })
+}
+
 module.exports = {
   signUp,
   logIn,
   token,
   signOut,
+  logInToken
 };

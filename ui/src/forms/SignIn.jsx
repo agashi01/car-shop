@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig4000";
 
 // eslint-disable-next-line react/prop-types
-export default function SignInForm({ dealer, id, username }) {
+export default function SignInForm({ dealer, guest, id, username }) {
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [error, setError] = useState({ email: "", password: "" });
   const [backendError, setBackendError] = useState(null);
   const [backendMessage, setBackendMessage] = useState(null);
   const axiosInstance = useAxiosInstance();
-  const navigate=useNavigate()
+  const navigate = useNavigate()
 
   const email = useRef(null);
   const password = useRef(null);
@@ -36,12 +36,11 @@ export default function SignInForm({ dealer, id, username }) {
           console.log(localStorage);
           setBackendError(false);
           console.log(res.data?.user?.type);
+          setError({ email: "stabil", password: "stabil" });
           dealer(res.data?.user?.type);
           username(res.data?.user?.username);
-          setError({ email: "stabil", password: "stabil" });
-          id(res.data?.user?.id);
-          localStorage.setItem('guest',false)
-          localStorage.setItem('id',res.data?.user?.id)
+          guest(false)
+          id(res.data?.user?.id)
           navigate("/");
         })
         .catch((err) => {
@@ -339,8 +338,7 @@ export default function SignInForm({ dealer, id, username }) {
           </button>
           <button
             onClick={() => {
-          localStorage.setItem('guest',true) 
-          localStorage.removeItem('id')             
+              guest(true)
               navigate("/");
             }}
             type="btn"

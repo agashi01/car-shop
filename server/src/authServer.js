@@ -31,6 +31,7 @@ app.options('*', cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 
+app.post('/log-in-token',auth.logInToken(db,jwt))
 app.post('/token', auth.token(db, jwt))
 app.post("/sign-up", auth.signUp(db));
 app.post("/log-in", auth.logIn(db, jwt));

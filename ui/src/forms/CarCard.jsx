@@ -1,21 +1,43 @@
+/* eslint-disable react/jsx-key */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable react/prop-types */
 
-import { React, useEffect, useState } from "react";
+
+import { React, useEffect, useState, useRef } from "react";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
 
 // eslint-disable-next-line react/prop-types
 export default function CarCard({ removeId, carId, deletMarket, deletSold, id, isit, guest, car }) {
-id=parseInt(id)
-  
+  id = parseInt(id)
+
   const [purchased, setPurchased] = useState(false);
   const [flip, setFlip] = useState(false);
   const [removeMenu, setRemoveMenu] = useState(false);
   const [theOne, setTheOne] = useState(false)
-  const [path] = useState(car.paths[0])
+  const [path] = useState(car.paths[0]) || []
   const [current, setCurrent] = useState(0)
   const [isLeftHovered, setIsLeftHovered] = useState(false)
   const [isRightHovered, setIsRightHovered] = useState(false)
+ 
+  const [isSliding, setIsSliding] = useState(false)
+
+
+  const [images, setImages] = useState([])
+
+  useEffect(() => {
+    if (path) {
+      const bufferImages = path.map((url) => {
+        const image = new Image()
+        image.src = url
+        return image
+
+      })
+      if (bufferImages) setImages(bufferImages)
+
+    }
+
+  }, [])
+
 
   const axiosInstance = useAxiosInstance()
 
@@ -37,7 +59,7 @@ id=parseInt(id)
     console.log(id);
 
     e.stopPropagation();
-    if (guest==='true') {
+    if (guest) {
       isit(true);
       return;
     }
@@ -76,18 +98,32 @@ id=parseInt(id)
   const prevImage = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setCurrent(() => {
-      return (current - 1 + path.length) % path.length
-    })
+    setIsSliding(true)
+
+    setTimeout(() => {
+      setCurrent(() => {
+        return (current - 1 + images.length) % images.length
+      })
+      setIsSliding(false)
+    }, 500)
+
   }
 
   const nextImage = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setCurrent(() => {
-      return (current + 1) % path.length
-    })
+    setIsSliding(true)
+    setTimeout(() => {
+      setCurrent(() => {
+        return (current + 1) % images.length
+      })
+      setIsSliding(false)
+
+    }, 500)
+
   }
+
+
 
   return (
     // eslint-disable-next-line react/prop-types
@@ -95,7 +131,15 @@ id=parseInt(id)
       <div className="front">
         <div className="card-png">
           <button onMouseEnter={() => setIsLeftHovered(true)} onMouseLeave={() => setIsLeftHovered(false)} style={{ opacity: isLeftHovered ? "1" : ".76" }} className="image-button left" onClick={prevImage}>&lt;</button>
-          <img className="carcard-image" src={path[current]}></img>
+          <div className={`image-container ${isSliding ? 'sliding' : ''}`}>
+            <img  className={`carcard-image`} src={images[current]?.src}></img>
+            <div  className='white-balls-div'>
+              {images.length ? images.map((url, index) => {
+                return <div key={index} className={`white-balls ${index === current ? 'blue' : ''}`}></div>
+              }) : null}
+            </div>
+
+          </div>
           <button onMouseEnter={() => setIsRightHovered(true)} onMouseLeave={() => setIsRightHovered(false)} style={{ opacity: isRightHovered ? "1" : ".76" }} className="image-button right" onClick={nextImage}>&gt;</button>
         </div>
         <div className="png-div">

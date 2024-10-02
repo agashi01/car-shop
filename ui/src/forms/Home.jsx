@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig";
 
 // eslint-disable-next-line react/prop-types
-function Home({ auth,guest, dealer, username }) {
-  const [id, setId] = useState(localStorage.getItem('id'))
+function Home({ auth, guest, id, dealer, username }) {
   const [vehicleInput, setVehicleInput] = useState([]);
   const [modelInput, setModelInput] = useState([]);
   const [vehicleList, setVehicleList] = useState([]);
@@ -40,22 +39,17 @@ function Home({ auth,guest, dealer, username }) {
   const burgerRef = useRef();
 
   useEffect(() => {
-    const updateStorage = () => {
-      setGuest(localStorage.getItem('guest'))
-      setId(localStorage.getItem('id'))
+    if (deletMarket || deletSold || isit) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
     }
 
-    updateStorage()
-
-    window.addEventListener('storage', updateStorage)
-
+    // Clean up the overflow style when component unmounts
     return () => {
-
-      window.removeEventListener('storage', updateStorage)
-
-    }
-
-  }, [])
+      document.body.style.overflow = "auto";
+    };
+  }, [deletMarket, deletSold, isit]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -64,6 +58,20 @@ function Home({ auth,guest, dealer, username }) {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
+  
+  useEffect(() => {
+    setRemoveId(carId);
+    axiosInstance
+      .delete("/cars", { params: { id: carId } })
+      .then((res) => {
+        setRemoveId(carId);
+        console.log(res);
+      })
+
+
+  }, [deletSold])
+
 
   useEffect(() => {
     let count = 0
@@ -82,7 +90,7 @@ function Home({ auth,guest, dealer, username }) {
       .get("/model", {
         params: {
           vehicleList,
-        },
+        }
       })
       .then((res) => {
         setModelInput(res.data);
@@ -93,6 +101,20 @@ function Home({ auth,guest, dealer, username }) {
 
     return;
   }, [vehicleList]);
+
+  
+  useEffect(() => {
+    axiosInstance
+      .get("/make")
+      .then((response) => {
+        const res = response.data;
+        const list = sorted(res.map((item, index) => ({ id: index, ...item, checked: false })));
+        setVehicleInput(list);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []); // Note the empty dependency array
 
   const sorted = (list) => {
     for (let x = 0; x < list.length; x++) {
@@ -199,19 +221,6 @@ function Home({ auth,guest, dealer, username }) {
       document.removeEventListener("click", defaultClass);
     };
   }, []);
-
-  useEffect(() => {
-    axiosInstance
-      .get("/make")
-      .then((response) => {
-        const res = response.data;
-        const list = sorted(res.map((item, index) => ({ id: index, ...item, checked: false })));
-        setVehicleInput(list);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []); // Note the empty dependency array
 
   useEffect(() => {
     const listV = vehicleInput.filter((item) => item.checked).map((item) => item.make);
@@ -327,20 +336,6 @@ function Home({ auth,guest, dealer, username }) {
     setModelInput(modelInput.map((obj) => ({ ...obj, checked: false })));
   };
 
-  const soldDelete = (e) => {
-    console.log(deletSold, carId);
-    e.preventDefault();
-    setRemoveId(carId);
-    axiosInstance
-      .delete("/cars", { params: { id: carId } })
-      .then((res) => {
-        setRemoveId(carId);
-        console.log(res);
-        setDeletSold(false);
-      })
-      .catch((err) => console.log(err));
-  };
-
   const marketDelete = (e) => {
     console.log(deletMarket, carId);
     e.preventDefault();
@@ -362,33 +357,43 @@ function Home({ auth,guest, dealer, username }) {
     });
   };
 
-  console.log(guest,'home')
+  const closeModal = () => {
+    setDeletMarket(false)
+    setDeletSold(false)
+  }
+
   return (
     <div className="complet">
       {deletMarket && (
-        <div className="isit remove-card">
-          <p className="isit-first">Are you sure want to remove this car from the market!</p>
-          <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
-            <button type="btn" className="btn2" onClick={() => setDeletMarket(false)}>
-              No
-            </button>
-            <button type="btn" className="btn2" onClick={marketDelete}>
-              Yes
+        <div className='modal' onClick={closeModal}>
+          <div className="isit remove-card" onClick={e => e.stopPropagation()}>
+            <p className="isit-first">Are you sure want to remove this car from the market!</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
+              <button type="btn" className="btn2" onClick={() => setDeletMarket(false)}>
+                No
+              </button>
+              <button type="btn" className="btn2" onClick={marketDelete}>
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+
+      )}
+      {deletSold && (
+        <div className='modal' onClick={closeModal}>
+          <div className="isit remove-card" onClick={e => e.stopPropagation()}>
+            <p className="isit-first">Your sold car has been removed!</p>
+            <button type="btn" className="btn2" onClick={() => setDeletSold(false)}>
+              Ok
             </button>
           </div>
         </div>
-      )}
-      {deletSold && (
-        <div className="isit remove-card">
-          <p className="isit-first">Your sold car has been removed!</p>
-          <button type="btn" className="btn2" onClick={soldDelete}>
-            Ok
-          </button>
-        </div>
+
       )}
       {isit && (
-        <div className="modal">
-          <div className='itis'>
+        <div className="modal" onClick={closeModal}>
+          <div className='itis' onClick={e => e.stopPropagation()}>
             <p className="isit-first">You need to sign in before purchasing!</p>
             <p className="isit-second">Go back to sign in</p>
             <button
@@ -404,7 +409,7 @@ function Home({ auth,guest, dealer, username }) {
           </div>
         </div>
       )}
-      {guest !=='false' ? (
+      {guest ? (
         <nav className="home">
           <div className="vehicles-menu">
             <button ref={vehicleRef} onClick={vehicleMenu} className="vehicle here">
@@ -741,6 +746,22 @@ function Home({ auth,guest, dealer, username }) {
               <div className="arrow"></div>
             </div>
           </div>
+        ) : dealer === 'Buying' ? (
+          <div className="scroll-bottom buying">
+            <div onClick={scroll("bottom")} className="arrows">
+              <div className="arrow"></div>
+              <div className="arrow"></div>
+              <div className="arrow"></div>
+            </div>
+          </div>
+        ) : guest ? (
+          <div className="scroll-bottom buying">
+            <div onClick={scroll("bottom")} className="arrows">
+              <div className="arrow"></div>
+              <div className="arrow"></div>
+              <div className="arrow"></div>
+            </div>
+          </div>
         ) : null}
         <div className="cars-page">
           <ul className="cars-ul">
@@ -773,6 +794,7 @@ function Home({ auth,guest, dealer, username }) {
                 scroll("top")(e);
                 setPageNumber(pageNumber - 1);
               }}
+              disabled={pageNumber === 1}
             >
               Previous
             </button>
@@ -783,7 +805,7 @@ function Home({ auth,guest, dealer, username }) {
                 scroll("top")(e);
                 setPageNumber(pageNumber + 1);
               }}
-              disabled={cars.length < limit}
+              disabled={cars.length < limit && end}
             >
               Next
             </button>

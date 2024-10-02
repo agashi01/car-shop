@@ -1,29 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useGuest } from "../Context";
 
 export const axiosInstance = () => {
-  const { setAuthMessage } = useGuest();
-  const [guest, setGuest] = useState(localStorage.getItem('guest'))
-
-
-  useEffect(() => {
-    const updateStorage = () => {
-      setGuest(localStorage.getItem('guest'))
-    }
-
-    updateStorage()
-
-    window.addEventListener('storage', updateStorage)
-
-    return () => {
-
-      window.removeEventListener('storage', updateStorage)
-
-    }
-
-  }, [])
+  const { guest, setAuthMessage } = useGuest();
 
   const axiosInstance2 = useMemo(() => {
     const instance = axios.create({
@@ -64,28 +45,25 @@ export const axiosInstance = () => {
       async (error) => {
         const original = error.config;
         const errMessage = error.response?.data;
-        console.log(errMessage, 'err');
-
+  
         if (!original._retry) {
           original._retry = 0;
         }
-
+  
         if (original._retry < 1 && errMessage === "Token has expired") {
           original._retry += 1;
-
+  
           try {
             const refreshToken = localStorage.getItem("refreshToken");
-
-            console.log(refreshToken)
+  
             const response = await axios.post("http://localhost:4000/token", { refreshToken });
-
-            console.log(response.data);
+  
             const newToken = response.data;
             localStorage.setItem('token', newToken);
-
+  
 
             original.headers['Authorization'] = `Bearer ${newToken}`;
-
+  
 
             return axiosInstance2(original);
           } catch (err) {
@@ -104,21 +82,21 @@ export const axiosInstance = () => {
           original._retry += 1;
           setAuthMessage('Who are you? Please log in again!');
           return Promise.reject(error);
-        } else if (errMessage - 'Token verification failed') {
+        }else if( errMessage-'Token verification failed'){
           original._retry += 1;
-          setAuthMessage('Something went wrong, can you please refresh the page and log in again!');
-          return Promise.reject(error);
+        setAuthMessage('Something went wrong, can you please refresh the page and log in again!');
+        return Promise.reject(error);
         }
-
+       
         return Promise.reject(error);
       }
     );
-
+  
     return () => {
       axiosInstance2.interceptors.response.eject(responseInterceptor);
     }
   }, []);
-
+  
 
 
 

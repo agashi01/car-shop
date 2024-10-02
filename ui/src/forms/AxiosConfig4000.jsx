@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from 'axios';
 import { useEffect, useMemo } from 'react';
+import { useGuest } from '../Context';
 
 export const axiosInstance = () => {
-    const guest = localStorage.getItem('guest');
+    const { guest} = useGuest();
 
     const axiosInstance2 = useMemo(() => {
         const instance = axios.create({

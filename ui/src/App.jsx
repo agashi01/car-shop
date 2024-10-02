@@ -18,6 +18,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 export default function App() {
     const [dealer, setDealer] = useState(false);
+    const {guest, setGuest} = useGuest()
     const [id, setId] = useState(null);
     const { authMessage, setAuthMessage } = useGuest();
     const [username, setUsername] = useState("");
@@ -36,20 +37,45 @@ export default function App() {
     }, [])
 
     useEffect(() => {
-        const isFirstLoad = localStorage.getItem('isFirstLoad')
+        const token = localStorage.getItem('token')
 
-        if (!isFirstLoad) {
-            localStorage.setItem('isFirstLoad', true)
-            // localStorage.removeItem('token')
-            // localStorage.removeItem('refreshToken')
-            localStorage.setItem('guest', true)
-            localStorage.removeItem('id')
+        if (token) {
+            axiosInstance.post('/log-in-token',{token})
+                .then(res => {
+                    setDealer(res.data?.type);
+                    setUsername(res.data?.username);
+                    setGuest(false)
+                    setId(res.data?.id)
+                })
+                .catch(err => {
+                    const refreshToken = localStorage.getItem('refreshToken')
+                    if (err.response?.data === "Token has expired") {
+                        if (refreshToken) {
+                            axiosInstance.post('/token', { refreshToken })
+                                .then(res => {
+                                    localStorage.setItem('token', res.data)
+                                    axiosInstance.post('/log-in-token',{token:res.data})
+                                        .then(secondRes => {
+                                            setDealer(secondRes.data?.type);
+                                            setUsername(secondRes.data?.username);
+                                            setGuest(false)
+                                            setId(secondRes.data?.id)
+                                        })
+                                })
+
+                                .catch(secondErr => {
+                                    console.log(secondErr,'secondErr')
+                                    setAuthMessage('Something went wrong, can you please refresh the page and log in again!')
+                                })
+                        }
+
+                    } else if (err.response?.data === 'Invalid Token') {
+                        console.log(err)
+                        setAuthMessage('Who are you? Please log in again!')
+                    }
+                })
         }
-        return () => {
-            localStorage.removeItem('isFirstLoad')
-            localStorage.removeItem('lastPath')
-        }
-    }, []);
+    }, [])
 
     const auth = () => {
         setAuthMessage("");
@@ -68,7 +94,6 @@ export default function App() {
             });
         navigate("/sign-in");
     };
-    console.log(auth, 'auth')
 
     return (
         <>
@@ -82,6 +107,7 @@ export default function App() {
                         path="/Sign-in"
                         element={
                             <SignInForm
+                                guest={setGuest}
                                 dealer={setDealer}
                                 id={setId}
                                 username={setUsername}
@@ -100,6 +126,7 @@ export default function App() {
                         <Home
                             auth={auth}
                             dealer={dealer}
+                            guest={guest}
                             id={id}
                             logo3={Logo}
                             username={username}

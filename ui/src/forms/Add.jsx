@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useState, useRef } from "react";
 import { capitalize } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
@@ -40,6 +40,9 @@ export default function Add({ id }) {
   const axiosInstance = useAxiosInstance();
   const navigate = useNavigate()
 
+  const divRef = useRef(null)
+  const [maxWidth, setMaxWidth] = useState(0)
+
   const [error, setError] = useState({
     make: "",
     model: "",
@@ -60,6 +63,37 @@ export default function Add({ id }) {
     vehicleType: "",
     file: null,
   });
+
+  useEffect(() => {
+    if (divRef.current) {
+      setMaxWidth(divRef.current.offsetWidth)
+    }
+
+    const handleSize = () => {
+      console.log('hi')
+      if (divRef.current) {
+        setMaxWidth(divRef.current.offsetWidth)
+      }
+    }
+
+    window.addEventListener('resize', handleSize)
+
+    return () => window.removeEventListener('resize', handleSize)
+
+  }, [])
+
+  useEffect(() => {
+    if (loading || currentImageIndex) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+
+  }, [loading, currentImageIndex])
 
   useEffect(() => {
     const toggle = (e) => {
@@ -159,6 +193,9 @@ export default function Add({ id }) {
         setLoading(false);
         setUnavailable(false);
         console.log(err);
+        if (typeof err.response.data !== 'string') {
+          setErrorMessage('Problems in te server')
+        }
         setErrorMessage(err.response.data);
       });
   }, [message]);
@@ -168,14 +205,17 @@ export default function Add({ id }) {
       .get("/dealerMake", { params: { model, reqMake: value } })
       .then((res) => {
         if (Array.isArray(res.data)) {
+          console.log(res.data,'array')
           setAllMake(res.data);
           return;
         }
+        console.log(res.data)
         setAllMake([res.data]);
         setValue(res.data.make);
       })
       .catch((err) => console.log(err));
   }, [model]);
+
 
   useEffect(() => {
     axiosInstance
@@ -233,10 +273,12 @@ export default function Add({ id }) {
     setCurrentImageIndex((currentImageIndex - 1 + file.length) % file.length);
   };
 
+  console.log(maxWidth)
+
   return (
     <>
-    <button type='btn' onClick={() => navigate('/')} className="btn2 ">Home</button>
-      <div className="div-box" style={{marginTop:'0px'}}>
+      <button type='btn' onClick={() => navigate('/')} className="btn2 ">Home</button>
+      <div className="div-box" ref={divRef} style={{ marginTop: '0px' }}>
         <form className="sell-menu" encType="multipart/form-data" onSubmit={submit}>
           <div style={{ display: "flex" }}>
             <div className="options">
@@ -387,7 +429,7 @@ export default function Add({ id }) {
           </div>
           {errorMessage && (
             <div>
-              <p className="add-error">{errorMessage}</p>
+              <p style={{ maxWidth: `${maxWidth - 50}px` }} className="add-error">{errorMessage}</p>
             </div>
           )}
           <button

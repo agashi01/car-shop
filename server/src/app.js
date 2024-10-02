@@ -55,9 +55,9 @@ app.options("*", cors(corsOptions));
 
 const authenticate = (req, res, next) => {
   app.disable("x-powered-by");
-  if (req.headers.guest && req.headers.guest !== "false") {
+  if (req.headers.guest==='true') {
     next();
-  } else if (req.headers.guest === "false") {
+  } else if (req.headers.guest === 'false') {
     const authorization = req.headers.authorization;
     const token = authorization && authorization.split(" ")[1];
     if (!token) return res.status(400).json("you dont have a token in authorization");
@@ -71,7 +71,6 @@ const authenticate = (req, res, next) => {
           return res.status(403).json("Token verification failed");
         }
       }
-
       req.user = user
       next()
 
