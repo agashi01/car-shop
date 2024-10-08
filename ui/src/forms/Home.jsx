@@ -59,7 +59,7 @@ function Home({ auth, guest, id, dealer, username }) {
     setIsHovered(false);
   };
 
-  
+
   useEffect(() => {
     setRemoveId(carId);
     axiosInstance
@@ -102,7 +102,7 @@ function Home({ auth, guest, id, dealer, username }) {
     return;
   }, [vehicleList]);
 
-  
+
   useEffect(() => {
     axiosInstance
       .get("/make")
@@ -723,46 +723,80 @@ function Home({ auth, guest, id, dealer, username }) {
             <div ref={burgerMenuRef} className={menu}>
               <div className="help">
                 <ul className="ul">
-                  <li onClick={() => navigate("/Register")}>New account</li>
-                  <li onClick={() => navigate("/Sign-in")}>Sign Out</li>
+                  <li onClick={() => {
+                    auth()
+                    navigate("/Register")
+                  }}>New account</li>
+                  <li onClick={() => {
+                    auth()
+                    navigate("/Sign-in")
+                  }}>Sign Out</li>
                 </ul>
               </div>
             </div>
           </nav>
         )}
       <div className="sell-cars-ul">
-        {dealer === "Selling" ? (
-          <div className="scroll-bottom">
-            <button
-              onClick={() => navigate("/Add")}
-              className="btn sell ul"
-              style={{ position: "relative" }}
-            >
-              Add a car
-            </button>
-            <div onClick={scroll("bottom")} className="arrows">
-              <div className="arrow"></div>
-              <div className="arrow"></div>
-              <div className="arrow"></div>
+        <div className='scroll-menu'>
+          {dealer === 'Selling' ? (
+            <div className='cars-options'>
+              <button className='btn car-options-buttons'>
+                Selling
+              </button>
+              <button className='btn car-options-buttons'>
+                Sold
+              </button>
+              <button className='btn car-options-buttons'>
+                Owned
+              </button>
+              <button className='btn car-options-buttons'>
+                In Stock
+              </button>
             </div>
-          </div>
-        ) : dealer === 'Buying' ? (
-          <div className="scroll-bottom buying">
-            <div onClick={scroll("bottom")} className="arrows">
-              <div className="arrow"></div>
-              <div className="arrow"></div>
-              <div className="arrow"></div>
+          ) : dealer === 'Buying' ? (
+            <div  className='cars-options'>
+               <button className='btn car-options-buttons'>
+                Owned
+              </button>
+              <button className='btn car-options-buttons'>
+                In Stock
+              </button>
             </div>
-          </div>
-        ) : guest ? (
-          <div className="scroll-bottom buying">
-            <div onClick={scroll("bottom")} className="arrows">
-              <div className="arrow"></div>
-              <div className="arrow"></div>
-              <div className="arrow"></div>
+          ) : null}
+
+          {dealer === "Selling" ? (
+            <div className="scroll-bottom">
+              <button
+                onClick={() => navigate("/Add")}
+                className="btn sell ul"
+                style={{ position: "relative" }}
+              >
+                Add a car
+              </button>
+              <div onClick={scroll("bottom")} className="arrows">
+                <div className="arrow"></div>
+                <div className="arrow"></div>
+                <div className="arrow"></div>
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : dealer === 'Buying' ? (
+            <div className="scroll-bottom buying">
+              <div onClick={scroll("bottom")} className="arrows">
+                <div className="arrow"></div>
+                <div className="arrow"></div>
+                <div className="arrow"></div>
+              </div>
+            </div>
+          ) : guest ? (
+            <div className="scroll-bottom buying">
+              <div onClick={scroll("bottom")} className="arrows">
+                <div className="arrow"></div>
+                <div className="arrow"></div>
+                <div className="arrow"></div>
+              </div>
+            </div>
+          ) : null}
+        </div>
         <div className="cars-page">
           <ul className="cars-ul">
             {cars.map((car) => {

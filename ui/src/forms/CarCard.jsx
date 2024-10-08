@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 
 
-import { React, useEffect, useState, useRef } from "react";
+import { React, useEffect, useState } from "react";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig.jsx";
 
 // eslint-disable-next-line react/prop-types
@@ -124,7 +124,7 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   }
 
 
-
+console.log(car.dealer_id,id,car.owner_id)
   return (
     // eslint-disable-next-line react/prop-types
     <div onClick={() => setFlip(!flip)} className={flip ? "car-card flip" : "car-card"}>
@@ -149,7 +149,7 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
               ? "Sold"
               : car.dealer_id === id && !car.owner_id
                 ? "On Market"
-                : car.owner_id != null && id != null && car.owner_id === id
+                : purchased || (car.owner_id != null && id != null && car.owner_id === id)
                   ? "Owned"
                   : car.owner_id
                     ? "Out of Stock"

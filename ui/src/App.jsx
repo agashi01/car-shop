@@ -18,7 +18,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 export default function App() {
     const [dealer, setDealer] = useState(false);
-    const {guest, setGuest} = useGuest()
+    const { guest, setGuest } = useGuest()
     const [id, setId] = useState(null);
     const { authMessage, setAuthMessage } = useGuest();
     const [username, setUsername] = useState("");
@@ -31,16 +31,13 @@ export default function App() {
     }, [location])
 
     useEffect(() => {
-        if (!localStorage.getItem("token")) { // if not logged in
-            navigate("Sign-in");
-        }
-    }, [])
 
-    useEffect(() => {
         const token = localStorage.getItem('token')
 
-        if (token) {
-            axiosInstance.post('/log-in-token',{token})
+        if (!token) { // if not logged in
+            navigate("Sign-in");
+        } else {
+            axiosInstance.post('/log-in-token', { token })
                 .then(res => {
                     setDealer(res.data?.type);
                     setUsername(res.data?.username);
@@ -54,7 +51,7 @@ export default function App() {
                             axiosInstance.post('/token', { refreshToken })
                                 .then(res => {
                                     localStorage.setItem('token', res.data)
-                                    axiosInstance.post('/log-in-token',{token:res.data})
+                                    axiosInstance.post('/log-in-token', { token: res.data })
                                         .then(secondRes => {
                                             setDealer(secondRes.data?.type);
                                             setUsername(secondRes.data?.username);
@@ -64,7 +61,7 @@ export default function App() {
                                 })
 
                                 .catch(secondErr => {
-                                    console.log(secondErr,'secondErr')
+                                    console.log(secondErr, 'secondErr')
                                     setAuthMessage('Something went wrong, can you please refresh the page and log in again!')
                                 })
                         }
@@ -88,6 +85,12 @@ export default function App() {
             .then(() => {
                 localStorage.removeItem("refreshToken");
                 localStorage.removeItem("token");
+                setDealer(false);
+                setGuest(true)
+                setId(null);
+                setAuthMessage('')
+                setUsername("");
+
             })
             .catch((err) => {
                 console.log(err);

@@ -731,6 +731,29 @@ front .model-clicked li:last-child {
   list-style-type: none;
 }
 
+.scroll-menu{
+  display:flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.cars-options{
+  display: flex;
+  justify-content: space-between;
+  width:auto;
+}
+
+
+.car-options-buttons{
+  border-radius: 40px !important;
+  cursor: pointer;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  height: 50px;
+}
+
+
 .scroll-bottom {
   width: 280px;
   display: flex;
