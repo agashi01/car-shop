@@ -76,7 +76,6 @@ export default function App() {
 
     const auth = () => {
         setAuthMessage("");
-        console.log('fsef')
 
         axiosInstance
             .post("/sign-out", {
@@ -85,6 +84,7 @@ export default function App() {
             .then(() => {
                 localStorage.removeItem("refreshToken");
                 localStorage.removeItem("token");
+                localStorage.removeItem('checkboxStates')
                 setDealer(false);
                 setGuest(true)
                 setId(null);

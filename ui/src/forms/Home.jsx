@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import CarCard from "./CarCard";
 import carLogo from "../car_logo.png";
 import debounce from "lodash/debounce";
@@ -18,7 +18,7 @@ function Home({ auth, guest, id, dealer, username }) {
   const [menu, setMenu] = useState("menu-hidden");
   const [cars, setCars] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
-  const [limit] = useState(21);
+  const [limit] = useState(2);
   const [pageNumber, setPageNumber] = useState(1);
   const account = useRef(null);
   const [modelClass, setModelClass] = useState(false);
@@ -28,6 +28,35 @@ function Home({ auth, guest, id, dealer, username }) {
   const [removeId, setRemoveId] = useState(null);
   const [end, setEnd] = useState(false);
   const [num, setNum] = useState(0);
+  const [checkboxStates, setCheckboxStates] = useState({
+    selling: false,
+    sold: false,
+    owned: false,
+    inStock: false,
+    outOfStock: false
+  })
+
+  const handleCheckbox = useCallback(() => {
+
+    console.log(localStorage.getItem('checkboxStates'))
+    if (!localStorage.getItem('checkboxStates')) {
+      localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates))
+    } else {
+      setCheckboxStates(JSON.parse(localStorage.getItem('checkboxStates')))
+    }
+
+  }, [checkboxStates])
+
+  useEffect(() => {
+
+
+  }, [checkboxStates])
+
+  useEffect(() => {
+    console.log('checkboc', checkboxStates)
+    localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates))
+  }, [checkboxStates])
+
   const axiosInstance = useAxiosInstance()
   const navigate = useNavigate()
 
@@ -243,6 +272,7 @@ function Home({ auth, guest, id, dealer, username }) {
         model: modelList,
         pageNumber,
         limit,
+        checkboxStates,
         ...(guest ? {} : { id }),
       };
       try {
@@ -250,12 +280,12 @@ function Home({ auth, guest, id, dealer, username }) {
         setCars(res.data[1]);
         setEnd(res.data[0])
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
     fetchCars();
-  }, [vehicleList, modelList, pageNumber]);
+  }, [vehicleList, modelList, pageNumber, checkboxStates]);
 
   const burgerMenuFunc = (e) => {
     e.preventDefault();
@@ -337,12 +367,10 @@ function Home({ auth, guest, id, dealer, username }) {
   };
 
   const marketDelete = (e) => {
-    console.log(deletMarket, carId);
     e.preventDefault();
     axiosInstance
       .delete("/cars", { params: { id: carId } })
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         setRemoveId(carId);
         setDeletMarket(false);
       })
@@ -360,6 +388,13 @@ function Home({ auth, guest, id, dealer, username }) {
   const closeModal = () => {
     setDeletMarket(false)
     setDeletSold(false)
+  }
+
+  const toggleCheckbox = (key) => {
+    setCheckboxStates((current) => {
+      return { ...current, [key]: !checkboxStates[key] }
+    })
+
   }
 
   return (
@@ -738,31 +773,96 @@ function Home({ auth, guest, id, dealer, username }) {
         )}
       <div className="sell-cars-ul">
         <div className='scroll-menu'>
-          {dealer === 'Selling' ? (
-            <div className='cars-options'>
-              <button className='btn car-options-buttons'>
-                Selling
-              </button>
-              <button className='btn car-options-buttons'>
-                Sold
-              </button>
-              <button className='btn car-options-buttons'>
-                Owned
-              </button>
-              <button className='btn car-options-buttons'>
-                In Stock
-              </button>
+          {dealer === 'Selling' ?
+            <div className="input-row">
+              {/* Input field for 'myCars' */}
+              <div className="input-group">
+                <label>
+                  My Cars
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.selling}
+                    onChange={() => toggleCheckbox('selling')}
+                  />
+                </label>
+              </div>
+
+              {/* Input field for 'sold' */}
+              <div className="input-group">
+                <label>
+                  Sold
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.sold}
+                    onChange={() => toggleCheckbox('sold')}
+                  />
+                </label>
+              </div>
+
+              {/* Input field for 'owned' */}
+              <div className="input-group">
+                <label>
+                  Owned
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.owned}
+                    onChange={() => toggleCheckbox('owned')}
+                  />
+                </label>
+              </div>
+
+              {/* Input field for 'inStock' */}
+              <div className="input-group">
+                <label>
+                  In Stock
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.inStock}
+                    onChange={() => toggleCheckbox('inStock')}
+                  />
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Out of Stock
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.outOfStock}
+                    onChange={() => toggleCheckbox('outOfStock')}
+                  />
+                </label>
+              </div>
             </div>
-          ) : dealer === 'Buying' ? (
-            <div  className='cars-options'>
-               <button className='btn car-options-buttons'>
-                Owned
-              </button>
-              <button className='btn car-options-buttons'>
-                In Stock
-              </button>
-            </div>
-          ) : null}
+
+
+            : dealer === 'Buying' ?
+              <div className="input-row">
+                {/* Input field for 'myCars' */}
+                <div className="input-group">
+                  <label>
+                    My Cars
+                    <input
+                      type="checkbox"
+                      checked={checkboxStates.owned}
+                      onChange={() => toggleCheckbox('owned')}
+                    />
+                  </label>
+                </div>
+
+                {/* Input field for 'sold' */}
+                <div className="input-group">
+                  <label>
+                    Sold
+                    <input
+                      type="checkbox"
+                      checked={checkboxStates.inStock}
+                      onChange={() => toggleCheckbox('inStock')}
+                    />
+                  </label>
+                </div>
+              </div>
+              : null}
 
           {dealer === "Selling" ? (
             <div className="scroll-bottom">

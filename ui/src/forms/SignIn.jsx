@@ -33,9 +33,7 @@ export default function SignInForm({ dealer, guest, id, username }) {
         .then((res) => {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("refreshToken", res.data.refresh);
-          console.log(localStorage);
           setBackendError(false);
-          console.log(res.data?.user?.type);
           setError({ email: "stabil", password: "stabil" });
           dealer(res.data?.user?.type);
           username(res.data?.user?.username);
@@ -92,7 +90,6 @@ export default function SignInForm({ dealer, guest, id, username }) {
   useEffect(() => {
     const array = Object.values(error);
 
-    // console.log(array)
     let hasErrors = false;
     for (let key of array) {
       if (key !== "Stabil") {

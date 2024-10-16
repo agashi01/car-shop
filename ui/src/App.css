@@ -761,6 +761,39 @@ front .model-clicked li:last-child {
   /* gap */
 }
 
+/* cars selection */
+.App {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+.input-row {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+  transform: scale(1.5); 
+}
+/* stop */
 .buying {
   justify-content: flex-end;
 }

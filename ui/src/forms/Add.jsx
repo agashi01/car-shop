@@ -70,7 +70,6 @@ export default function Add({ id }) {
     }
 
     const handleSize = () => {
-      console.log('hi')
       if (divRef.current) {
         setMaxWidth(divRef.current.offsetWidth)
       }
@@ -205,11 +204,9 @@ export default function Add({ id }) {
       .get("/dealerMake", { params: { model, reqMake: value } })
       .then((res) => {
         if (Array.isArray(res.data)) {
-          console.log(res.data,'array')
           setAllMake(res.data);
           return;
         }
-        console.log(res.data)
         setAllMake([res.data]);
         setValue(res.data.make);
       })
@@ -273,7 +270,6 @@ export default function Add({ id }) {
     setCurrentImageIndex((currentImageIndex - 1 + file.length) % file.length);
   };
 
-  console.log(maxWidth)
 
   return (
     <>

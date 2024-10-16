@@ -1,5 +1,4 @@
 const runOnce = (db) => (req, res) => {
-  console.log('hgi')
   let cars = {};
 
   const brand = ["Audi", "Bmw", "Mercedes-Benz"];
@@ -34,7 +33,6 @@ const runOnce = (db) => (req, res) => {
         })
         .returning("*")
         .then((res) => {
-          console.log(res);
         });
       await trx.commit();
     } catch (err) {

@@ -16,7 +16,6 @@ export default function AuthMessage({authMessage,auth}){
   }, [authMessage]);
 
 
-console.log(auth)
     return(
         <div className="modal">
           <div className="logIn-again" onClick={e=>e.stopPropagation()}>

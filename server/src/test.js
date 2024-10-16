@@ -85,7 +85,6 @@ const logIn = (db) => async (req, res) => {
               .where("u.email", userEmail)
               .returning("*")
               .then((result) => {
-                console.log(result);
                 res.json(result[0]);
               })
               .catch((err) => {

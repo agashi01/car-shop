@@ -38,7 +38,6 @@ const create = (db, cloudinary) => async (req, res) => {
   let errMessage = ''
   let status = null
   for (let x = 0; x < urls.length; x++) {
-    console.log(x)
     const response = await fetch(
       'https://api-inference.huggingface.co/models/facebook/detr-resnet-50',
       {
@@ -51,7 +50,6 @@ const create = (db, cloudinary) => async (req, res) => {
     if (response.ok) {
 
       const result = await response.json();
-      console.log(result)
       const car = result.some(detection => detection.label === 'car' && detection.score > 0.9);
       const clear = result.some(detection => detection.label === 'car' && detection.score > 0.5);
 
@@ -165,7 +163,6 @@ const sortModel = (list) => {
       mercedes[count3++] = list[x].model;
     }
   }
-  // console.log(audi,mercedes,bmw)
   if (audi) {
     for (let x = 0; x < audi.length; x++) {
       let min = 999;
@@ -272,7 +269,7 @@ const model = (db) => async (req, res) => {
   }
 };
 
-const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = null, id = null, dealer = null) => {
+const func = async (db, vehicle, model, limit, offset, carsState, num = null, pageNumber = null, id = null, dealer = null,) => {
   try {
 
     let query = db("cars")
@@ -280,6 +277,29 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
       .join("users", "cars.dealer_id", "users.id")
       .whereIn("make", vehicle || [])
       .whereIn("model", model || []);
+    const values = Object.values(carsState)
+    const all = values.every((value) => value === false)
+    const none = values.every((value) => value === true)
+    // console.log(carsState)
+    if (!all) {
+      if (!none) {
+        console.log(carsState)
+        if (carsState.selling) {
+          console.log(carsState.selling)
+          query.where('cars.dealer_id', id)
+        } else if (carsState.sold) {
+          query.whereRaw('cars.dealer_id=? and cars.owner_id is not null', [id])
+        } else if (carsState.owned) {
+          query.whereRaw('cars.owner_id =?', [id])
+        } else if (carsState.inStock) {
+          query.whereRaw('cars.owner_id is null')
+        } else if (carsState.outOfStock) {
+          query.whereRaw('cars.dealer_id <> ? and cars.owner_id <> ? and cars.owner_id is not null', [id, id])
+        }
+      }
+
+    }
+    console.log(query.toString());
 
 
     if (dealer === "Selling") {
@@ -331,6 +351,23 @@ const func = async (db, vehicle, model, limit, offset, num = null, pageNumber = 
     throw new Error("An error occurred while fetching the cars");
   }
 };
+
+
+const readAll = (db) => async (req, res) => {
+  const { dealer, vehicle, model, num, id, limit, pageNumber, checkboxStates: carsState } = req.query;
+  let pageNum = Number(pageNumber)
+  let number = Number(num)
+  const offset = (pageNum - 1) * limit;
+
+  try {
+    const cars = await func(db, vehicle, model, limit, offset, carsState, number, pageNum, id, dealer);
+    return res.status(200).json(cars);
+  } catch (err) {
+    console.log(err)
+    res.status(400).json("something went wrong");
+  }
+};
+
 const func2 = async (db, list) => {
   if (list) {
     return await db("cars").select(db.raw("DISTINCT model")).whereIn("make", list);
@@ -354,7 +391,6 @@ const readAllGuest = (db) => async (req, res) => {
 };
 
 const make = (db) => async (req, res) => {
-  console.log(model)
   try {
     const rows = await db("cars").select(db.raw("DISTINCT make"));
     if (!rows) {
@@ -368,20 +404,6 @@ const make = (db) => async (req, res) => {
   }
 };
 
-const readAll = (db) => async (req, res) => {
-  const { dealer, vehicle, model, num, id, limit, pageNumber } = req.query;
-  let pageNum = Number(pageNumber)
-  let number = Number(num)
-  const offset = (pageNum - 1) * limit;
-
-  try {
-    const cars = await func(db, vehicle, model, limit, offset, number, pageNum, id, dealer);
-    return res.status(200).json(cars);
-  } catch (err) {
-    console.log(err)
-    res.status(400).json("something went wrong");
-  }
-};
 const dealerModel = (db) => (req, res) => {
   const { make, reqModel } = req.query;
 
@@ -419,7 +441,6 @@ const dealerModel = (db) => (req, res) => {
 
 const dealerMake = (db) => (req, res) => {
   const { model, reqMake } = req.query;
-  console.log(req.query)
   let make = db("cars_info").distinct("make");
   if (model) make = make.where("model", model);
   make

@@ -76,8 +76,7 @@ const logIn = (db, jwt) => async (req, res) => {
             const refresh = jwt.sign(header, process.env.JWT_REFRESH_SECRET)
             db('refresh_tokens').insert({
               "refresh_token": refresh
-            }).then(res => {
-              console.log("token succesfully inserted")
+            }).then(() => {
             }).catch(err => {
               console.log(err)
               return res.status(400).json(`the refresh token couldn't be insrted because of this error ${err}`)
@@ -108,7 +107,6 @@ const token = (db, jwt) => (req, res) => {
   db('refresh_tokens').select("*").where("refresh_token", refreshToken)
     .first().then(refresh => {
       if (refresh) {
-        console.log(refresh)
 
         jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
           if (err) {
@@ -180,7 +178,6 @@ const logInToken=(db,jwt)=>(req,res)=>{
         return res.status(403).json("Token verification failed");
       }
     }
-    console.log(user.name)
     const dbUser= await db('users_info').where('username',user.name).select('*').first()
     
     if(!dbUser) return res.status(500).json('something went wrong with getting username from token')

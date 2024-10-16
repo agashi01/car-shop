@@ -56,7 +56,6 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
   }, [removeId]);
 
   const purchasing = (carId) => (e) => {
-    console.log(id);
 
     e.stopPropagation();
     if (guest) {
@@ -91,7 +90,6 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
     for (let x = final.length - 1; x >= 0; x--) {
       ans += final[x]
     }
-    // console.log(final)
     return ans + " km";
   };
 
@@ -123,8 +121,6 @@ export default function CarCard({ removeId, carId, deletMarket, deletSold, id, i
 
   }
 
-
-console.log(car.dealer_id,id,car.owner_id)
   return (
     // eslint-disable-next-line react/prop-types
     <div onClick={() => setFlip(!flip)} className={flip ? "car-card flip" : "car-card"}>

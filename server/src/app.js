@@ -51,7 +51,6 @@ const makeApp=(express,app,multer,cloudinary,db,authenticate)=>{
   app.use((err, req, res, next) => {
     const errStatus = err.statusCode || 500;
     const errMsg = err.message || "Something went wrong";
-    console.log()
     return res.status(errStatus).json({
       success: false,
       status: errStatus,
