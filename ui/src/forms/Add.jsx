@@ -191,7 +191,7 @@ export default function Add({ id }) {
       .catch((err) => {
         setLoading(false);
         setUnavailable(false);
-        console.log(err);
+        console.log(err,'hi');
         if (typeof err.response.data !== 'string') {
           setErrorMessage('Problems in te server')
         }

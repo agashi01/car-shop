@@ -2,7 +2,7 @@
 
 const create = (db, cloudinary) => async (req, res) => {
   const { make, model, mileage, color, transmission, fuelType, vehicleType, dealer_id } = req.body;
-  //   cloudinary.api.resources({ type: 'upload', resource_type: 'image', max_results: 500 }, 
+  //   cloudinary.api.resources({ type: 'upload', resource_type: 'image', max_results: 500 },
   //   (error, result) => {
   //     if (!error) {
   //       const publicIds = result.resources.map((resource) => resource.public_id);
@@ -11,84 +11,125 @@ const create = (db, cloudinary) => async (req, res) => {
   //           if (delErr) return console.error('Error deleting images:', delErr);
   //           console.log('Deleted images:', delResult);
   //         });
-  //       } else {
+  //       } else {x
   //         console.log('No images to delete.');
   //       }
   //     } else {
   //       console.error('Error fetching images:', error);
   //     }
   // });
-
-  let urls = []
-  let images = []
-  if (req.files.length > 15) return res.status(400).json('To many images, the limit is 15')
+  const interiorKeywords = [
+    "cassette player",
+    "tape player",
+    "radio",
+    "dashboard",
+    "car",
+    "steering wheel",
+    "seats",
+  ];
+  const interiorCheck = (key) => {
+    for (let x of interiorKeywords) {
+      if (key.label.includes(x)) {
+        if(key.score>0.08)
+        return true;
+      }
+    }
+    return false;
+  };
+  let urls = [];
+  let images = [];
+  if (req.files.length > 15) return res.status(400).json("To many images, the limit is 15");
   try {
     for (let x = 0; x < req.files.length; x++) {
-      images[x] = await cloudinary.uploader.upload(req.files[x].path)
-      urls[x] = images[x].secure_url
+      images[x] = await cloudinary.uploader.upload(req.files[x].path);
+      urls[x] = images[x].secure_url;
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     for (let x = 0; x < images.length; x++) {
-      cloudinary.uploader.destroy(images[x].public_id)
+      cloudinary.uploader.destroy(images[x].public_id);
     }
-    console.log(err, 'cloudinary')
-    return res.json(err)
+    console.log(err, "cloudinary");
+    return res.json(err);
   }
-  let errMessage = ''
-  let status = null
+  let errMessage = "";
+  let status = null;
   for (let x = 0; x < urls.length; x++) {
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/facebook/detr-resnet-50',
+      "https://api-inference.huggingface.co/models/facebook/detr-resnet-50",
       {
         headers: { Authorization: `Bearer ${process.env.IMAGEAPI}` },
         method: "POST",
-        'content-type': 'application/json',
-        body: urls[x]
+        "content-type": "application/json",
+        body: urls[x],
       }
     );
     if (response.ok) {
-
       const result = await response.json();
-      const car = result.some(detection => detection.label === 'car' && detection.score > 0.9);
-      const clear = result.some(detection => detection.label === 'car' && detection.score > 0.5);
+      const car = result.some((detection) => detection.label === "car" && detection.score > 0.9);
+      const clear = result.some((detection) => detection.label === "car" && detection.score > 0.5);
 
       if (!car) {
+        const responseInterior = await fetch(
+          "https://api-inference.huggingface.co/models/google/vit-base-patch16-224",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.IMAGEAPI}`,
+              "Content-Type": "application/json",
+            },
+            body: urls[x],
+          }
+        );
+        if (responseInterior.ok) {
+          const resultInterior = await responseInterior.json();
+          console.log(resultInterior)
+          let count = 0;
+          for (let key of resultInterior) {
+            const isItInterior = interiorCheck(key);
+            isItInterior ? count++ : null;
+          }
+          if (count > 1) {
+            continue;
+          }
+
+          console.log("interior", resultInterior);
+        } else {
+          for (let y = 0; y <= x; y++) {
+            await cloudinary.uploader.destroy(images[y].public_id);
+          }
+
+          const errorText = await responseInterior.text();
+          console.log(responseInterior.status, responseInterior.statusText, errorText, "here");
+          return res.status(responseInterior.status).json("Problems in the server");
+        }
 
         for (let y = 0; y <= x; y++) {
-          cloudinary.uploader.destroy(images[y].public_id)
+          cloudinary.uploader.destroy(images[y].public_id);
         }
 
         if (clear) {
-
-          errMessage = `image number ${x + 1} is not clear. Please retake it!`
-          status = 400
+          errMessage = `image number ${x + 1} is not clear. Please retake it!`;
+          status = 400;
         } else {
-
-          errMessage = `image number ${x + 1} is not related to a car!`
-          status = 400
+          errMessage = `image number ${x + 1} is not related to a car or is not clear!`;
+          status = 400;
         }
-
       } else {
-        console.log('images are related to cars')
+        console.log("images are related to cars");
       }
-
     } else {
       for (let y = 0; y <= x; y++) {
-        let ans = await cloudinary.uploader.destroy(images[y].public_id)
-
+        let ans = await cloudinary.uploader.destroy(images[y].public_id);
       }
 
-      const errorText = await response.text()
-      console.log(response.status, response.statusText, errorText, 'here')
-      return res.status(response.status).json('Problems in the server')
-
+      const errorText = await response.text();
+      console.log(response.status, response.statusText, errorText, "here");
+      return res.status(response.status).json("Problems in the server");
     }
     if (errMessage) {
-      return res.status(status).json(errMessage)
+      return res.status(status).json(errMessage);
     }
-
-
   }
 
   try {
@@ -97,8 +138,6 @@ const create = (db, cloudinary) => async (req, res) => {
     if (!dealer) {
       return res.status(404).json("You are not a dealer");
     }
-
-
 
     // Start transaction
     await db.transaction(async (trx) => {
@@ -115,7 +154,7 @@ const create = (db, cloudinary) => async (req, res) => {
             fuel_type: fuelType,
             vehicle_type: vehicleType,
             dealer_id,
-            paths: JSON.stringify([urls])
+            paths: JSON.stringify([urls]),
           })
           .returning("*");
 
@@ -126,8 +165,8 @@ const create = (db, cloudinary) => async (req, res) => {
         // Commit the transaction
         await trx.commit();
       } catch (err) {
-        console.log(err)
-        await trx.rollback()
+        console.log(err);
+        await trx.rollback();
         console.error(err);
         res.status(400).json("This car is missing something");
 
@@ -136,8 +175,8 @@ const create = (db, cloudinary) => async (req, res) => {
       }
     });
   } catch (err) {
-    console.log(err)
-    await trx.rollback()
+    console.log(err);
+    await trx.rollback();
     console.error(err);
     res.status(500).json(err);
   }
@@ -263,49 +302,64 @@ const model = (db) => async (req, res) => {
       return res.status(400).json("failed");
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     console.log(err);
     return res.status(400).json(err);
   }
 };
 
-const func = async (db, vehicle, model, limit, offset, carsState, num = null, pageNumber = null, id = null, dealer = null,) => {
+const func = async (
+  db,
+  vehicle,
+  model,
+  limit,
+  offset,
+  carsState,
+  num = null,
+  pageNumber = null,
+  id = null,
+  dealer = null
+) => {
   try {
-
     let query = db("cars")
-      .whereNotNull('paths')
+      .whereNotNull("paths")
       .join("users", "cars.dealer_id", "users.id")
       .whereIn("make", vehicle || [])
       .whereIn("model", model || []);
-    const values = Object.values(carsState)
-    const all = values.every((value) => value === false)
-    const none = values.every((value) => value === true)
+    const values = Object.values(carsState);
+    const all = values.every((value) => value === false);
+    const none = values.every((value) => value === true);
     // console.log(carsState)
     if (!all) {
       if (!none) {
-        console.log(carsState)
-        if (carsState.selling) {
-          console.log(carsState.selling)
-          query.where('cars.dealer_id', id)
-        } else if (carsState.sold) {
-          query.whereRaw('cars.dealer_id=? and cars.owner_id is not null', [id])
-        } else if (carsState.owned) {
-          query.whereRaw('cars.owner_id =?', [id])
-        } else if (carsState.inStock) {
-          query.whereRaw('cars.owner_id is null')
-        } else if (carsState.outOfStock) {
-          query.whereRaw('cars.dealer_id <> ? and cars.owner_id <> ? and cars.owner_id is not null', [id, id])
+        // console.log(carsState);
+        if (carsState.selling==='true') {
+          console.log('hi')
+          query.where("cars.dealer_id", id);
+        }
+        if (carsState.sold === "true") {
+          console.log('hi')
+          query.whereRaw("cars.dealer_id=? and cars.owner_id is not null", [id]);
+        }
+        if (carsState.owned === "true") {
+          query.whereRaw("cars.owner_id =?", [id]);
+        }
+        if (carsState.inStock === "true") {
+          query.whereRaw("cars.owner_id is null");
+        }
+        if (carsState.outOfStock === "true") {
+          query.whereRaw(
+            "cars.dealer_id <> ? and cars.owner_id <> ? and cars.owner_id is not null",
+            [id, id]
+          );
         }
       }
-
     }
-    console.log(query.toString());
-
+    // console.log(query.toString());
 
     if (dealer === "Selling") {
-
-      query = query
-        .orderByRaw(`
+      query = query.orderByRaw(
+        `
           CASE WHEN cars.dealer_id = ? and cars.owner_id IS NULL THEN 0 
            WHEN cars.dealer_id = ? THEN 1
            WHEN cars.owner_id = ? THEN 2
@@ -313,7 +367,9 @@ const func = async (db, vehicle, model, limit, offset, carsState, num = null, pa
           END,
           date_of_creation DESC,
           date_of_last_update DESC
-        `, [id, id, id]);
+        `,
+        [id, id, id]
+      );
     } else if (id) {
       query = query
         .orderByRaw("CASE WHEN cars.owner_id = ? THEN 0 ELSE 1 END", [id])
@@ -326,7 +382,7 @@ const func = async (db, vehicle, model, limit, offset, carsState, num = null, pa
       .limit(limit + 1)
       .offset(offset);
 
-    let end = !(cars.length > limit)
+    let end = !(cars.length > limit);
 
     if (!end) {
       cars.pop();
@@ -346,24 +402,43 @@ const func = async (db, vehicle, model, limit, offset, carsState, num = null, pa
 
     return [end, cars];
   } catch (err) {
-    console.log(err)
+    console.log(err);
     console.error(err);
     throw new Error("An error occurred while fetching the cars");
   }
 };
 
-
 const readAll = (db) => async (req, res) => {
-  const { dealer, vehicle, model, num, id, limit, pageNumber, checkboxStates: carsState } = req.query;
-  let pageNum = Number(pageNumber)
-  let number = Number(num)
+  const {
+    dealer,
+    vehicle,
+    model,
+    num,
+    id,
+    limit,
+    pageNumber,
+    checkboxStates: carsState,
+  } = req.query;
+  let pageNum = Number(pageNumber);
+  let number = Number(num);
   const offset = (pageNum - 1) * limit;
 
   try {
-    const cars = await func(db, vehicle, model, limit, offset, carsState, number, pageNum, id, dealer);
+    const cars = await func(
+      db,
+      vehicle,
+      model,
+      limit,
+      offset,
+      carsState,
+      number,
+      pageNum,
+      id,
+      dealer
+    );
     return res.status(200).json(cars);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(400).json("something went wrong");
   }
 };
@@ -384,7 +459,7 @@ const readAllGuest = (db) => async (req, res) => {
 
     return res.status(200).json(cars);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     console.log(err);
     res.status(400).json("something went wrong");
   }
@@ -398,7 +473,7 @@ const make = (db) => async (req, res) => {
     }
     return res.json(rows);
   } catch (err) {
-    console.log(err)
+    console.log(err);
 
     res.status(400).json(err);
   }
@@ -415,15 +490,15 @@ const dealerModel = (db) => (req, res) => {
   model
     .then((models) => {
       if (models.some((el) => el.model === reqModel)) {
-        let obj = {}
-        obj.modelValue = reqModel
+        let obj = {};
+        obj.modelValue = reqModel;
         const model = sortModel(models);
         const fModel = [];
         for (let x = 0; x < model.length; x++) {
           fModel[x] = model[x].model;
         }
-        obj.models = fModel
-        return res.json(obj)
+        obj.models = fModel;
+        return res.json(obj);
       }
 
       const model = sortModel(models);
@@ -445,9 +520,12 @@ const dealerMake = (db) => (req, res) => {
   if (model) make = make.where("model", model);
   make
     .then((makes) => {
-      if (makes[0].make === reqMake && model) {
-        return res.json(makes[0])
+      if (makes.length) {
+        if (makes[0].make === reqMake && model) {
+          return res.json(makes[0]);
+        }
       }
+
       return res.json(makes);
     })
     .catch((err) => {
@@ -502,7 +580,7 @@ const read = (db) => (req, res) => {
       res.json(car[0]);
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
       res.status(404).json("car doesn't exist");
     });
 };
@@ -527,7 +605,7 @@ const update = (db) => async (req, res) => {
       return res.status(400).json({ error: "Update failed" });
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     console.error(err);
     res.status(500).json({ error: "An error occurred while updating the owner_id" });
   }

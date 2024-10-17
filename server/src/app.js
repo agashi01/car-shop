@@ -2,9 +2,10 @@ require("dotenv").config();
 const cars = require("./cars");
 const dealers = require("./dealers");
 const path = require("path");
-// const runOnce = require("./RunOnce");
+const runOnce = require("./RunOnce");
 
 const makeApp=(express,app,multer,cloudinary,db,authenticate)=>{
+  console.log('hi')
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       return cb(null, path.join(__dirname, "../public/cars"));
@@ -22,15 +23,16 @@ const makeApp=(express,app,multer,cloudinary,db,authenticate)=>{
     return res.status(200).json("Server is up and running!");
   });
   
-  // app.post("/runOnce", runOnce.runOnce(db));
-  
+  // app.get("/runOnce", runOnce.runOnce(db));
+
+  app.get("/hey",(req,res)=>res.json('hey'))
   app.get("/transmission", (req, res) => cars.transmission(db)(req, res));
   app.get("/fuelType", (req, res) => cars.fuelType(db)(req, res));
   app.get("/vehicleType", (req, res) => cars.vehicleType(db)(req, res));
   app.get("/dealerModel", (req, res) => cars.dealerModel(db)(req, res));
   app.get("/dealerMake", (req, res) => cars.dealerMake(db)(req, res));
   app.get("/model", (req, res) => cars.model(db)(req, res));
-  app.post("/cars",  upload.array('files', 17),(req, res) =>
+  app.post("/cars",  upload.array('files', 50),(req, res) =>
     cars.createCar(db, cloudinary)(req, res)
   );
   

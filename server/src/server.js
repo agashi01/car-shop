@@ -28,12 +28,13 @@ cloudinary.config({
 const authenticate = (req, res, next) => {
     app.disable("x-powered-by");
     if (req.headers.guest === 'true') {
-        next();
+        return next();
     } else if (req.headers.guest === 'false') {
         const authorization = req.headers.authorization;
         const token = authorization && authorization.split(" ")[1];
         if (!token) return res.status(400).json("you dont have a token in authorization");
         jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+
             if (err) {
                 if (err.name === "TokenExpiredError") {
                     return res.status(401).json("Token has expired");
@@ -44,7 +45,7 @@ const authenticate = (req, res, next) => {
                 }
             }
             req.user = user
-            next()
+            return next()
 
         })
     } else {

@@ -841,7 +841,7 @@ function Home({ auth, guest, id, dealer, username }) {
                 {/* Input field for 'myCars' */}
                 <div className="input-group">
                   <label>
-                    My Cars
+                      Owned
                     <input
                       type="checkbox"
                       checked={checkboxStates.owned}
@@ -853,11 +853,21 @@ function Home({ auth, guest, id, dealer, username }) {
                 {/* Input field for 'sold' */}
                 <div className="input-group">
                   <label>
-                    Sold
+                    In Stock
                     <input
                       type="checkbox"
                       checked={checkboxStates.inStock}
                       onChange={() => toggleCheckbox('inStock')}
+                    />
+                  </label>
+                </div>
+                <div className="input-group">
+                  <label>
+                    Out of Stock
+                    <input
+                      type="checkbox"
+                      checked={checkboxStates.outOfStock}
+                      onChange={() => toggleCheckbox('outOfStock')}
                     />
                   </label>
                 </div>
