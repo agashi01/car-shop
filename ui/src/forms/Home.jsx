@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CarCard from "./CarCard";
 import carLogo from "../car_logo.png";
 import debounce from "lodash/debounce";
@@ -28,29 +28,13 @@ function Home({ auth, guest, id, dealer, username }) {
   const [removeId, setRemoveId] = useState(null);
   const [end, setEnd] = useState(false);
   const [num, setNum] = useState(0);
-  const [checkboxStates, setCheckboxStates] = useState({
-    selling: false,
-    sold: false,
-    owned: false,
-    inStock: false,
-    outOfStock: false
-  })
-
-  const handleCheckbox = useCallback(() => {
-
-    console.log(localStorage.getItem('checkboxStates'))
-    if (!localStorage.getItem('checkboxStates')) {
-      localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates))
-    } else {
-      setCheckboxStates(JSON.parse(localStorage.getItem('checkboxStates')))
+  const [checkboxStates, setCheckboxStates] = useState(()=>{
+    if(localStorage.getItem('checkboxStates')){
+      return JSON.parse(localStorage.getItem('checkboxStates'))
     }
+    return {selling:false,sold:false,owned:false,inStock:false,outOfStock:false}	
 
-  }, [checkboxStates])
-
-  useEffect(() => {
-
-
-  }, [checkboxStates])
+  })
 
   useEffect(() => {
     console.log('checkboc', checkboxStates)

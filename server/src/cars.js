@@ -329,7 +329,7 @@ const func = async (
     const values = Object.values(carsState);
     const all = values.every((value) => value === false);
     const none = values.every((value) => value === true);
-    const isit = false;
+    let isit = false;
     // console.log(carsState)
     if (!all) {
       if (!none) {
@@ -361,7 +361,7 @@ const func = async (
         }
         if (carsState.inStock === "true") {
           if (isit) {
-            query.orwhere(function () {
+            query.orWhere(function () {
               this.whereRaw("cars.owner_id is null");
             });
           } else {
@@ -373,13 +373,13 @@ const func = async (
           if (isit) {
             query.orWhere(function () {
               this.whereRaw(
-                "cars.dealer_id <> ? and cars.owner_id <> ? and cars.ownerh_id is not null",
+                "cars.dealer_id <> ? and cars.owner_id <> ? and cars.owner_id is not null",
                 [id, id]
               );
             });
           } else {
             query.whereRaw(
-              "cars.dealer_id <> ? and cars.owner_id <> ? and cars.ownerh_id is not null",
+              "cars.dealer_id <> ? and cars.owner_id <> ? and cars.owner_id is not null",
               [id, id]
             );
           }
