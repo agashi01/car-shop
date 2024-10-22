@@ -30,8 +30,7 @@ const create = (db, cloudinary) => async (req, res) => {
   const interiorCheck = (key) => {
     for (let x of interiorKeywords) {
       if (key.label.includes(x)) {
-        if(key.score>0.08)
-        return true;
+        if (key.score > 0.08) return true;
       }
     }
     return false;
@@ -83,7 +82,7 @@ const create = (db, cloudinary) => async (req, res) => {
         );
         if (responseInterior.ok) {
           const resultInterior = await responseInterior.json();
-          console.log(resultInterior)
+          console.log(resultInterior);
           let count = 0;
           for (let key of resultInterior) {
             const isItInterior = interiorCheck(key);
@@ -326,36 +325,68 @@ const func = async (
       .join("users", "cars.dealer_id", "users.id")
       .whereIn("make", vehicle || [])
       .whereIn("model", model || []);
+    console.log(carsState);
     const values = Object.values(carsState);
     const all = values.every((value) => value === false);
     const none = values.every((value) => value === true);
+    const isit = false;
     // console.log(carsState)
     if (!all) {
       if (!none) {
         // console.log(carsState);
-        if (carsState.selling==='true') {
-          console.log('hi')
-          query.where("cars.dealer_id", id);
+        if (carsState.selling === "true") {
+          query.whereRaw("cars.dealer_id=?", [id]);
+          isit = true;
         }
         if (carsState.sold === "true") {
-          console.log('hi')
-          query.whereRaw("cars.dealer_id=? and cars.owner_id is not null", [id]);
+          console.log("hi");
+          if (isit) {
+            query.orWhere(function () {
+              this.whereRaw("cars.dealer_id=? and cars.owner_id is not null", [id]);
+            });
+          } else {
+            query.whereRaw("cars.dealer_id=? and cars.owner_id is not null", [id]);
+            isit=true
+          }
         }
         if (carsState.owned === "true") {
-          query.whereRaw("cars.owner_id =?", [id]);
+          if (isit) {
+            query.orWhere(function () {
+              this.whereRaw("cars.owner_id =?", [id]);
+            });
+          } else {
+            query.whereRaw("cars.owner_id =?", [id]);
+            isit = true;
+          }
         }
         if (carsState.inStock === "true") {
-          query.whereRaw("cars.owner_id is null");
+          if (isit) {
+            query.orwhere(function () {
+              this.whereRaw("cars.owner_id is null");
+            });
+          } else {
+            query.whereRaw("cars.owner_id is null");
+            isit = true;
+          }
         }
         if (carsState.outOfStock === "true") {
-          query.whereRaw(
-            "cars.dealer_id <> ? and cars.owner_id <> ? and cars.owner_id is not null",
-            [id, id]
-          );
+          if (isit) {
+            query.orWhere(function () {
+              this.whereRaw(
+                "cars.dealer_id <> ? and cars.owner_id <> ? and cars.ownerh_id is not null",
+                [id, id]
+              );
+            });
+          } else {
+            query.whereRaw(
+              "cars.dealer_id <> ? and cars.owner_id <> ? and cars.ownerh_id is not null",
+              [id, id]
+            );
+          }
         }
       }
     }
-    // console.log(query.toString());
+    console.log(query.toString());
 
     if (dealer === "Selling") {
       query = query.orderByRaw(
