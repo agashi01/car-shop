@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import CarCard from "./CarCard";
 import carLogo from "../car_logo.png";
 import debounce from "lodash/debounce";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import { axiosInstance as useAxiosInstance } from "./AxiosConfig";
+// import { BsArrowDown } from "react-icons/bs";
+// import { truncate } from "lodash";
 
 // eslint-disable-next-line react/prop-types
-function Home({ auth, guest, id, dealer, username }) {
+function Home({ refreshPage, auth, guest, id, dealer, username }) {
   const [vehicleInput, setVehicleInput] = useState([]);
   const [modelInput, setModelInput] = useState([]);
   const [vehicleList, setVehicleList] = useState([]);
@@ -18,9 +20,8 @@ function Home({ auth, guest, id, dealer, username }) {
   const [menu, setMenu] = useState("menu-hidden");
   const [cars, setCars] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
-  const [limit] = useState(2);
+  const [limit] = useState(20);
   const [pageNumber, setPageNumber] = useState(1);
-  const account = useRef(null);
   const [modelClass, setModelClass] = useState(false);
   const [deletMarket, setDeletMarket] = useState(false);
   const [deletSold, setDeletSold] = useState(false);
@@ -28,21 +29,28 @@ function Home({ auth, guest, id, dealer, username }) {
   const [removeId, setRemoveId] = useState(null);
   const [end, setEnd] = useState(false);
   const [num, setNum] = useState(0);
-  const [checkboxStates, setCheckboxStates] = useState(()=>{
-    if(localStorage.getItem('checkboxStates')){
-      return JSON.parse(localStorage.getItem('checkboxStates'))
-    }
-    return {selling:false,sold:false,owned:false,inStock:false,outOfStock:false}	
+  const [image, setImage] = useState(null);
+  const [imagesLength, setImagesLength] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(null);
+  const [outOfStockMessage, setOutOfStockMessage] = useState(false);
+  const [noCars, setNoCars] = useState(false);
+  const [counter, setCounter] = useState(0)
 
-  })
+  const account = useRef(null);
+  
+  const [checkboxStates, setCheckboxStates] = useState(() => {
+    if (localStorage.getItem("checkboxStates")) {
+      return JSON.parse(localStorage.getItem("checkboxStates"));
+    }
+    return { selling: false, sold: false, owned: false, inStock: false, outOfStock: false };
+  });
 
   useEffect(() => {
-    console.log('checkboc', checkboxStates)
-    localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates))
-  }, [checkboxStates])
+    localStorage.setItem("checkboxStates", JSON.stringify(checkboxStates));
+  }, [checkboxStates]);
 
-  const axiosInstance = useAxiosInstance()
-  const navigate = useNavigate()
+  const axiosInstance = useAxiosInstance();
+  const navigate = useNavigate();
 
   const modelRef = useRef();
   const modelMenuRef = useRef();
@@ -52,7 +60,7 @@ function Home({ auth, guest, id, dealer, username }) {
   const burgerRef = useRef();
 
   useEffect(() => {
-    if (deletMarket || deletSold || isit) {
+    if (deletMarket || deletSold || isit || image || outOfStockMessage) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -62,7 +70,7 @@ function Home({ auth, guest, id, dealer, username }) {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [deletMarket, deletSold, isit]);
+  }, [deletMarket, deletSold, isit, image, outOfStockMessage]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -72,29 +80,43 @@ function Home({ auth, guest, id, dealer, username }) {
     setIsHovered(false);
   };
 
+  // useEffect(() => {
+  //   if (!bigImage.current) return;
+
+  //   const containerWidth = bigImage.current.offsetWidth;
+  //   const containerHeight = bigImage.current.offsetHeight;
+
+  //   const scaledWidth = image.width * (containerWidth / image.width);
+  //   const scaledHeight = image.height * (containerHeight / image.height);
+
+  //   const dimensions = [scaledHeight, scaledWidth]
+  //   console.log(dimensions)
+  //   setImageDimensions(dimensions);
+
+  // }, [bigImage, image])
 
   useEffect(() => {
     setRemoveId(carId);
-    axiosInstance
-      .delete("/cars", { params: { id: carId } })
-      .then((res) => {
+    if (carId) {
+      axiosInstance.delete("/cars", { params: { id: carId } }).then(() => {
         setRemoveId(carId);
-        console.log(res);
-      })
-
-
-  }, [deletSold])
-
+        // if (counter < 2) {
+        //   setCounter(counter + 1);
+        //   setDeletSold(true);
+        // }
+      });
+    }
+  }, [deletSold]);
 
   useEffect(() => {
-    let count = 0
+    let count = 0;
     if (dealer === "Selling") {
       for (let x of cars) {
         if (x.dealer_id !== id) {
-          count++
+          count++;
         }
       }
-      setNum(count)
+      setNum(count);
     }
   }, [cars]);
 
@@ -103,7 +125,7 @@ function Home({ auth, guest, id, dealer, username }) {
       .get("/model", {
         params: {
           vehicleList,
-        }
+        },
       })
       .then((res) => {
         setModelInput(res.data);
@@ -114,7 +136,6 @@ function Home({ auth, guest, id, dealer, username }) {
 
     return;
   }, [vehicleList]);
-
 
   useEffect(() => {
     axiosInstance
@@ -172,30 +193,6 @@ function Home({ auth, guest, id, dealer, username }) {
   };
 
   useEffect(() => {
-    const onEscapePress = () => {
-      let timeout;
-      return (e) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          if (e.key === "Esc" || e.key === "Escape") {
-            setBurgerMenu("burger unclicked");
-            setMenu("menu-hidden");
-            setModelClicked("model-unclicked");
-            setVehicleClicked("vehicle-unclicked");
-          }
-        }, 100);
-      };
-    };
-    const result = onEscapePress();
-
-    document.addEventListener("keydown", result);
-
-    return () => {
-      document.removeEventListener("keydown", result);
-    };
-  }, []);
-
-  useEffect(() => {
     const defaultClass = debounce((e) => {
       let switchEl = checkButton(e);
 
@@ -245,7 +242,7 @@ function Home({ auth, guest, id, dealer, username }) {
     setModelList(listM.length ? listM : modelInput.map((item) => item.model));
   }, [modelInput]);
 
-  // fetching cars 
+  // fetching cars
   useEffect(() => {
     const fetchCars = async () => {
       const url = guest ? "/cars/guest" : "/cars";
@@ -261,10 +258,25 @@ function Home({ auth, guest, id, dealer, username }) {
       };
       try {
         const res = await axiosInstance.get(url, { params });
-        setCars(res.data[1]);
-        setEnd(res.data[0])
+        if (!res.data[1].length) {
+          if (counter > 0) {
+            setNoCars(true);
+          }
+          setCounter(counter + 1)
+        }
+
+        else {
+          setNoCars(false);
+          setCars(res.data[1]);
+          setEnd(res.data[0]);
+        }
+
+        // if(res.data[1].length){
+        //   clearTimeout(time)
+        // }
       } catch (err) {
-        // console.log(err);
+        console.log(err);
+        setNoCars(true)
       }
     };
 
@@ -361,31 +373,147 @@ function Home({ auth, guest, id, dealer, username }) {
       .catch((err) => console.log(err));
   };
 
-  const scroll = (direction) => () => {
+  const scroll = (direction, updatePage) => () => {
     let position = direction === "bottom" ? document.body.scrollHeight : 0;
     window.scrollTo({
       top: position,
       behavior: "smooth",
     });
+    updatePage();
   };
 
-  const closeModal = () => {
-    setDeletMarket(false)
-    setDeletSold(false)
-  }
+  const closeModal = (e) => {
+    e.stopPropagation();
+    setOutOfStockMessage("");
+    setCurrentImageIndex(null);
+    setImagesLength(null);
+    setCarId(null);
+    setImage(null);
+    setDeletMarket(false);
+    setDeletSold(false);
+  };
 
   const toggleCheckbox = (key) => {
     setCheckboxStates((current) => {
-      return { ...current, [key]: !checkboxStates[key] }
-    })
+      return { ...current, [key]: !checkboxStates[key] };
+    });
+  };
 
-  }
+  useEffect(() => {
+    const toggle = (e) => {
+      if (e.key === "ArrowLeft") {
+        prevImage();
+      } else if (e.key === "ArrowRight") {
+        nextImage();
+      }
+    };
+
+    if (currentImageIndex !== null) {
+      document.addEventListener("keydown", toggle);
+    } else {
+      document.removeEventListener("keydown", toggle);
+    }
+
+    return () => document.removeEventListener("keydown", toggle);
+  }, [currentImageIndex]);
+
+  const prevImage = () => {
+    const prev = (currentImageIndex + imagesLength - 1) % imagesLength;
+    setCurrentImageIndex(prev);
+  };
+
+  const nextImage = () => {
+    const next = (currentImageIndex + 1) % imagesLength;
+    setCurrentImageIndex(next);
+  };
+
+  useEffect(() => {
+    const onEscapePress = () => {
+      let timeout;
+      return (e) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          if (e.key === "Esc" || e.key === "Escape") {
+            setOutOfStockMessage("");
+            setCurrentImageIndex(null);
+            setImagesLength(null);
+            setCarId(null);
+            setImage(null);
+            setDeletMarket(false);
+            setDeletSold(false);
+            setBurgerMenu("burger unclicked");
+            setMenu("menu-hidden");
+            setModelClicked("model-unclicked");
+            setVehicleClicked("vehicle-unclicked");
+          }
+        }, 100);
+      };
+    };
+    const result = onEscapePress();
+
+    document.addEventListener("keydown", result);
+
+    return () => {
+      document.removeEventListener("keydown", result);
+    };
+  }, []);
+
+  const changeOwner = (id, ownerId) => {
+    setCars((current) => {
+      return current.map((car) => {
+        if (car.id === id) {
+          return { ...car, owner_id: ownerId };
+        }
+        return car;
+      });
+    });
+  };
 
   return (
     <div className="complet">
+      {outOfStockMessage && (
+        <div className="modal" onClick={closeModal}>
+          <div className="itis remove-card" onClick={(e) => e.stopPropagation()}>
+            <p className="isit-first">Unfortunately, this car is out of stock!</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
+              <button type="btn" className="btn2" onClick={closeModal}>
+                Ok
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {image != null && (
+        <div className="modal" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="close-div">
+              <span className="close" onClick={closeModal}>
+                &times;
+              </span>
+            </div>
+            <div className="image-div">
+              <img
+                style={{
+                  overflow: "hidden",
+                }}
+                src={image.src}
+                alt="Preview"
+              />
+            </div>
+            <div className="modal-navigation">
+              <button className="next" onClick={prevImage}>
+                &lt;
+              </button>
+              <button className="next" onClick={nextImage}>
+                &gt;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {deletMarket && (
-        <div className='modal' onClick={closeModal}>
-          <div className="isit remove-card" onClick={e => e.stopPropagation()}>
+        <div className="modal" onClick={closeModal}>
+          <div className="itis remove-card" onClick={(e) => e.stopPropagation()}>
             <p className="isit-first">Are you sure want to remove this car from the market!</p>
             <div style={{ display: "flex", justifyContent: "center", gap: "5px" }}>
               <button type="btn" className="btn2" onClick={() => setDeletMarket(false)}>
@@ -397,22 +525,20 @@ function Home({ auth, guest, id, dealer, username }) {
             </div>
           </div>
         </div>
-
       )}
       {deletSold && (
-        <div className='modal' onClick={closeModal}>
-          <div className="isit remove-card" onClick={e => e.stopPropagation()}>
+        <div className="modal" onClick={closeModal}>
+          <div className="itis remove-card" onClick={(e) => e.stopPropagation()}>
             <p className="isit-first">Your sold car has been removed!</p>
             <button type="btn" className="btn2" onClick={() => setDeletSold(false)}>
               Ok
             </button>
           </div>
         </div>
-
       )}
       {isit && (
         <div className="modal" onClick={closeModal}>
-          <div className='itis' onClick={e => e.stopPropagation()}>
+          <div className="itis" onClick={(e) => e.stopPropagation()}>
             <p className="isit-first">You need to sign in before purchasing!</p>
             <p className="isit-second">Go back to sign in</p>
             <button
@@ -471,6 +597,7 @@ function Home({ auth, guest, id, dealer, username }) {
                   return (
                     <li key={obj.id} onClick={checked(obj)} className="type-input">
                       <input
+                        onChange={checked(obj)}
                         type="checkbox"
                         className="custom-checkbox"
                         checked={obj.checked}
@@ -496,6 +623,7 @@ function Home({ auth, guest, id, dealer, username }) {
                   return (
                     <li key={obj.id} onClick={checkedM(obj)} className="type-input">
                       <input
+                        onChange={checkedM(obj)}
                         type="checkbox"
                         className="custom-checkbox"
                         checked={obj.checked}
@@ -527,14 +655,22 @@ function Home({ auth, guest, id, dealer, username }) {
           <div ref={burgerMenuRef} className={menu}>
             <div className="help">
               <ul className="ul">
-                <li onClick={() => {
-                  auth()
-                  navigate("/Sign-in")
-                }}>Sign In</li>
-                <li onClick={() => {
-                  auth()
-                  navigate("/Register")
-                }}>Register</li>
+                <li
+                  onClick={() => {
+                    auth();
+                    navigate("/Sign-in");
+                  }}
+                >
+                  Sign In
+                </li>
+                <li
+                  onClick={() => {
+                    auth();
+                    navigate("/Register");
+                  }}
+                >
+                  Register
+                </li>
                 <li>Home</li>
               </ul>
             </div>
@@ -586,6 +722,7 @@ function Home({ auth, guest, id, dealer, username }) {
                     {vehicleInput.map((obj) => (
                       <li key={obj.id} onClick={checked(obj)} className="type-input">
                         <input
+                          onChange={checked(obj)}
                           type="checkbox"
                           className="custom-checkbox"
                           checked={obj.checked}
@@ -612,6 +749,7 @@ function Home({ auth, guest, id, dealer, username }) {
                         <li key={obj.id} onClick={checkedM(obj)} className="type-input">
                           <input
                             type="checkbox"
+                            onChange={checkedM(obj)}
                             className="custom-checkbox"
                             checked={obj.checked}
                             id={`input-${obj.model}`}
@@ -636,14 +774,22 @@ function Home({ auth, guest, id, dealer, username }) {
               <div ref={burgerMenuRef} className={menu}>
                 <div className="help">
                   <ul className="ul">
-                    <li onClick={() => {
-                      auth()
-                      navigate("/Register")
-                    }}>New account</li>
-                    <li onClick={() => {
-                      auth()
-                      navigate("/Sign-in")
-                    }}>Sign Out</li>
+                    <li
+                      onClick={() => {
+                        auth();
+                        navigate("/Register");
+                      }}
+                    >
+                      New account
+                    </li>
+                    <li
+                      onClick={() => {
+                        auth();
+                        navigate("/Sign-in");
+                      }}
+                    >
+                      Sign Out
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -692,6 +838,7 @@ function Home({ auth, guest, id, dealer, username }) {
                   {vehicleInput.map((obj) => (
                     <li key={obj.id} onClick={checked(obj)} className="type-input">
                       <input
+                        onChange={checked(obj)}
                         type="checkbox"
                         className="custom-checkbox"
                         checked={obj.checked}
@@ -717,6 +864,7 @@ function Home({ auth, guest, id, dealer, username }) {
                     return (
                       <li key={obj.id} onClick={checkedM(obj)} className="type-input">
                         <input
+                          onChange={checkedM(obj)}
                           type="checkbox"
                           className="custom-checkbox"
                           checked={obj.checked}
@@ -742,22 +890,30 @@ function Home({ auth, guest, id, dealer, username }) {
             <div ref={burgerMenuRef} className={menu}>
               <div className="help">
                 <ul className="ul">
-                  <li onClick={() => {
-                    auth()
-                    navigate("/Register")
-                  }}>New account</li>
-                  <li onClick={() => {
-                    auth()
-                    navigate("/Sign-in")
-                  }}>Sign Out</li>
+                  <li
+                    onClick={() => {
+                      auth();
+                      navigate("/Register");
+                    }}
+                  >
+                    New account
+                  </li>
+                  <li
+                    onClick={() => {
+                      auth();
+                      navigate("/Sign-in");
+                    }}
+                  >
+                    Sign Out
+                  </li>
                 </ul>
               </div>
             </div>
           </nav>
         )}
       <div className="sell-cars-ul">
-        <div className='scroll-menu'>
-          {dealer === 'Selling' ?
+        <div className="scroll-menu">
+          {dealer === "Selling" ? (
             <div className="input-row">
               {/* Input field for 'myCars' */}
               <div className="input-group">
@@ -766,7 +922,7 @@ function Home({ auth, guest, id, dealer, username }) {
                   <input
                     type="checkbox"
                     checked={checkboxStates.selling}
-                    onChange={() => toggleCheckbox('selling')}
+                    onChange={() => toggleCheckbox("selling")}
                   />
                 </label>
               </div>
@@ -778,7 +934,7 @@ function Home({ auth, guest, id, dealer, username }) {
                   <input
                     type="checkbox"
                     checked={checkboxStates.sold}
-                    onChange={() => toggleCheckbox('sold')}
+                    onChange={() => toggleCheckbox("sold")}
                   />
                 </label>
               </div>
@@ -790,7 +946,7 @@ function Home({ auth, guest, id, dealer, username }) {
                   <input
                     type="checkbox"
                     checked={checkboxStates.owned}
-                    onChange={() => toggleCheckbox('owned')}
+                    onChange={() => toggleCheckbox("owned")}
                   />
                 </label>
               </div>
@@ -802,7 +958,7 @@ function Home({ auth, guest, id, dealer, username }) {
                   <input
                     type="checkbox"
                     checked={checkboxStates.inStock}
-                    onChange={() => toggleCheckbox('inStock')}
+                    onChange={() => toggleCheckbox("inStock")}
                   />
                 </label>
               </div>
@@ -813,52 +969,50 @@ function Home({ auth, guest, id, dealer, username }) {
                   <input
                     type="checkbox"
                     checked={checkboxStates.outOfStock}
-                    onChange={() => toggleCheckbox('outOfStock')}
+                    onChange={() => toggleCheckbox("outOfStock")}
                   />
                 </label>
               </div>
             </div>
-
-
-            : dealer === 'Buying' ?
-              <div className="input-row">
-                {/* Input field for 'myCars' */}
-                <div className="input-group">
-                  <label>
-                      Owned
-                    <input
-                      type="checkbox"
-                      checked={checkboxStates.owned}
-                      onChange={() => toggleCheckbox('owned')}
-                    />
-                  </label>
-                </div>
-
-                {/* Input field for 'sold' */}
-                <div className="input-group">
-                  <label>
-                    In Stock
-                    <input
-                      type="checkbox"
-                      checked={checkboxStates.inStock}
-                      onChange={() => toggleCheckbox('inStock')}
-                    />
-                  </label>
-                </div>
-                <div className="input-group">
-                  <label>
-                    Out of Stock
-                    <input
-                      type="checkbox"
-                      checked={checkboxStates.outOfStock}
-                      onChange={() => toggleCheckbox('outOfStock')}
-                    />
-                  </label>
-                </div>
+          ) : dealer === "Buying" ? (
+            <div className="input-row">
+              {/* Input field for 'myCars' */}
+              <div className="input-group">
+                <label>
+                  Owned
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.owned}
+                    onChange={() => toggleCheckbox("owned")}
+                  />
+                </label>
               </div>
-              : null}
 
-          {dealer === "Selling" ? (
+              {/* Input field for 'sold' */}
+              <div className="input-group">
+                <label>
+                  In Stock
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.inStock}
+                    onChange={() => toggleCheckbox("inStock")}
+                  />
+                </label>
+              </div>
+              <div className="input-group">
+                <label>
+                  Out of Stock
+                  <input
+                    type="checkbox"
+                    checked={checkboxStates.outOfStock}
+                    onChange={() => toggleCheckbox("outOfStock")}
+                  />
+                </label>
+              </div>
+            </div>
+          ) : null}
+
+          {(!noCars || Boolean(cars.length) === true) && dealer === "Selling" ? (
             <div className="scroll-bottom">
               <button
                 onClick={() => navigate("/Add")}
@@ -867,13 +1021,25 @@ function Home({ auth, guest, id, dealer, username }) {
               >
                 Add a car
               </button>
+
               <div onClick={scroll("bottom")} className="arrows">
+
                 <div className="arrow"></div>
                 <div className="arrow"></div>
                 <div className="arrow"></div>
               </div>
             </div>
-          ) : dealer === 'Buying' ? (
+          ) : dealer === "Selling" ? (
+            <div className="scroll-bottom">
+              <button
+                onClick={() => navigate("/Add")}
+                className="btn sell ul margined"
+                style={{ position: "relative" }}
+              >
+                Add a car
+              </button>
+            </div>
+          ) : dealer === "Buying" && (!noCars || Boolean(cars.length) === true) ? (
             <div className="scroll-bottom buying">
               <div onClick={scroll("bottom")} className="arrows">
                 <div className="arrow"></div>
@@ -881,8 +1047,8 @@ function Home({ auth, guest, id, dealer, username }) {
                 <div className="arrow"></div>
               </div>
             </div>
-          ) : guest ? (
-            <div className="scroll-bottom buying">
+          ) : guest && (!noCars && !!cars.length) ? (
+            <div className="scroll-bottom buying-guest">
               <div onClick={scroll("bottom")} className="arrows">
                 <div className="arrow"></div>
                 <div className="arrow"></div>
@@ -891,60 +1057,73 @@ function Home({ auth, guest, id, dealer, username }) {
             </div>
           ) : null}
         </div>
-        <div className="cars-page">
-          <ul className="cars-ul">
-            {cars.map((car) => {
-              // console.log(car.id)
-              return (
-                // eslint-disable-next-line react/jsx-key
-                <li key={car.id}>
-                  <CarCard
-                    removeId={removeId}
-                    carId={setCarId}
-                    deletMarket={setDeletMarket}
-                    deletSold={setDeletSold}
-                    id={id}
-                    isit={setIsit}
-                    guest={guest}
-                    car={car}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        <div className="page">
-          <div className="bottom-middle">
-            <button
-              className={`btn${pageNumber === 1 ? " disabled" : ""}`}
-              onClick={(e) => {
-                scroll("top")(e);
-                setPageNumber(pageNumber - 1);
-              }}
-              disabled={pageNumber === 1}
-            >
-              Previous
-            </button>
-            <span> Page {pageNumber}</span>
-            <button
-              className={`btn${cars.length < limit || end ? " disabled" : ""}`}
-              onClick={(e) => {
-                scroll("top")(e);
-                setPageNumber(pageNumber + 1);
-              }}
-              disabled={cars.length < limit && end}
-            >
-              Next
-            </button>
+        {noCars ? (
+          <div style={{ alignSelf: "center" }}>Unfortunately there are no cars available!</div>
+        ) : !cars.length ? (
+          <div style={{ alignSelf: "center" }} className="loading"></div>
+        ) : (
+          <div className="cars-page">
+            <ul className="cars-ul">
+              {cars.map((car) => {
+                return (
+                  // eslint-disable-next-line react/jsx-key
+                  <li key={car.id}>
+                    <CarCard
+                      changeOwner={changeOwner}
+                      outOfStockMessage={setOutOfStockMessage}
+                      setImagesLength={setImagesLength}
+                      currentImageIndex={currentImageIndex}
+                      setCurrentImageIndex={setCurrentImageIndex}
+                      image={setImage}
+                      removeId={removeId}
+                      carId={carId}
+                      setCarId={setCarId}
+                      deletMarket={setDeletMarket}
+                      deletSold={setDeletSold}
+                      id={id}
+                      isit={setIsit}
+                      guest={guest}
+                      car={car}
+                      refreshPage={refreshPage}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
           </div>
+        )}
 
-          <div onClick={scroll("top")} className="arrows-up">
-            <div className="arrow-up"></div>
-            <div className="arrow-up"></div>
-            <div className="arrow-up"></div>
+        {!noCars && Boolean(cars.length) === true && (
+          <div className="page">
+            <div className="bottom-middle">
+              <button
+                className={`btn${pageNumber === 1 ? " disabled" : ""}`}
+                onClick={scroll("top", () => {
+                  setPageNumber(pageNumber - 1);
+                })}
+                disabled={pageNumber === 1}
+              >
+                Previous
+              </button>
+              <span> Page {pageNumber}</span>
+              <button
+                className={`btn${end ? " disabled" : "s"}`}
+                onClick={scroll("top", () => {
+                  setPageNumber(pageNumber + 1);
+                })}
+                disabled={end}
+              >
+                Next
+              </button>
+            </div>
+
+            <div onClick={scroll("top")} className="arrows-up">
+              <div className="arrow-up"></div>
+              <div className="arrow-up"></div>
+              <div className="arrow-up"></div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

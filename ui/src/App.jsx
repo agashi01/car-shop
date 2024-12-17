@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { useState, useEffect } from "react";
 // import { useEffect } from 'react'
@@ -15,6 +16,8 @@ import { useGuest } from "./Context.jsx";
 import { axiosInstance as useAxiosInstance } from "./forms/AxiosConfig4000.jsx";
 import "./App.css";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import NotFound from "./forms/NotFound"; // Import the NotFound component
+
 
 export default function App() {
     const [dealer, setDealer] = useState(false);
@@ -27,16 +30,14 @@ export default function App() {
     const location = useLocation()
 
     useEffect(() => {
-        localStorage.setItem('lastPath', location.pathname)
-    }, [location])
+        document.title = "Car Shop"; // Replace with your desired title
+    }, []);
 
     useEffect(() => {
 
         const token = localStorage.getItem('token')
 
-        if (!token) { // if not logged in
-            navigate("Sign-in");
-        } else {
+        if (token) { // if not logged in
             axiosInstance.post('/log-in-token', { token })
                 .then(res => {
                     setDealer(res.data?.type);
@@ -61,7 +62,7 @@ export default function App() {
                                 })
 
                                 .catch(secondErr => {
-                                    console.log(secondErr, 'secondErr')
+                                    console.log(secondErr)
                                     setAuthMessage('Something went wrong, can you please refresh the page and log in again!')
                                 })
                         }
@@ -97,8 +98,8 @@ export default function App() {
             });
         navigate("/sign-in");
     };
-
     return (
+
         <>
             <Routes>
                 <Route
@@ -133,12 +134,16 @@ export default function App() {
                             id={id}
                             logo3={Logo}
                             username={username}
+
                         />
                     }
                 ></Route>
+                <Route path="*" element={<NotFound />} />
+
             </Routes>
 
             {authMessage && <AuthMessage auth={auth} authMessage={authMessage} />}
         </>
     );
+
 }

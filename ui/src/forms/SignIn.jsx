@@ -31,8 +31,8 @@ export default function SignInForm({ dealer, guest, id, username }) {
           password: signIn.password,
         })
         .then((res) => {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("refreshToken", res.data.refresh);
+          localStorage.setItem("token", res.data?.token);
+          localStorage.setItem("refreshToken", res.data?.refresh);
           setBackendError(false);
           setError({ email: "stabil", password: "stabil" });
           dealer(res.data?.user?.type);
@@ -45,11 +45,11 @@ export default function SignInForm({ dealer, guest, id, username }) {
           console.log(err);
           if (err.response?.data === "wrong password") {
             setError((current) => {
-              return { ...current, password: "Wrong password !" };
+              return { ...current, password: "Wrong password!" };
             });
           } else if (err.response?.data === "wrong email") {
             setError((current) => {
-              return { ...current, email: "Wrong email !" };
+              return { ...current, email: "wrong email!" };
             });
           } else {
             setBackendMessage(err?.response?.data);
@@ -68,7 +68,7 @@ export default function SignInForm({ dealer, guest, id, username }) {
 
     setError((current) => {
       if (signIn.email.length === 0) {
-        return { ...current, email: "Enter your email !" };
+        return { ...current, email: "Enter your email!" };
       } else if (!signIn.email.includes("@")) {
         return { ...current, email: "Invalid form of email !" };
       } else {
@@ -78,9 +78,9 @@ export default function SignInForm({ dealer, guest, id, username }) {
 
     setError((current) => {
       if (signIn.password.length === 0) {
-        return { ...current, password: "Enter your password !" };
+        return { ...current, password: "Enter your password!" };
       } else if (signIn.password.length < 8) {
-        return { ...current, password: "Minimum 8 characters !" };
+        return { ...current, password: "Minimum 8 characters!" };
       } else {
         return { ...current, password: "Stabil" };
       }
@@ -122,7 +122,7 @@ export default function SignInForm({ dealer, guest, id, username }) {
       if (signIn.password.length === 0) {
         return { ...current, password: "Stabil" };
       } else if (signIn.password.length < 8) {
-        return { ...current, password: " Minimum 8 characters !" };
+        return { ...current, password: " Minimum 8 characters!" };
       } else {
         return { ...current, password: "Correct form" };
       }
@@ -179,16 +179,16 @@ export default function SignInForm({ dealer, guest, id, username }) {
     switch (true) {
       case backendMessage:
         return null;
-      case error.email === "Wrong email !":
+      case error.email === "wrong email!":
         return <p className="wrong-sign-in">{error.email}</p>;
 
-      case error.email === "Enter your email !":
+      case error.email === "Enter your email!":
         return <p className="wrong-sign-in">{error.email}</p>;
 
-      case error.email === "Invalid form of email !":
+      case error.email === "Invalid form of email!":
         return <p className="wrong-sign-in">{error.email}</p>;
 
-      case error.email === " Invalid form of email !":
+      case error.email === " Invalid form of email!":
         return <p className="half-good-sign-in">{error.email}</p>;
 
       case error.email === "Correct" || error.email === "Correct form":
@@ -202,21 +202,19 @@ export default function SignInForm({ dealer, guest, id, username }) {
   const errorPassword = () => {
     switch (true) {
       case backendMessage:
-        console.log(backendMessage);
         return <p className="wrong-sign-in">{backendMessage}</p>;
 
-      case error.password === "Wrong password !":
+      case error.password === "Wrong password!":
         return <p className="wrong-sign-in">{error.password}</p>;
 
-      case error.password === "Minimum 8 characters !":
+      case error.password === "Minimum 8 characters!":
         return <p className="wrong-sign-in">{error.password}</p>;
 
-      case error.password === " Minimum 8 characters !":
+      case error.password === " Minimum 8 characters!":
         return <p className="half-good-sign-in">{error.password}</p>;
 
-      case error.password === "Enter your password !":
+      case error.password === "Enter your password!":
         return <p className="wrong-sign-in">{error.password}</p>;
-
       case error.password === "Correct":
         return <p className="good-sign-in">{error.password}</p>;
 
@@ -234,8 +232,8 @@ export default function SignInForm({ dealer, guest, id, username }) {
       case backendMessage:
         return "prezantimi-register";
 
-      case error.email === "Wrong email !" ||
-        error.email === "Enter your email !" ||
+      case error.email === "Wrong email!" ||
+        error.email === "Enter your email!" ||
         error.email === "Invalid form of email !":
         return "wrong-prezantimi-register";
 
@@ -255,12 +253,12 @@ export default function SignInForm({ dealer, guest, id, username }) {
       case backendMessage:
         return "prezantimi-register";
 
-      case error.password === "Wrong password !" ||
-        error.password === "Enter your password !" ||
-        error.password === "Minimum 8 characters !":
+      case error.password === "Wrong password!" ||
+        error.password === "Enter your password!" ||
+        error.password === "Minimum 8 characters!":
         return "wrong-prezantimi-register";
 
-      case error.password === " Minimum 8 characters !":
+      case error.password === " Minimum 8 characters!":
         return "half-good-prezantimi";
 
       case error.password === "Correct" || error.password === "Correct form":
@@ -273,15 +271,17 @@ export default function SignInForm({ dealer, guest, id, username }) {
 
   return (
     <div className="div-box">
-      <form id="sign-in">
+      <form id="sign-in" onSubmit={ signInConfirm}>
         <h2>Sign In</h2>
         <label htmlFor="email">
           <input
             className={classnameEmail()}
             type="email"
+            name="email-address"
             onChange={(e) => {
               signInEmail(e.target.value);
             }}
+              autoComplete="on"
             value={signIn.email}
             id="email"
             placeholder="Enter your email"
@@ -293,9 +293,11 @@ export default function SignInForm({ dealer, guest, id, username }) {
           <input
             className={classnamePassword()}
             type="password"
+            name='password'
             onChange={(e) => {
               signInPassword(e.target.value);
             }}
+              autoComplete="on"
             value={signIn.password}
             id="password"
             placeholder="Enter your password"
@@ -303,7 +305,7 @@ export default function SignInForm({ dealer, guest, id, username }) {
           ></input>
         </label>
         <div className="error">{errorPassword()}</div>
-        <button className="register-button" type="btn" onClick={(e) => signInConfirm(e)}>
+        <button className="register-button" type="submit" >
           Sign in
         </button>
       </form>

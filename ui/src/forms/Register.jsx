@@ -474,7 +474,7 @@ export default function Register() {
 
   return (
     <div className="div-box">
-      <form id="register">
+      <form id="register" onSubmit={registerConfirm}>
         <h2>Register</h2>
         <label htmlFor="emri">
           <input
@@ -518,6 +518,7 @@ export default function Register() {
           <input
             className={classNameEmail()}
             type="email"
+            name="email-address"
             ref={email}
             id="email"
             value={register.email}
@@ -543,6 +544,7 @@ export default function Register() {
           <div className="next-to-select">
             <label htmlFor="user-type"></label>
             <select
+            style={{cursor:'pointer'}}
               onChange={(e) => setType(e.target.value)}
               className="select"
               name="user-type"
@@ -553,7 +555,7 @@ export default function Register() {
             </select>
           </div>
 
-          <button className="register-button" type="btn" onClick={registerConfirm}>
+          <button className="register-button" type="submit">
             Register
           </button>
         </div>

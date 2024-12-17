@@ -1,12 +1,13 @@
+require('dotenv').config()
 const { makeApp } = require('./app.js')
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const cors = require("cors");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-const {db} = require('./db.js')
+const { db } = require('./db.js')
 
-const app=express()
+const app = express()
 
 const corsOptions = {
     origin: "*",
@@ -53,7 +54,7 @@ const authenticate = (req, res, next) => {
     }
 };
 
-makeApp(express,app,multer,cloudinary,db,authenticate)
+makeApp(express, app, multer, cloudinary, db, authenticate)
 
-
-app.listen(3000, () => console.log("Server is running on port 3000"));
+const PORT =process.env.PORT||3000
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
